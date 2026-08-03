@@ -1,10 +1,10 @@
 @extends('layouts.app', ['navigation' => [
-    ['dashboard', 'Dashboard', 'heroicons-o-squares-2x2'],
-    ['schedules.index', 'Jadwal Piket', 'heroicons-o-clock'],
-    ['piket.upload.form', 'Ambil Bukti', 'heroicons-o-qr-code'],
-    ['verification.index', 'Verifikasi', 'heroicons-o-shield-check'],
-    ['reports.index', 'Laporan', 'heroicons-o-clipboard-document-list'],
-    ['users.index', 'Pengguna', 'heroicons-o-users'],
+    ['dashboard', 'Dashboard', 'heroicon-o-squares-2x2'],
+    ['schedules.index', 'Jadwal Piket', 'heroicon-o-clock'],
+    ['piket.upload.form', 'Ambil Bukti', 'heroicon-o-qr-code'],
+    ['verification.index', 'Verifikasi', 'heroicon-o-shield-check'],
+    ['reports.index', 'Laporan', 'heroicon-o-clipboard-document-list'],
+    ['users.index', 'Pengguna', 'heroicon-o-users'],
 ]])
 @section('content')
 <section class="relative overflow-hidden rounded-[2rem] bg-gradient-to-br from-amber-400 via-yellow-400 to-amber-500 p-7 text-amber-950 shadow-[0_24px_70px_rgba(217,119,6,.18)] before:absolute before:-right-24 before:-top-36 before:h-96 before:w-96 before:rounded-full before:border-[55px] before:border-white/20 lg:p-10">
@@ -15,7 +15,7 @@
             <p class="mt-4 max-w-xl text-sm font-medium leading-7 text-amber-950/75">Pantau aktivitas piket dan selesaikan hal penting hari ini dari satu ruang kerja yang ringkas.</p>
         </div>
         <div class="flex min-w-[210px] items-center gap-4 rounded-2xl border border-amber-950/10 bg-white/30 p-4 backdrop-blur-sm">
-            <div class="grid h-12 w-12 place-items-center rounded-2xl bg-white text-amber-700"><x-icon name="heroicons-o-clock" class="h-6 w-6" /></div>
+            <div class="grid h-12 w-12 place-items-center rounded-2xl bg-white text-amber-700"><x-icon name="heroicon-o-clock" class="h-6 w-6" /></div>
             <div><span class="block text-[.62rem] uppercase tracking-[.14em] text-[#d6aa90]">Waktu lokal</span><strong class="mt-1 block text-xl">{{ now()->format('H:i') }} WIB</strong></div>
         </div>
     </div>
@@ -23,16 +23,16 @@
 
 @php
     $stats = [
-        ['Jadwal hari ini', $scheduleCount, 'heroicons-o-clock', 'Tugas piket terjadwal', '#f4dfbd'],
-        ['Perlu ditinjau', $pendingCount, 'heroicons-o-exclamation-triangle', 'Menunggu verifikasi', '#ead1c7'],
-        ['Sudah disetujui', $approvedCount, 'heroicons-o-check-circle', 'Bukti piket valid', '#d9e5d5'],
-        ['Siswa & KM', $studentCount, 'heroicons-o-users', 'Pengguna terdaftar', '#d8e2e8'],
+        ['Jadwal hari ini', $scheduleCount, 'heroicon-o-clock', 'Tugas piket terjadwal', '#f4dfbd'],
+        ['Perlu ditinjau', $pendingCount, 'heroicon-o-exclamation-triangle', 'Menunggu verifikasi', '#ead1c7'],
+        ['Sudah disetujui', $approvedCount, 'heroicon-o-check-circle', 'Bukti piket valid', '#d9e5d5'],
+        ['Siswa & KM', $studentCount, 'heroicon-o-users', 'Pengguna terdaftar', '#d8e2e8'],
     ];
 @endphp
 <div class="mt-6 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
     @foreach($stats as [$label, $value, $icon, $description, $accent])
         <article class="group relative overflow-hidden rounded-2xl border border-[#e8ddd1] bg-white p-5 shadow-[0_8px_30px_#4d28100a] transition duration-300 hover:-translate-y-1 hover:shadow-[0_16px_40px_#4d281014]">
-            <div class="mb-8 flex items-start justify-between"><span class="text-xs font-bold uppercase tracking-[.1em] text-[#8c7162]">{{ $label }}</span><span class="grid h-10 w-10 place-items-center rounded-xl text-[#551414]" style="background: {{ $accent }}"><x-icon name="{{ $iconMap[$icon] ?? 'heroicons-o-question-mark-circle' }}" class="h-6 w-6" /></span></div>
+            <div class="mb-8 flex items-start justify-between"><span class="text-xs font-bold uppercase tracking-[.1em] text-[#8c7162]">{{ $label }}</span><span class="grid h-10 w-10 place-items-center rounded-xl text-[#551414]" style="background: {{ $accent }}"><x-icon name="{{ $iconMap[$icon] ?? 'heroicon-o-question-mark-circle' }}" class="h-6 w-6" /></span></div>
             <div class="flex items-end justify-between gap-2"><strong class="text-4xl font-semibold tracking-[-.06em] text-[#421717]">{{ str_pad($value, 2, '0', STR_PAD_LEFT) }}</strong><span class="pb-1 text-right text-[.65rem] text-[#9b8173]">{{ $description }}</span></div>
         </article>
     @endforeach
@@ -43,17 +43,18 @@
         <div class="mb-6 flex items-end justify-between gap-4"><div><p class="text-[.62rem] font-bold uppercase tracking-[.16em] text-[#a17a64]">Akses cepat</p><h2 class="mt-1 text-xl font-semibold tracking-[-.035em]">Apa yang ingin dikerjakan?</h2></div><span class="text-[.68rem] text-[#9b8173]">Sesuai hak akses Anda</span></div>
         <div class="grid gap-3 sm:grid-cols-2">
             @if(auth()->user()->role==='admin')
-                <a class="dashboard-action" href="{{ route('schools.index') }}"><span class="dashboard-action-icon"><x-icon name="heroicons-o-academic-cap" class="h-5 w-5" /></span><span><strong>Kelola sekolah</strong><small>Profil dan lokasi sekolah</small></span><b>→</b></a>
-                <a class="dashboard-action" href="{{ route('classes.index') }}"><span class="dashboard-action-icon"><x-icon name="heroicons-o-squares-2x2" class="h-5 w-5" /></span><span><strong>Kelola kelas</strong><small>Susunan kelas aktif</small></span><b>→</b></a>
-                <a class="dashboard-action" href="{{ route('users.index') }}"><span class="dashboard-action-icon"><x-icon name="heroicons-o-users" class="h-5 w-5" /></span><span><strong>Kelola pengguna</strong><small>Akun dan hak akses</small></span><b>→</b></a>
+                <a class="dashboard-action" href="{{ route('schools.index') }}"><span class="dashboard-action-icon"><x-icon name="heroicon-o-academic-cap" class="h-5 w-5" /></span><span><strong>Pengaturan sekolah</strong><small>Profil, lokasi, dan jam upload</small></span><b>→</b></a>
+                <a class="dashboard-action" href="{{ route('classes.index') }}"><span class="dashboard-action-icon"><x-icon name="heroicon-o-squares-2x2" class="h-5 w-5" /></span><span><strong>Kelola kelas</strong><small>Susunan kelas aktif</small></span><b>→</b></a>
+                <a class="dashboard-action" href="{{ route('students.index') }}"><span class="dashboard-action-icon"><x-icon name="heroicon-o-user-group" class="h-5 w-5" /></span><span><strong>Kelola siswa</strong><small>Anggota kelas dan KM</small></span><b>→</b></a>
+                <a class="dashboard-action" href="{{ route('users.index') }}"><span class="dashboard-action-icon"><x-icon name="heroicon-o-users" class="h-5 w-5" /></span><span><strong>Kelola pengguna</strong><small>Akun dan hak akses</small></span><b>→</b></a>
             @endif
-            @if(in_array(auth()->user()->role,['siswa','km']))<a class="dashboard-action" href="{{ route('piket.upload.form') }}"><span class="dashboard-action-icon"><x-icon name="heroicons-o-qr-code" class="h-5 w-5" /></span><span><strong>Ambil bukti piket</strong><small>Foto dan kirim bukti</small></span><b>→</b></a>@endif
-            @if(in_array(auth()->user()->role,['admin','km']))<a class="dashboard-action" href="{{ route('schedules.index') }}"><span class="dashboard-action-icon"><x-icon name="heroicons-o-clock" class="h-5 w-5" /></span><span><strong>Atur jadwal</strong><small>Kelola giliran piket</small></span><b>→</b></a>@endif
-            @if(in_array(auth()->user()->role,['admin','guru','km']))<a class="dashboard-action" href="{{ route('verification.index') }}"><span class="dashboard-action-icon"><x-icon name="heroicons-o-shield-check" class="h-5 w-5" /></span><span><strong>Verifikasi bukti</strong><small>Tinjau kiriman terbaru</small></span><b>→</b></a>@endif
+            @if(in_array(auth()->user()->role,['siswa','km']))<a class="dashboard-action" href="{{ route('piket.upload.form') }}"><span class="dashboard-action-icon"><x-icon name="heroicon-o-qr-code" class="h-5 w-5" /></span><span><strong>Ambil bukti piket</strong><small>Foto dan kirim bukti</small></span><b>→</b></a>@endif
+            @if(in_array(auth()->user()->role,['admin','km']))<a class="dashboard-action" href="{{ route('schedules.index') }}"><span class="dashboard-action-icon"><x-icon name="heroicon-o-clock" class="h-5 w-5" /></span><span><strong>Atur jadwal</strong><small>Kelola giliran piket</small></span><b>→</b></a>@endif
+            @if(in_array(auth()->user()->role,['admin','guru','km']))<a class="dashboard-action" href="{{ route('verification.index') }}"><span class="dashboard-action-icon"><x-icon name="heroicon-o-shield-check" class="h-5 w-5" /></span><span><strong>Verifikasi bukti</strong><small>Tinjau kiriman terbaru</small></span><b>→</b></a>@endif
         </div>
     </section>
     <aside class="relative overflow-hidden rounded-[1.6rem] bg-[#e7ae48] p-7 text-[#421717] before:absolute before:-bottom-16 before:-right-12 before:h-44 before:w-44 before:rounded-full before:border-[28px] before:border-[#551414]/[.06]">
-        <span class="relative grid h-11 w-11 place-items-center rounded-2xl bg-[#551414] text-white"><x-icon name="heroicons-o-chart-bar" class="h-6 w-6" /></span>
+        <span class="relative grid h-11 w-11 place-items-center rounded-2xl bg-[#551414] text-white"><x-icon name="heroicon-o-chart-bar" class="h-6 w-6" /></span>
         <p class="relative mt-10 text-[.62rem] font-extrabold uppercase tracking-[.16em] text-[#704315]">Catatan hari ini</p>
         <h2 class="relative mt-2 text-2xl font-semibold leading-tight tracking-[-.04em]">Konsistensi kecil membangun budaya sekolah.</h2>
         <p class="relative mt-4 text-xs leading-6 text-[#704315]">Pastikan setiap bukti dikirim dari lokasi sekolah dan sesuai jadwal yang ditentukan.</p>

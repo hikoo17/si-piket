@@ -1,9 +1,9 @@
 @extends('layouts.app', ['navigation' => [
-    ['dashboard', 'Dashboard', 'heroicons-o-squares-2x2'],
-    ['schedules.index', 'Jadwal Piket', 'heroicons-o-clock'],
-    ['piket.upload.form', 'Ambil Bukti', 'heroicons-o-qr-code'],
-    ['verification.index', 'Verifikasi', 'heroicons-o-shield-check'],
-    ['reports.index', 'Laporan', 'heroicons-o-clipboard-document-list'],
+    ['dashboard', 'Dashboard', 'heroicon-o-squares-2x2'],
+    ['schedules.index', 'Jadwal Piket', 'heroicon-o-clock'],
+    ['piket.upload.form', 'Ambil Bukti', 'heroicon-o-qr-code'],
+    ['verification.index', 'Verifikasi', 'heroicon-o-shield-check'],
+    ['reports.index', 'Laporan', 'heroicon-o-clipboard-document-list'],
 ]])
 @section('content')
 <h1 class="mb-5 text-2xl font-bold text-[#6d1a1a]">Verifikasi Bukti</h1>

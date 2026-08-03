@@ -94,7 +94,7 @@
                             <label for="email" class="mb-1.5 block text-xs font-bold text-slate-700">Alamat Email</label>
                             <!-- Mengganti ring/border focus dari merah ke amber -->
                             <div class="group flex items-center rounded-xl border bg-amber-50/30 px-3.5 transition focus-within:bg-white focus-within:border-amber-500 focus-within:ring-2 focus-within:ring-amber-100 {{ $errors->has('email') ? 'border-amber-500' : 'border-slate-200' }}">
-                                <x-icon name="heroicons-o-envelope" class="mr-2.5 h-4 w-4 shrink-0 text-slate-400 transition group-focus-within:text-amber-500" />
+                                <x-icon name="heroicon-o-envelope" class="mr-2.5 h-4 w-4 shrink-0 text-slate-400 transition group-focus-within:text-amber-500" />
                                 <input id="email" class="w-full border-0 bg-transparent py-3 text-xs sm:text-sm text-slate-900 outline-none placeholder:text-slate-400 font-medium" name="email" type="email" value="{{ old('email') }}" required autofocus autocomplete="email" placeholder="nama@sekolah.id">
                             </div>
                             @error('email')
@@ -110,10 +110,10 @@
                             </div>
                             <!-- Mengganti focus style merah menjadi amber -->
                             <div class="group flex items-center rounded-xl border border-slate-200 bg-amber-50/30 px-3.5 transition focus-within:bg-white focus-within:border-amber-500 focus-within:ring-2 focus-within:ring-amber-100">
-                                <x-icon name="heroicons-o-lock-closed" class="mr-2.5 h-4 w-4 shrink-0 text-slate-400 transition group-focus-within:text-amber-500" />
+                                <x-icon name="heroicon-o-lock-closed" class="mr-2.5 h-4 w-4 shrink-0 text-slate-400 transition group-focus-within:text-amber-500" />
                                 <input id="password" class="w-full border-0 bg-transparent py-3 text-xs sm:text-sm text-slate-900 outline-none placeholder:text-slate-400 font-medium" name="password" type="password" required autocomplete="current-password" placeholder="Masukkan kata sandi">
                                 <button id="password-toggle" class="ml-1.5 grid h-7 w-7 shrink-0 place-items-center rounded-lg text-slate-400 hover:bg-slate-100 hover:text-slate-600 transition" type="button" aria-label="Tampilkan kata sandi">
-                                    <x-icon name="heroicons-o-eye" class="h-4 w-4" />
+                                    <x-icon name="heroicon-o-eye" class="h-4 w-4" />
                                 </button>
                             </div>
                         </div>

@@ -1,19 +1,21 @@
 @extends('layouts.app', ['navigation' => [
-    ['dashboard', 'Dashboard', 'heroicons-o-squares-2x2'],
-    ['schedules.index', 'Jadwal Piket', 'heroicons-o-clock'],
-    ['piket.upload.form', 'Ambil Bukti', 'heroicons-o-qr-code'],
-    ['verification.index', 'Verifikasi', 'heroicons-o-shield-check'],
-    ['reports.index', 'Laporan', 'heroicons-o-clipboard-document-list'],
+    ['dashboard', 'Dashboard', 'heroicon-o-squares-2x2'],
+    ['schedules.index', 'Jadwal Piket', 'heroicon-o-clock'],
+    ['piket.upload.form', 'Ambil Bukti', 'heroicon-o-qr-code'],
+    ['verification.index', 'Verifikasi', 'heroicon-o-shield-check'],
+    ['reports.index', 'Laporan', 'heroicon-o-clipboard-document-list'],
 ]])
 @section('content')
-<h1 class="mb-5 text-2xl font-bold text-[#6d1a1a]">Jadwal Piket</h1>
+<p class="text-xs font-bold uppercase tracking-[.16em] text-amber-700">Langkah 4 dari 4 · Operasional</p>
+<h1 class="mt-1 text-2xl font-bold text-[#6d1a1a]">Jadwal Piket</h1>
+<p class="mb-5 mt-2 text-sm text-amber-900/65">Pilih siswa yang sudah memiliki kelas. Setelah dijadwalkan, siswa dapat mengirim bukti pada hari tersebut.</p>
 <form method="POST" action="{{ route('schedules.store') }}" class="mb-6 flex flex-wrap items-end gap-3 rounded-xl border border-[#fce4c4] bg-white p-4">
     @csrf
     <div class="flex-1 min-w-[200px]">
         <label class="mb-1 block text-xs font-semibold text-[#5d4037]">Siswa</label>
         <select name="user_id" class="w-full rounded-lg border border-[#fce4c4] bg-white p-2.5 text-sm outline-none transition focus:border-[#6d1a1a]" required>
             <option value="">Pilih siswa</option>
-            @foreach($users as $user)<option value="{{ $user->id }}" @selected(old('user_id') == $user->id)>{{ $user->name }} · {{ $user->schoolClass?->name }}</option>@endforeach
+            @foreach($users as $user)<option value="{{ $user->id }}" @selected(old('user_id') == $user->id)>{{ $user->schoolClass?->name }} · {{ $user->name }}{{ $user->role === 'km' ? ' (KM)' : '' }}</option>@endforeach
         </select>
     </div>
     <div class="w-[160px]">

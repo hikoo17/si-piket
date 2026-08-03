@@ -50,11 +50,13 @@ if (mapElement) {
     });
     const marker = L.marker(initialPosition, { draggable: true, icon: schoolIcon }).addTo(map);
     const radiusCircle = L.circle(initialPosition, {
-        color: '#4338ca',
-        fillColor: '#6366f1',
-        fillOpacity: 0.15,
+        color: '#b91c1c',
+        weight: 2,
+        fillColor: '#dc2626',
+        fillOpacity: 0.18,
         radius: Number(radiusInput.value) || 100,
     }).addTo(map);
+    radiusCircle.bindPopup(`Radius: ${Number(radiusInput.value) || 100} meter`);
 
     const setPosition = (position, recenter = false) => {
         latitudeInput.value = position.lat.toFixed(8);
@@ -85,6 +87,7 @@ if (mapElement) {
         const radius = Number(radiusInput.value);
         if (Number.isFinite(radius) && radius > 0) {
             radiusCircle.setRadius(radius);
+            radiusCircle.setPopupContent(`Radius: ${radius} meter`);
         }
     });
 

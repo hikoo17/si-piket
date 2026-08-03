@@ -1,4 +1,4 @@
-@props(['title' => 'Dashboard', 'navigation' => []])
+@props(['title' => 'Dashboard'])
 
 <!doctype html>
 <html lang="id">
@@ -13,38 +13,38 @@
 <body class="m-0 bg-amber-50 font-sans text-amber-950 antialiased">
 @php
     $iconMap = [
-        'dashboard' => 'heroicons-o-squares-2x2',
-        'clock' => 'heroicons-o-clock',
-        'scan' => 'heroicons-o-qr-code',
-        'shield' => 'heroicons-o-shield-check',
-        'report' => 'heroicons-o-clipboard-document-list',
-        'users' => 'heroicons-o-users',
-        'list' => 'heroicons-o-queue-list',
-        'grid' => 'heroicons-o-squares-2x2',
-        'school' => 'heroicons-o-academic-cap',
-        'chart' => 'heroicons-o-chart-bar',
-        'heart' => 'heroicons-o-heart',
-        'menu' => 'heroicons-o-bars-3',
-        'logout' => 'heroicons-o-arrow-right-on-rectangle',
-        'check' => 'heroicons-o-check',
-        'alert' => 'heroicons-o-exclamation-circle',
-        'mail' => 'heroicons-o-envelope',
-        'eye' => 'heroicons-o-eye',
-        'lock' => 'heroicons-o-lock-closed',
-        'arrow-right' => 'heroicons-o-arrow-right',
-        'close' => 'heroicons-o-x-mark',
-        'success' => 'heroicons-o-check-circle',
-        'warning' => 'heroicons-o-exclamation-triangle',
-        'info' => 'heroicons-o-information-circle',
-        'download' => 'heroicons-o-arrow-down-tray',
-        'filter' => 'heroicons-o-funnel',
-        'plus' => 'heroicons-o-plus',
-        'note' => 'heroicons-o-document-text',
-        'file' => 'heroicons-o-document',
-        'bell' => 'heroicons-o-bell',
-        'user' => 'heroicons-o-user',
-        'letter' => 'heroicons-o-envelope',
-        'tracking' => 'heroicons-o-map-pin',
+        'dashboard' => 'heroicon-o-squares-2x2',
+        'clock' => 'heroicon-o-clock',
+        'scan' => 'heroicon-o-qr-code',
+        'shield' => 'heroicon-o-shield-check',
+        'report' => 'heroicon-o-clipboard-document-list',
+        'users' => 'heroicon-o-users',
+        'list' => 'heroicon-o-queue-list',
+        'grid' => 'heroicon-o-squares-2x2',
+        'school' => 'heroicon-o-academic-cap',
+        'chart' => 'heroicon-o-chart-bar',
+        'heart' => 'heroicon-o-heart',
+        'menu' => 'heroicon-o-bars-3',
+        'logout' => 'heroicon-o-arrow-right-on-rectangle',
+        'check' => 'heroicon-o-check',
+        'alert' => 'heroicon-o-exclamation-circle',
+        'mail' => 'heroicon-o-envelope',
+        'eye' => 'heroicon-o-eye',
+        'lock' => 'heroicon-o-lock-closed',
+        'arrow-right' => 'heroicon-o-arrow-right',
+        'close' => 'heroicon-o-x-mark',
+        'success' => 'heroicon-o-check-circle',
+        'warning' => 'heroicon-o-exclamation-triangle',
+        'info' => 'heroicon-o-information-circle',
+        'download' => 'heroicon-o-arrow-down-tray',
+        'filter' => 'heroicon-o-funnel',
+        'plus' => 'heroicon-o-plus',
+        'note' => 'heroicon-o-document-text',
+        'file' => 'heroicon-o-document',
+        'bell' => 'heroicon-o-bell',
+        'user' => 'heroicon-o-user',
+        'letter' => 'heroicon-o-envelope',
+        'tracking' => 'heroicon-o-map-pin',
     ];
 @endphp
 
@@ -62,22 +62,23 @@
 
         <p class="relative mb-3 ml-3 mt-9 text-[.6rem] font-extrabold tracking-[.2em] text-amber-900/70">RUANG KERJA</p>
         @php
-            $menuRoles = [
-                'dashboard' => ['admin', 'guru', 'km', 'siswa'],
-                'schedules.index' => ['admin', 'km'],
-                'piket.upload.form' => ['km', 'siswa'],
-                'verification.index' => ['admin', 'guru', 'km'],
-                'reports.index' => ['admin', 'guru', 'km'],
-                'users.index' => ['admin'],
-                'schools.index' => ['admin'],
-                'classes.index' => ['admin'],
+            $navigation = [
+                ['dashboard', 'Dashboard', 'heroicon-o-squares-2x2', ['admin', 'guru', 'km', 'siswa']],
+                ['schools.index', 'Pengaturan Sekolah', 'heroicon-o-academic-cap', ['admin']],
+                ['classes.index', 'Kelas', 'heroicon-o-rectangle-group', ['admin']],
+                ['students.index', 'Siswa', 'heroicon-o-user-group', ['admin']],
+                ['users.index', 'Staf & Pengguna', 'heroicon-o-users', ['admin']],
+                ['schedules.index', 'Jadwal Piket', 'heroicon-o-clock', ['admin', 'km']],
+                ['piket.upload.form', 'Kirim Bukti', 'heroicon-o-camera', ['km', 'siswa']],
+                ['verification.index', 'Verifikasi', 'heroicon-o-shield-check', ['admin', 'guru', 'km']],
+                ['reports.index', 'Laporan', 'heroicon-o-clipboard-document-list', ['admin', 'guru', 'km']],
             ];
         @endphp
         <nav class="grid gap-1">
             @foreach ($navigation as $item)
-                @continue(! in_array(auth()->user()->role, $menuRoles[$item[0]] ?? [], true))
+                @continue(! in_array(auth()->user()->role, $item[3], true))
                 <a class="group relative flex min-h-[48px] items-center gap-3 overflow-hidden rounded-xl px-3 py-3 text-[.8rem] font-semibold text-amber-950/75 transition hover:bg-white/20 hover:text-amber-950 {{ request()->routeIs($item[0].'*') ? 'bg-white text-amber-950 shadow-lg shadow-amber-900/10' : '' }}" href="{{ route($item[0]) }}">
-                    <span class="grid h-8 w-8 shrink-0 place-items-center rounded-lg {{ request()->routeIs($item[0].'*') ? 'bg-[#f3dfc5]' : 'bg-white/[.06] group-hover:bg-white/[.1]' }}"><x-icon name="{{ $item[2] ?? 'heroicons-o-queue-list' }}" class="h-5 w-5" /></span>
+                    <span class="grid h-8 w-8 shrink-0 place-items-center rounded-lg {{ request()->routeIs($item[0].'*') ? 'bg-[#f3dfc5]' : 'bg-white/[.06] group-hover:bg-white/[.1]' }}"><x-icon name="{{ $item[2] ?? 'heroicon-o-queue-list' }}" class="h-5 w-5" /></span>
                     <span>{{ $item[1] }}</span>
                     <i class="ml-auto h-1.5 w-1.5 rounded-full {{ request()->routeIs($item[0].'*') ? 'bg-[#c88b24]' : 'bg-transparent' }}"></i>
                 </a>
@@ -85,7 +86,7 @@
         </nav>
 
         <div class="relative mt-auto mb-4 overflow-hidden rounded-2xl border border-amber-900/10 bg-white/20 p-4 text-amber-950/75">
-            <span class="mb-3 grid h-9 w-9 place-items-center rounded-xl bg-white text-amber-700"><x-icon name="heroicons-o-heart" class="h-5 w-5" /></span>
+            <span class="mb-3 grid h-9 w-9 place-items-center rounded-xl bg-white text-amber-700"><x-icon name="heroicon-o-heart" class="h-5 w-5" /></span>
             <div>
                 <strong class="block text-sm text-amber-950">Kebiasaan baik, tiap hari.</strong>
                 <span class="mt-1 block text-[.68rem] leading-relaxed text-[#d9bba7]">Catat piket dengan jujur, rapi, dan tepat waktu.</span>
@@ -102,7 +103,7 @@
             <form method="POST" action="{{ route('logout') }}" class="ml-auto">
                 @csrf
                 <button class="grid place-items-center border-0 bg-transparent text-[#e6b98a]" aria-label="Keluar">
-                    <x-icon name="heroicons-o-arrow-right-on-rectangle" class="h-5 w-5" />
+                    <x-icon name="heroicon-o-arrow-right-on-rectangle" class="h-5 w-5" />
                 </button>
             </form>
         </div>
@@ -113,7 +114,7 @@
         <header class="sticky top-0 z-10 flex h-[74px] items-center justify-between border-b border-[#e7ddd1] bg-[#f6f2eb]/90 px-[clamp(1.25rem,3.5vw,3.8rem)] backdrop-blur-xl max-[760px]:h-[65px] max-[760px]:px-4">
             <div class="flex items-center gap-5">
                 <button id="menu-button" class="hidden border-0 bg-transparent max-[1050px]:grid" type="button" aria-label="Buka menu" aria-expanded="false" aria-controls="app-sidebar">
-                    <x-icon name="heroicons-o-bars-3" class="h-5 w-5" />
+                    <x-icon name="heroicon-o-bars-3" class="h-5 w-5" />
                 </button>
                 <div>
                     <span class="block text-[.58rem] font-bold uppercase tracking-[.18em] text-[#a27f6d]">SI-PIKET</span>
@@ -131,14 +132,14 @@
         <section class="mx-auto min-h-[calc(100vh-74px)] max-w-[1540px] p-[clamp(1.5rem,3.5vw,3.8rem)] max-[760px]:px-4 max-[760px]:py-6">
             @if (session('success'))
                 <div class="flex items-center gap-[.7rem] mb-[1.2rem] rounded-[11px] border border-[#ffe0b2] bg-[#fff8e1] p-[1rem] text-[.8rem] font-[750] text-[#5d4037]">
-                    <x-icon name="heroicons-o-check" class="h-5 w-5" />
+                    <x-icon name="heroicon-o-check" class="h-5 w-5" />
                     {{ session('success') }}
                 </div>
             @endif
 
             @if ($errors->any())
                 <div class="flex items-center gap-[.7rem] mb-[1.2rem] rounded-[11px] border border-[#ffcdd2] bg-[#ffebee] p-[1rem] text-[.8rem] font-[750] text-[#b71c1c]">
-                    <x-icon name="heroicons-o-exclamation-circle" class="h-5 w-5" />
+                    <x-icon name="heroicon-o-exclamation-circle" class="h-5 w-5" />
                     {{ $errors->first() }}
                 </div>
             @endif
@@ -147,6 +148,7 @@
         </section>
     </main>
 </div>
+@vite('resources/js/app.js')
 <button id="sidebar-scrim" class="fixed inset-0 z-20 hidden border-0 bg-amber-950/40" type="button" aria-label="Tutup menu"></button>
 <script>
     const sidebar = document.getElementById('app-sidebar');

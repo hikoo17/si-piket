@@ -11,44 +11,28 @@ class SchoolController extends Controller
 {
     public function index(): View
     {
-        return view('schools.index', ['schools' => School::query()->latest()->paginate(15)]);
-    }
-
-    public function create(): View
-    {
         return view('schools.form', [
-            'school' => new School,
+            'school' => $this->primarySchool(),
             'locationCatalog' => $this->locationCatalog(),
         ]);
     }
 
     public function edit(School $school): View
     {
+        abort_unless($school->is($this->primarySchool()), 404);
+
         return view('schools.form', [
             'school' => $school,
             'locationCatalog' => $this->locationCatalog(),
         ]);
     }
 
-    public function store(Request $request): RedirectResponse
-    {
-        School::query()->create($this->validated($request));
-
-        return redirect()->route('schools.index')->with('success', 'Sekolah berhasil ditambahkan.');
-    }
-
     public function update(Request $request, School $school): RedirectResponse
     {
+        abort_unless($school->is($this->primarySchool()), 404);
         $school->update($this->validated($request));
 
         return redirect()->route('schools.index')->with('success', 'Sekolah berhasil diperbarui.');
-    }
-
-    public function destroy(School $school): RedirectResponse
-    {
-        $school->delete();
-
-        return back()->with('success', 'Sekolah berhasil dihapus.');
     }
 
     private function validated(Request $request): array
@@ -90,5 +74,10 @@ class SchoolController extends Controller
             ],
             ...$savedSchools,
         ];
+    }
+
+    private function primarySchool(): School
+    {
+        return School::primary();
     }
 }

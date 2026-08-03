@@ -7,6 +7,7 @@ use App\Http\Controllers\ReportController;
 use App\Http\Controllers\ScheduleController;
 use App\Http\Controllers\SchoolClassController;
 use App\Http\Controllers\SchoolController;
+use App\Http\Controllers\StudentController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\VerificationController;
 use Illuminate\Support\Facades\Route;
@@ -24,8 +25,11 @@ Route::middleware('auth')->group(function () {
     Route::get('/dashboard', DashboardController::class)->name('dashboard');
     Route::get('/piket/upload', [PiketController::class, 'create'])->name('piket.upload.form');
     Route::post('/piket/upload', [PiketController::class, 'storeUpload'])->middleware('throttle:5,1')->name('piket.upload');
-    Route::resource('schools', SchoolController::class)->except('show')->middleware('role:admin');
-    Route::resource('classes', SchoolClassController::class)->except('show')->middleware('role:admin');
+    Route::get('/schools', [SchoolController::class, 'index'])->middleware('role:admin')->name('schools.index');
+    Route::get('/schools/{school}/edit', [SchoolController::class, 'edit'])->middleware('role:admin')->name('schools.edit');
+    Route::put('/schools/{school}', [SchoolController::class, 'update'])->middleware('role:admin')->name('schools.update');
+    Route::resource('classes', SchoolClassController::class)->middleware('role:admin');
+    Route::resource('students', StudentController::class)->except('show')->middleware('role:admin');
     Route::resource('users', UserController::class)->except('show')->middleware('role:admin');
     Route::resource('schedules', ScheduleController::class)->only(['index', 'store', 'destroy'])->middleware('role:admin,km');
     Route::get('/verification', [VerificationController::class, 'index'])->middleware('role:admin,guru,km')->name('verification.index');
@@ -35,7 +39,3 @@ Route::middleware('auth')->group(function () {
     Route::get('/reports.csv', [ReportController::class, 'csv'])->middleware('role:admin,guru,km')->name('reports.csv');
     Route::get('/reports.pdf', [ReportController::class, 'pdf'])->middleware('role:admin,guru,km')->name('reports.pdf');
 });
-
-Route::post('/piket/upload', [PiketController::class, 'storeUpload'])
-    ->middleware('auth')
-    ->name('piket.upload');

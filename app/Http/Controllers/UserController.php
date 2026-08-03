@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\School;
 use App\Models\SchoolClass;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
@@ -20,12 +21,12 @@ class UserController extends Controller
 
     public function create(): View
     {
-        return view('users.form', ['user' => new User, 'classes' => SchoolClass::with('school')->get()]);
+        return view('users.form', ['user' => new User, 'classes' => $this->classes()]);
     }
 
     public function edit(User $user): View
     {
-        return view('users.form', ['user' => $user, 'classes' => SchoolClass::with('school')->get()]);
+        return view('users.form', ['user' => $user, 'classes' => $this->classes()]);
     }
 
     public function store(Request $request): RedirectResponse
@@ -69,5 +70,13 @@ class UserController extends Controller
         }
 
         return $data;
+    }
+
+    private function classes()
+    {
+        return SchoolClass::with('school')
+            ->where('school_id', School::primary()->id)
+            ->orderBy('name')
+            ->get();
     }
 }

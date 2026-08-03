@@ -1,10 +1,10 @@
 @extends('layouts.app', ['navigation' => [
-    ['dashboard', 'Dashboard', 'heroicons-o-squares-2x2'],
-    ['schedules.index', 'Jadwal Piket', 'heroicons-o-clock'],
-    ['piket.upload.form', 'Ambil Bukti', 'heroicons-o-qr-code'],
-    ['verification.index', 'Verifikasi', 'heroicons-o-shield-check'],
-    ['reports.index', 'Laporan', 'heroicons-o-clipboard-document-list'],
-    ['users.index', 'Pengguna', 'heroicons-o-users'],
+    ['dashboard', 'Dashboard', 'heroicon-o-squares-2x2'],
+    ['schedules.index', 'Jadwal Piket', 'heroicon-o-clock'],
+    ['piket.upload.form', 'Ambil Bukti', 'heroicon-o-qr-code'],
+    ['verification.index', 'Verifikasi', 'heroicon-o-shield-check'],
+    ['reports.index', 'Laporan', 'heroicon-o-clipboard-document-list'],
+    ['users.index', 'Pengguna', 'heroicon-o-users'],
 ]])
 @section('content')
 <div class="flex justify-between">

@@ -1,15 +1,11 @@
-@extends('layouts.app', ['navigation' => [
-    ['dashboard', 'Dashboard', 'heroicons-o-squares-2x2'],
-    ['schedules.index', 'Jadwal Piket', 'heroicons-o-clock'],
-    ['piket.upload.form', 'Ambil Bukti', 'heroicons-o-qr-code'],
-    ['verification.index', 'Verifikasi', 'heroicons-o-shield-check'],
-    ['reports.index', 'Laporan', 'heroicons-o-clipboard-document-list'],
-]])
+@extends('layouts.app', ['title' => 'Pengaturan Sekolah'])
 @section('content')
-<h1 class="mb-5 text-2xl font-bold text-[#6d1a1a]">{{ $school->exists ? 'Edit' : 'Tambah' }} Sekolah</h1>
-<form class="max-w-3xl space-y-5 rounded-xl border border-[#fce4c4] bg-white p-6" method="POST" action="{{ $school->exists ? route('schools.update', $school) : route('schools.store') }}">
+<p class="text-xs font-bold uppercase tracking-[.16em] text-amber-700">Konfigurasi aplikasi</p>
+<h1 class="mb-1 mt-1 text-2xl font-bold text-[#6d1a1a]">Pengaturan SMAN 1 Tasikmalaya</h1>
+<p class="mb-5 text-sm text-amber-900/65">Aplikasi ini dikhususkan untuk satu sekolah. Profil, lokasi, radius, dan jam upload dapat diperbarui di sini.</p>
+<form class="max-w-3xl space-y-5 rounded-xl border border-[#fce4c4] bg-white p-6" method="POST" action="{{ route('schools.update', $school) }}">
     @csrf
-    @if ($school->exists)@method('PUT')@endif
+    @method('PUT')
 
     <label class="block">Nama sekolah
         <input id="school-name" class="mt-1 w-full rounded-lg border border-[#fce4c4] bg-white p-2.5 text-sm outline-none transition focus:border-[#6d1a1a] focus:ring-2 focus:ring-[#6d1a1a]/10" name="name" type="text" value="{{ old('name', $school->name) }}" required>
@@ -31,6 +27,7 @@
         <div id="location-results" class="mb-2 space-y-1 text-xs"></div>
 
         <div id="school-location-map" class="h-80 w-full overflow-hidden rounded-lg border border-[#fce4c4]" data-default-latitude="-7.32709600" data-default-longitude="108.22034900" data-location-catalog='@json($locationCatalog)'></div>
+        <p class="mt-2 flex items-center gap-2 text-xs text-amber-900/65"><span class="inline-block h-3 w-3 rounded-full border-2 border-red-700 bg-red-600/20"></span> Area ini menandai jangkauan radius lokasi sekolah.</p>
         <p id="location-status" class="mt-2 text-xs text-[#8d6e63]" aria-live="polite"></p>
     </div>
 

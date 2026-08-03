@@ -7,6 +7,7 @@ use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
+use Illuminate\Validation\ValidationException;
 use Illuminate\View\View;
 
 class ScheduleController extends Controller
@@ -36,6 +37,9 @@ class ScheduleController extends Controller
             'day_of_week.unique' => 'Siswa tersebut sudah memiliki jadwal pada hari yang dipilih.',
         ]);
         $target = User::findOrFail($data['user_id']);
+        if (! in_array($target->role, ['siswa', 'km'], true) || ! $target->class_id) {
+            throw ValidationException::withMessages(['user_id' => 'Jadwal hanya dapat diberikan kepada siswa atau KM yang memiliki kelas.']);
+        }
         abort_if($request->user()->role === 'km' && $target->class_id !== $request->user()->class_id, 403);
         PiketSchedule::query()->create($data);
 

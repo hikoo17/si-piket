@@ -26,6 +26,32 @@ class PhaseOneWorkflowTest extends TestCase
     }
 
     #[Test]
+    public function school_is_a_singleton_setting_without_create_or_delete_routes(): void
+    {
+        $this->assertFalse(app('router')->has('schools.create'));
+        $this->assertFalse(app('router')->has('schools.store'));
+        $this->assertFalse(app('router')->has('schools.destroy'));
+        $this->assertTrue(app('router')->has('schools.index'));
+        $this->assertTrue(app('router')->has('schools.update'));
+    }
+
+    #[Test]
+    public function class_is_automatically_assigned_to_the_primary_school(): void
+    {
+        $school = School::create(['name' => 'SMAN 1 Tasikmalaya', 'latitude' => -7.327096, 'longitude' => 108.220349, 'radius_meters' => 100]);
+        $otherSchool = School::create(['name' => 'Sekolah Lain', 'latitude' => -6.2, 'longitude' => 106.8, 'radius_meters' => 100]);
+        $admin = User::factory()->create(['role' => 'admin']);
+
+        $this->actingAs($admin)->post(route('classes.store'), [
+            'name' => 'X IPA 1',
+            'school_id' => $otherSchool->id,
+        ])->assertRedirect(route('classes.index'));
+
+        $this->assertDatabaseHas('classes', ['name' => 'X IPA 1', 'school_id' => $school->id]);
+        $this->assertDatabaseMissing('classes', ['name' => 'X IPA 1', 'school_id' => $otherSchool->id]);
+    }
+
+    #[Test]
     public function admin_can_update_school_upload_times_without_timezone_conversion(): void
     {
         [$class] = $this->classes();
@@ -93,7 +119,7 @@ class PhaseOneWorkflowTest extends TestCase
     /** @return array{SchoolClass, SchoolClass} */
     private function classes(): array
     {
-        $school = School::create(['name' => 'SMK Test', 'latitude' => -6.2, 'longitude' => 106.8, 'radius_meters' => 100]);
+        $school = School::create(['name' => 'SMAN 1 Tasikmalaya', 'latitude' => -6.2, 'longitude' => 106.8, 'radius_meters' => 100]);
 
         return [
             SchoolClass::create(['school_id' => $school->id, 'name' => 'XII RPL 1']),
