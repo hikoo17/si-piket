@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Models\PiketLog;
 use App\Models\PiketSchedule;
 use App\Models\School;
 use App\Models\SchoolClass;
@@ -66,6 +67,42 @@ class PiketUploadTest extends TestCase
         $response = $this->actingAs($user)->post(route('piket.upload'));
 
         $response->assertInvalid(['photo', 'latitude', 'longitude']);
+    }
+
+    #[Test]
+    public function student_can_resubmit_after_rejection_but_not_after_approval(): void
+    {
+        Storage::fake('public');
+        Carbon::setTestNow('2026-08-03 08:00:00');
+        [$user, $school] = $this->createScheduledUser();
+
+        $log = PiketLog::query()->create([
+            'schedule_id' => $user->piketSchedules()->sole()->id,
+            'user_id' => $user->id,
+            'date' => today(),
+            'status' => 'rejected',
+        ]);
+
+        $this->actingAs($user)->post(route('piket.upload'), [
+            'photo' => $this->validPngDataUrl(),
+            'latitude' => $school->latitude,
+            'longitude' => $school->longitude,
+            'accuracy' => 10,
+        ])->assertSessionHas('success');
+
+        $this->assertDatabaseCount('piket_logs', 1);
+        $this->assertSame('pending', $log->fresh()->status);
+
+        $log->update(['status' => 'approved']);
+
+        $this->actingAs($user)->post(route('piket.upload'), [
+            'photo' => $this->validPngDataUrl(),
+            'latitude' => $school->latitude,
+            'longitude' => $school->longitude,
+            'accuracy' => 10,
+        ])->assertSessionHas('error', 'Bukti piket hari ini sudah disetujui.');
+
+        $this->assertDatabaseCount('piket_logs', 1);
     }
 
     /**

@@ -26,6 +26,30 @@ class PhaseOneWorkflowTest extends TestCase
     }
 
     #[Test]
+    public function admin_can_update_school_upload_times_without_timezone_conversion(): void
+    {
+        [$class] = $this->classes();
+        $school = $class->school;
+        $admin = User::factory()->create(['role' => 'admin']);
+
+        $this->actingAs($admin)->put(route('schools.update', $school), [
+            'name' => $school->name,
+            'latitude' => $school->latitude,
+            'longitude' => $school->longitude,
+            'radius_meters' => $school->radius_meters,
+            'upload_start_time' => '07:15',
+            'upload_deadline' => '09:45',
+        ])->assertSessionHas('success');
+
+        $school->refresh();
+        $this->assertSame('07:15', substr($school->upload_start_time, 0, 5));
+        $this->assertSame('09:45', substr($school->upload_deadline, 0, 5));
+        $this->actingAs($admin)->get(route('schools.edit', $school))
+            ->assertSee('value="07:15"', false)
+            ->assertSee('value="09:45"', false);
+    }
+
+    #[Test]
     public function km_cannot_schedule_a_student_from_another_class(): void
     {
         [$firstClass, $secondClass] = $this->classes();
@@ -36,6 +60,20 @@ class PhaseOneWorkflowTest extends TestCase
             'user_id' => $student->id,
             'day_of_week' => 'Monday',
         ])->assertForbidden();
+    }
+
+    #[Test]
+    public function admin_can_schedule_sunday_but_cannot_duplicate_a_schedule(): void
+    {
+        [$class] = $this->classes();
+        $admin = User::factory()->create(['role' => 'admin']);
+        $student = User::factory()->create(['role' => 'siswa', 'class_id' => $class->id]);
+
+        $data = ['user_id' => $student->id, 'day_of_week' => 'Sunday'];
+        $this->actingAs($admin)->post(route('schedules.store'), $data)->assertSessionHas('success');
+        $this->actingAs($admin)->post(route('schedules.store'), $data)->assertSessionHasErrors('day_of_week');
+
+        $this->assertDatabaseCount('piket_schedules', 1);
     }
 
     #[Test]

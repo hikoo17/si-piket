@@ -33,8 +33,8 @@ class PiketController extends Controller
 
         $user = $request->user();
         abort_unless(in_array($user->role, ['siswa', 'km'], true), 403);
-        if ((float) $validated['accuracy'] > 100) {
-            return back()->withInput()->with('error', 'Akurasi GPS terlalu rendah. Coba di area terbuka.');
+        if ((float) $validated['accuracy'] > 300) {
+            return back()->withInput()->with('error', 'Akurasi lokasi masih di atas 300 meter. Aktifkan GPS dan lokasi presisi, lalu coba lagi.');
         }
         $school = $user->schoolClass?->school;
 
@@ -52,8 +52,8 @@ class PiketController extends Controller
         }
 
         $currentTime = now()->format('H:i');
-        $startTime = $school->upload_start_time->format('H:i');
-        $deadlineTime = $school->upload_deadline->format('H:i');
+        $startTime = substr($school->upload_start_time, 0, 5);
+        $deadlineTime = substr($school->upload_deadline, 0, 5);
         $withinSchedule = $startTime <= $deadlineTime
             ? $currentTime >= $startTime && $currentTime <= $deadlineTime
             : $currentTime >= $startTime || $currentTime <= $deadlineTime;
@@ -62,8 +62,10 @@ class PiketController extends Controller
             return back()->withInput()->with('error', 'Upload hanya dapat dilakukan pada jam piket yang ditentukan.');
         }
 
-        if ($schedule->logs()->whereDate('date', today())->exists()) {
-            return back()->withInput()->with('error', 'Kamu sudah mengirim bukti piket hari ini.');
+        $existingLog = $schedule->logs()->whereDate('date', today())->first();
+
+        if ($existingLog && $existingLog->status === 'approved') {
+            return back()->withInput()->with('error', 'Bukti piket hari ini sudah disetujui.');
         }
 
         $distance = (int) round(GeoService::getDistanceMeters(
@@ -83,33 +85,52 @@ class PiketController extends Controller
         }
 
         [$image, $extension] = $this->decodePhoto($validated['photo']);
-        $path = 'piket/'.Str::uuid().'.'.$extension;
+        $path = $existingLog?->photo_path ?: 'piket/'.Str::uuid().'.'.$extension;
+
+        if ($existingLog?->photo_path) {
+            Storage::disk('public')->delete($existingLog->photo_path);
+        }
 
         if (! Storage::disk('public')->put($path, $image)) {
             return back()->withInput()->with('error', 'Gagal menyimpan foto bukti piket.');
         }
 
         try {
-            $log = PiketLog::query()->create([
-                'schedule_id' => $schedule->id,
-                'user_id' => $user->id,
-                'date' => today(),
-                'photo_path' => $path,
-                'latitude' => $validated['latitude'],
-                'longitude' => $validated['longitude'],
-                'distance_meters' => $distance,
-                'accuracy_meters' => $validated['accuracy'],
-                'location_captured_at' => now(), 'photo_captured_at' => now(), 'ip_address' => $request->ip(), 'user_agent' => $request->userAgent(),
-                'status' => 'pending',
-            ]);
-            AuditLog::create(['user_id' => $user->id, 'action' => 'piket.upload.submitted', 'auditable_type' => PiketLog::class, 'auditable_id' => $log->id, 'ip_address' => $request->ip(), 'user_agent' => $request->userAgent()]);
+            if ($existingLog) {
+                $existingLog->update([
+                    'photo_path' => $path,
+                    'latitude' => $validated['latitude'],
+                    'longitude' => $validated['longitude'],
+                    'distance_meters' => $distance,
+                    'accuracy_meters' => $validated['accuracy'],
+                    'location_captured_at' => now(),
+                    'photo_captured_at' => now(),
+                    'status' => 'pending',
+                ]);
+                $log = $existingLog;
+                AuditLog::create(['user_id' => $user->id, 'action' => 'piket.upload.resubmitted', 'auditable_type' => PiketLog::class, 'auditable_id' => $log->id, 'ip_address' => $request->ip(), 'user_agent' => $request->userAgent()]);
+            } else {
+                $log = PiketLog::query()->create([
+                    'schedule_id' => $schedule->id,
+                    'user_id' => $user->id,
+                    'date' => today(),
+                    'photo_path' => $path,
+                    'latitude' => $validated['latitude'],
+                    'longitude' => $validated['longitude'],
+                    'distance_meters' => $distance,
+                    'accuracy_meters' => $validated['accuracy'],
+                    'location_captured_at' => now(), 'photo_captured_at' => now(), 'ip_address' => $request->ip(), 'user_agent' => $request->userAgent(),
+                    'status' => 'pending',
+                ]);
+                AuditLog::create(['user_id' => $user->id, 'action' => 'piket.upload.submitted', 'auditable_type' => PiketLog::class, 'auditable_id' => $log->id, 'ip_address' => $request->ip(), 'user_agent' => $request->userAgent()]);
+            }
         } catch (\Throwable $exception) {
             Storage::disk('public')->delete($path);
 
             throw $exception;
         }
 
-        return back()->with('success', 'Berhasil upload bukti piket! Menunggu verifikasi Guru/KM.');
+        return back()->with('success', $existingLog ? 'Bukti piket berhasil diperbarui! Menunggu verifikasi Guru/KM.' : 'Berhasil upload bukti piket! Menunggu verifikasi Guru/KM.');
     }
 
     /**

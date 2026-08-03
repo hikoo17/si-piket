@@ -21,10 +21,11 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         $school = School::query()->updateOrCreate(
-            ['name' => 'SMK SI-PIKET'],
+            ['name' => 'SMAN 1 Tasikmalaya'],
             [
-                'latitude' => -6.20000000,
-                'longitude' => 106.81666600,
+                'address' => 'Jl. Rumah Sakit Umum No. 28, Empangsari, Kec. Tawang, Kota Tasikmalaya, Jawa Barat',
+                'latitude' => -7.32709600,
+                'longitude' => 108.22034900,
                 'radius_meters' => 100,
                 'upload_start_time' => '05:00',
                 'upload_deadline' => '23:59',
@@ -47,9 +48,7 @@ class DatabaseSeeder extends Seeder
         $student = $this->user('Siswa RPL', 'siswa@si-piket.test', 'siswa', $rpl->id, $password, '628144444444');
         $otherStudent = $this->user('Siswa TKJ', 'siswa.tkj@si-piket.test', 'siswa', $tkj->id, $password, '628155555555');
 
-        $day = in_array(now()->englishDayOfWeek, ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'], true)
-            ? now()->englishDayOfWeek
-            : 'Monday';
+        $day = now()->englishDayOfWeek;
 
         foreach ([$km, $student, $otherStudent] as $scheduledUser) {
             PiketSchedule::query()->updateOrCreate(

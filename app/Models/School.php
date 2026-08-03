@@ -18,8 +18,8 @@ class School extends Model
             'latitude' => 'decimal:8',
             'longitude' => 'decimal:8',
             'radius_meters' => 'integer',
-            'upload_start_time' => 'datetime:H:i',
-            'upload_deadline' => 'datetime:H:i',
+            'upload_start_time' => 'string',
+            'upload_deadline' => 'string',
         ];
     }
 
