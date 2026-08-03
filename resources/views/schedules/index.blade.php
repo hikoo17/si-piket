@@ -1,9 +1,9 @@
 @extends('layouts.app', ['navigation' => [
-    ['dashboard', 'Dashboard', 'dashboard'],
-    ['schedules.index', 'Jadwal Piket', 'clock'],
-    ['piket.upload.form', 'Ambil Bukti', 'scan'],
-    ['verification.index', 'Verifikasi', 'shield'],
-    ['reports.index', 'Laporan', 'report'],
+    ['dashboard', 'Dashboard', 'heroicons-o-squares-2x2'],
+    ['schedules.index', 'Jadwal Piket', 'heroicons-o-clock'],
+    ['piket.upload.form', 'Ambil Bukti', 'heroicons-o-qr-code'],
+    ['verification.index', 'Verifikasi', 'heroicons-o-shield-check'],
+    ['reports.index', 'Laporan', 'heroicons-o-clipboard-document-list'],
 ]])
 @section('content')
 <h1 class="mb-5 text-2xl font-bold text-[#6d1a1a]">Jadwal Piket</h1>

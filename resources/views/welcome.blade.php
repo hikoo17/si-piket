@@ -44,12 +44,12 @@
                     @auth
                         <a href="{{ url('/dashboard') }}" class="inline-flex items-center gap-2 rounded-lg bg-[#6d1a1a] px-6 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:-translate-y-px hover:bg-[#5a1515]">
                             <span>Buka Dashboard</span>
-                            <svg class="h-4 w-4"><use href="#icon-arrow-right"></use></svg>
+                            <x-icon name="heroicons-o-arrow-right" class="h-4 w-4" />
                         </a>
                     @else
                         <a href="{{ route('login') }}" class="inline-flex items-center gap-2 rounded-lg bg-[#6d1a1a] px-6 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:-translate-y-px hover:bg-[#5a1515]">
                             <span>Masuk</span>
-                            <svg class="h-4 w-4"><use href="#icon-arrow-right"></use></svg>
+                            <x-icon name="heroicons-o-arrow-right" class="h-4 w-4" />
                         </a>
                     @endauth
                 </div>

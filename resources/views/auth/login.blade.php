@@ -3,105 +3,143 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="theme-color" content="#b91c1c">
+    <meta name="theme-color" content="#eab308">
     <title>Masuk | SI-PIKET</title>
     <link rel="icon" href="{{ asset('Logo_SMAN_1_Tasikmalaya.png') }}" type="image/png">
     @vite('resources/css/app.css')
 </head>
-<body class="bg-[#fffaf0] text-[#351313]">
-    <main class="relative min-h-screen overflow-hidden bg-[#fffaf0] p-3 sm:p-5 lg:p-7">
-        <div class="pointer-events-none absolute -left-20 -top-20 h-72 w-72 rounded-full bg-[#facc15]/20 blur-3xl"></div>
-        <div class="pointer-events-none absolute -bottom-24 -right-20 h-80 w-80 rounded-full bg-[#dc2626]/10 blur-3xl"></div>
+<body class="bg-amber-50 font-sans text-amber-950 antialiased overflow-hidden h-screen">
+    <main class="relative h-screen w-screen overflow-hidden bg-amber-50/50 p-2 sm:p-4 lg:p-6 flex items-center justify-center">
+        <!-- Glow Ornaments -->
+        <div class="pointer-events-none absolute -left-20 -top-20 h-72 w-72 rounded-full bg-yellow-300/30 blur-3xl"></div>
+        <div class="pointer-events-none absolute -bottom-24 -right-20 h-80 w-80 rounded-full bg-amber-400/20 blur-3xl"></div>
 
-        <div class="relative mx-auto grid min-h-[calc(100vh-1.5rem)] max-w-[1440px] overflow-hidden rounded-[28px] bg-white shadow-[0_24px_80px_rgba(127,29,29,.14)] sm:min-h-[calc(100vh-2.5rem)] lg:min-h-[calc(100vh-3.5rem)] lg:grid-cols-[1.08fr_.92fr] lg:rounded-[36px]">
-            <section class="relative hidden overflow-hidden bg-[linear-gradient(145deg,#991b1b_0%,#c81e1e_54%,#e11d48_145%)] p-10 text-white lg:flex lg:flex-col xl:p-16">
-                <div class="pointer-events-none absolute -right-28 -top-28 h-[430px] w-[430px] rounded-full border-[70px] border-[#facc15]/10"></div>
-                <div class="pointer-events-none absolute -bottom-52 -left-40 h-[520px] w-[520px] rounded-full bg-[#7f1d1d]/45 ring-[55px] ring-white/[.035]"></div>
-                <div class="pointer-events-none absolute right-[8%] top-[22%] h-36 w-36 bg-[radial-gradient(circle,#fde047_1.5px,transparent_2px)] bg-[length:16px_16px] opacity-35"></div>
-
+        <!-- Main Card Container (Full Screen Fit) -->
+        <div class="relative w-full h-full max-w-[1400px] overflow-hidden rounded-2xl sm:rounded-3xl bg-white shadow-2xl shadow-amber-900/10 grid lg:grid-cols-[1.1fr_.9fr]">
+            
+            <!-- SECTION KIRI: Visual & Branding (Dominan Kuning Warm & Putih) -->
+            <section class="relative hidden overflow-hidden bg-gradient-to-br from-amber-400 via-yellow-400 to-amber-500 p-8 xl:p-12 text-amber-950 lg:flex lg:flex-col justify-between">
+                <!-- Decorative Circles -->
+                <div class="pointer-events-none absolute -right-20 -top-20 h-[380px] w-[380px] rounded-full border-[50px] border-white/20"></div>
+                <div class="pointer-events-none absolute -bottom-32 -left-32 h-[450px] w-[450px] rounded-full bg-white/10 ring-40 ring-white/10"></div>
+                
+                <!-- Logo Header -->
                 <a href="/" class="relative z-10 flex w-fit items-center gap-3" aria-label="SI-PIKET Beranda">
-                    <span class="grid h-14 w-14 place-items-center rounded-2xl bg-white shadow-[0_8px_28px_rgba(69,10,10,.24)]">
-                        <img src="{{ asset('Logo_SMAN_1_Tasikmalaya.png') }}" alt="Logo SMAN 1 Tasikmalaya" class="h-11 w-auto object-contain">
+                    <span class="grid h-12 w-12 place-items-center rounded-xl bg-white shadow-md">
+                        <img src="{{ asset('Logo_SMAN_1_Tasikmalaya.png') }}" alt="Logo SMAN 1 Tasikmalaya" class="h-9 w-auto object-contain">
                     </span>
                     <span>
-                        <strong class="block text-lg font-extrabold tracking-[.08em]">SI-PIKET</strong>
-                        <small class="mt-0.5 block text-[.68rem] font-medium tracking-[.08em] text-red-100">SISTEM INFORMASI PIKET</small>
+                        <strong class="block text-lg font-black tracking-wider text-amber-950">SI-PIKET</strong>
+                        <small class="block text-[0.65rem] font-bold tracking-widest text-amber-900/80">SISTEM INFORMASI PIKET</small>
                     </span>
                 </a>
 
-                <div class="relative z-10 my-auto max-w-[650px] py-16">
-                    <span class="mb-6 inline-flex items-center gap-2 rounded-full border border-yellow-200/25 bg-yellow-300/10 px-4 py-2 text-[.68rem] font-extrabold tracking-[.18em] text-yellow-200">
-                        <span class="h-2 w-2 rounded-full bg-yellow-300 shadow-[0_0_0_5px_rgba(253,224,71,.12)]"></span>
+                <!-- Hero Content -->
+                <div class="relative z-10 my-auto py-6">
+                    <!-- Mengganti aksen merah menjadi putih -->
+                    <span class="mb-4 inline-flex items-center gap-2 rounded-full bg-white/90 backdrop-blur-md px-3.5 py-1.5 text-[0.7rem] font-black tracking-widest text-amber-950 shadow-sm">
+                        <span class="h-2 w-2 rounded-full bg-amber-600 animate-pulse"></span>
                         DISIPLIN DIMULAI DARI SINI
                     </span>
-                    <h1 class="max-w-[620px] text-[clamp(3.2rem,5.5vw,6rem)] font-black leading-[.94] tracking-[-.065em]">
-                        Hadir hari ini,
-                        <span class="font-serif font-normal italic text-yellow-300">hebat</span> esok nanti.
+                    <h1 class="text-4xl xl:text-5xl font-black leading-tight tracking-tight text-amber-950">
+                        Hadir hari ini,<br>
+                        <!-- Tekan serasi dengan warna putih -->
+                        <span class="bg-white/90 px-2 py-0.5 rounded-lg text-amber-950 font-serif italic shadow-sm">hebat</span> esok nanti.
                     </h1>
-                    <p class="mt-7 max-w-[540px] text-[1.02rem] leading-8 text-red-50/80">
+                    <p class="mt-4 max-w-md text-sm xl:text-base leading-relaxed text-amber-950/80 font-medium">
                         Kelola presensi, jadwal piket, dan laporan sekolah dalam satu ruang kerja yang cepat, rapi, dan transparan.
                     </p>
                 </div>
 
-                <div class="relative z-10 grid grid-cols-3 divide-x divide-white/15 border-t border-white/15 pt-6">
-                    <div class="pr-5"><strong class="block text-2xl font-extrabold text-yellow-300">100%</strong><span class="mt-1 block text-xs text-red-100/75">Presensi digital</span></div>
-                    <div class="px-5"><strong class="block text-2xl font-extrabold text-yellow-300">24/7</strong><span class="mt-1 block text-xs text-red-100/75">Akses sistem</span></div>
-                    <div class="pl-5"><strong class="block text-2xl font-extrabold text-yellow-300">Real-time</strong><span class="mt-1 block text-xs text-red-100/75">Data laporan</span></div>
+                <!-- Footer Stats -->
+                <div class="relative z-10 grid grid-cols-3 divide-x divide-amber-950/10 border-t border-amber-950/10 pt-4">
+                    <div class="pr-3"><strong class="block text-xl font-black text-amber-950">100%</strong><span class="block text-[0.7rem] font-bold text-amber-900/70">Presensi digital</span></div>
+                    <div class="px-3"><strong class="block text-xl font-black text-amber-950">24/7</strong><span class="block text-[0.7rem] font-bold text-amber-900/70">Akses sistem</span></div>
+                    <div class="pl-3"><strong class="block text-xl font-black text-amber-950">Real-time</strong><span class="block text-[0.7rem] font-bold text-amber-900/70">Data laporan</span></div>
                 </div>
             </section>
 
-            <section class="relative flex items-center justify-center px-6 py-10 sm:px-12 lg:px-14 xl:px-20">
-                <div class="absolute right-8 top-8 hidden items-center gap-2 text-xs font-semibold text-[#9f6767] sm:flex">
-                    <span class="h-2 w-2 rounded-full bg-yellow-400"></span>Portal resmi sekolah
+            <!-- SECTION KANAN: Form Login -->
+            <section class="relative flex flex-col justify-between overflow-y-auto p-6 sm:p-10 xl:p-12 bg-white">
+                
+                <!-- Badge Atas -->
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-2.5 lg:hidden">
+                        <span class="grid h-10 w-10 place-items-center rounded-lg bg-amber-100 ring-1 ring-amber-300">
+                            <img src="{{ asset('Logo_SMAN_1_Tasikmalaya.png') }}" alt="Logo SMAN 1 Tasikmalaya" class="h-8 w-auto object-contain">
+                        </span>
+                        <span>
+                            <strong class="block text-sm font-extrabold text-amber-950">SI-PIKET</strong>
+                            <small class="text-[0.6rem] font-semibold text-amber-700">SMAN 1 TASIKMALAYA</small>
+                        </span>
+                    </div>
+                    <div class="ml-auto hidden sm:flex items-center gap-2 text-xs font-bold text-amber-700/80 bg-amber-50 px-3 py-1 rounded-full border border-amber-200/60">
+                        <span class="h-2 w-2 rounded-full bg-amber-500"></span>Portal resmi sekolah
+                    </div>
                 </div>
 
-                <div class="w-full max-w-[440px]">
-                    <div class="mb-10 flex items-center gap-3 lg:hidden">
-                        <span class="grid h-12 w-12 place-items-center rounded-xl bg-red-50 ring-1 ring-red-100">
-                            <img src="{{ asset('Logo_SMAN_1_Tasikmalaya.png') }}" alt="Logo SMAN 1 Tasikmalaya" class="h-10 w-auto object-contain">
-                        </span>
-                        <span><strong class="block font-extrabold tracking-[.06em] text-red-800">SI-PIKET</strong><small class="text-[.65rem] font-medium tracking-[.06em] text-[#a66a6a]">SISTEM INFORMASI PIKET</small></span>
+                <!-- Container Utama Form -->
+                <div class="my-auto w-full max-w-sm mx-auto py-2">
+                    <div class="mb-6">
+                        <!-- Mengubah warna teks dari merah ke amber -->
+                        <span class="block text-[0.65rem] font-black tracking-widest text-amber-600 uppercase">Selamat Datang</span>
+                        <h2 class="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">Masuk ke akunmu</h2>
+                        <p class="mt-1.5 text-xs sm:text-sm text-slate-500 font-medium">Gunakan akun yang telah diberikan oleh administrator sekolah.</p>
                     </div>
 
-                    <div class="mb-8">
-                        <span class="mb-4 block text-[.7rem] font-black tracking-[.2em] text-red-700">SELAMAT DATANG</span>
-                        <h2 class="text-4xl font-black tracking-[-.045em] text-[#3f1515] sm:text-[2.8rem]">Masuk ke akunmu</h2>
-                        <p class="mt-3 leading-7 text-[#946767]">Gunakan akun yang telah diberikan oleh administrator sekolah.</p>
-                    </div>
-
-                    <form method="POST" action="{{ route('login.store') }}" class="space-y-5">
+                    <form method="POST" action="{{ route('login.store') }}" class="space-y-4">
                         @csrf
+                        <!-- Input Email -->
                         <div>
-                            <label for="email" class="mb-2 block text-sm font-bold text-[#522020]">Alamat email</label>
-                            <div class="group flex min-h-14 items-center rounded-2xl border bg-white px-4 transition focus-within:border-red-500 focus-within:ring-4 focus-within:ring-red-100 {{ $errors->has('email') ? 'border-red-500' : 'border-[#eadada]' }}">
-                                <svg class="mr-3 h-5 w-5 shrink-0 text-[#c28f8f] transition group-focus-within:text-red-600" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2Z"/><path d="m22 6-10 7L2 6"/></svg>
-                                <input id="email" class="min-w-0 flex-1 border-0 bg-transparent py-4 text-sm text-[#3f1515] outline-none placeholder:text-[#c6a3a3]" name="email" type="email" value="{{ old('email') }}" required autofocus autocomplete="email" placeholder="nama@sekolah.id">
+                            <label for="email" class="mb-1.5 block text-xs font-bold text-slate-700">Alamat Email</label>
+                            <!-- Mengganti ring/border focus dari merah ke amber -->
+                            <div class="group flex items-center rounded-xl border bg-amber-50/30 px-3.5 transition focus-within:bg-white focus-within:border-amber-500 focus-within:ring-2 focus-within:ring-amber-100 {{ $errors->has('email') ? 'border-amber-500' : 'border-slate-200' }}">
+                                <x-icon name="heroicons-o-envelope" class="mr-2.5 h-4 w-4 shrink-0 text-slate-400 transition group-focus-within:text-amber-500" />
+                                <input id="email" class="w-full border-0 bg-transparent py-3 text-xs sm:text-sm text-slate-900 outline-none placeholder:text-slate-400 font-medium" name="email" type="email" value="{{ old('email') }}" required autofocus autocomplete="email" placeholder="nama@sekolah.id">
                             </div>
                             @error('email')
-                                <p class="mt-2 flex items-center gap-1.5 text-xs font-medium text-red-600" role="alert"><span class="grid h-4 w-4 place-items-center rounded-full bg-red-100 text-[.65rem] font-black">!</span>{{ $message }}</p>
+                                <p class="mt-1.5 flex items-center gap-1 text-[0.7rem] font-semibold text-amber-700" role="alert"><span class="grid h-3.5 w-3.5 place-items-center rounded-full bg-amber-100 text-[0.6rem]">!</span>{{ $message }}</p>
                             @enderror
                         </div>
 
+                        <!-- Input Password -->
                         <div>
-                            <div class="mb-2 flex items-center justify-between"><label for="password" class="text-sm font-bold text-[#522020]">Kata sandi</label><span class="text-xs font-semibold text-[#b17c7c]">Pastikan data benar</span></div>
-                            <div class="group flex min-h-14 items-center rounded-2xl border border-[#eadada] bg-white px-4 transition focus-within:border-red-500 focus-within:ring-4 focus-within:ring-red-100">
-                                <svg class="mr-3 h-5 w-5 shrink-0 text-[#c28f8f] transition group-focus-within:text-red-600" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="11" width="18" height="10" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-                                <input id="password" class="min-w-0 flex-1 border-0 bg-transparent py-4 text-sm text-[#3f1515] outline-none placeholder:text-[#c6a3a3]" name="password" type="password" required autocomplete="current-password" placeholder="Masukkan kata sandi">
-                                <button id="password-toggle" class="ml-2 grid h-9 w-9 shrink-0 place-items-center rounded-lg text-[#b17c7c] transition hover:bg-red-50 hover:text-red-700" type="button" aria-label="Tampilkan kata sandi" aria-pressed="false">
-                                    <svg class="h-5 w-5" viewBox="0 0 24 24" aria-hidden="true"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12Z"/><circle cx="12" cy="12" r="3"/></svg>
+                            <div class="mb-1.5 flex items-center justify-between">
+                                <label for="password" class="text-xs font-bold text-slate-700">Kata Sandi</label>
+                                <span class="text-[0.65rem] font-semibold text-slate-400">Pastikan data benar</span>
+                            </div>
+                            <!-- Mengganti focus style merah menjadi amber -->
+                            <div class="group flex items-center rounded-xl border border-slate-200 bg-amber-50/30 px-3.5 transition focus-within:bg-white focus-within:border-amber-500 focus-within:ring-2 focus-within:ring-amber-100">
+                                <x-icon name="heroicons-o-lock-closed" class="mr-2.5 h-4 w-4 shrink-0 text-slate-400 transition group-focus-within:text-amber-500" />
+                                <input id="password" class="w-full border-0 bg-transparent py-3 text-xs sm:text-sm text-slate-900 outline-none placeholder:text-slate-400 font-medium" name="password" type="password" required autocomplete="current-password" placeholder="Masukkan kata sandi">
+                                <button id="password-toggle" class="ml-1.5 grid h-7 w-7 shrink-0 place-items-center rounded-lg text-slate-400 hover:bg-slate-100 hover:text-slate-600 transition" type="button" aria-label="Tampilkan kata sandi">
+                                    <x-icon name="heroicons-o-eye" class="h-4 w-4" />
                                 </button>
                             </div>
                         </div>
 
-                        <button class="group mt-2 flex min-h-14 w-full items-center justify-center gap-3 rounded-2xl border-0 bg-red-700 px-5 py-4 text-sm font-extrabold text-white shadow-[0_14px_30px_rgba(185,28,28,.24)] transition hover:-translate-y-0.5 hover:bg-red-800 focus:outline-none focus:ring-4 focus:ring-red-200" type="submit">
-                            Masuk ke dashboard <span class="grid h-7 w-7 place-items-center rounded-full bg-yellow-300 text-base text-red-900 transition group-hover:translate-x-1">→</span>
+                        <!-- Tombol Submit (Mengganti Merah ke Amber/Kuning Warm dengan Ikon Putih) -->
+                        <button class="group mt-2 flex w-full items-center justify-center gap-2 rounded-xl bg-amber-500 px-4 py-3 text-xs sm:text-sm font-black text-amber-950 shadow-lg shadow-amber-500/20 transition hover:bg-amber-400 hover:shadow-amber-500/30 active:scale-[0.99]" type="submit">
+                            Masuk ke dashboard 
+                            <span class="grid h-5 w-5 place-items-center rounded-full bg-white text-amber-950 font-bold transition group-hover:translate-x-1">→</span>
                         </button>
                     </form>
 
-                    <div class="mt-9 flex items-center gap-4 text-[.7rem] font-semibold text-[#b28b8b] before:h-px before:flex-1 before:bg-[#f0dfdf] after:h-px after:flex-1 after:bg-[#f0dfdf]">BANTUAN</div>
-                    <p class="mt-5 text-center text-xs leading-5 text-[#9e7272]">Kesulitan masuk? Hubungi <span class="font-bold text-red-700">administrator sekolah</span>.</p>
+                    <!-- Divider & Help -->
+                    <div class="mt-6 flex items-center gap-3 text-[0.65rem] font-bold text-slate-400 before:h-px before:flex-1 before:bg-slate-100 after:h-px after:flex-1 after:bg-slate-100 uppercase tracking-widest">
+                        Bantuan
+                    </div>
+                    <p class="mt-3 text-center text-xs leading-normal text-slate-500 font-medium">
+                        Kesulitan masuk? Hubungi <span class="font-bold text-amber-700">administrator sekolah</span>.
+                    </p>
+                </div>
+
+                <!-- Footer Copyright -->
+                <div class="text-center text-[0.65rem] font-medium text-slate-400 pt-2">
+                    &copy; {{ date('Y') }} SMAN 1 Tasikmalaya. All rights reserved.
                 </div>
             </section>
+
         </div>
     </main>
 
