@@ -10,7 +10,7 @@
     <link rel="shortcut icon" href="{{ asset('Logo_SMAN_1_Tasikmalaya.png') }}" type="image/png">
     @vite('resources/css/app.css')
 </head>
-<body class="m-0 bg-amber-50 font-sans text-amber-950 antialiased">
+<body class="m-0 bg-slate-50 font-sans text-slate-900 antialiased">
 @php
     $iconMap = [
         'dashboard' => 'heroicon-o-squares-2x2',
@@ -49,98 +49,136 @@
 @endphp
 
 <div class="flex min-h-screen">
-    <aside id="app-sidebar" class="fixed inset-y-0 left-0 z-30 flex w-[276px] flex-col overflow-hidden bg-gradient-to-b from-amber-500 to-yellow-500 px-4 py-5 text-amber-950 shadow-[20px_0_60px_rgba(120,80,0,.16)] transition-transform duration-200 before:absolute before:-right-24 before:-top-20 before:h-64 before:w-64 before:rounded-full before:bg-white/20 before:blur-3xl max-[1050px]:-translate-x-full" aria-label="Navigasi utama">
-        <div class="flex items-center justify-between">
-            <a class="relative flex items-center gap-3 px-2 py-1" href="{{ route('dashboard') }}">
-                <span class="grid h-11 w-11 place-items-center rounded-2xl bg-white shadow-lg shadow-black/10"><img src="{{ asset('Logo_SMAN_1_Tasikmalaya.png') }}" alt="Logo SMAN 1 Tasikmalaya" class="block h-8 w-auto"></span>
-                <span>
-                    <strong class="text-[1.1rem] font-bold">SI-PIKET</strong>
-                    <small class="mt-0.5 block text-[.62rem] uppercase tracking-[.16em] text-[#e8b98f]">Ruang Kedisiplinan</small>
-                </span>
-            </a>
-        </div>
-
-        <p class="relative mb-3 ml-3 mt-9 text-[.6rem] font-extrabold tracking-[.2em] text-amber-900/70">RUANG KERJA</p>
-        @php
-            $navigation = [
-                ['dashboard', 'Dashboard', 'heroicon-o-squares-2x2', ['admin', 'guru', 'km', 'siswa']],
-                ['schools.index', 'Pengaturan Sekolah', 'heroicon-o-academic-cap', ['admin']],
-                ['classes.index', 'Kelas', 'heroicon-o-rectangle-group', ['admin']],
-                ['students.index', 'Siswa', 'heroicon-o-user-group', ['admin']],
-                ['users.index', 'Staf & Pengguna', 'heroicon-o-users', ['admin']],
-                ['schedules.index', 'Jadwal Piket', 'heroicon-o-clock', ['admin', 'km']],
-                ['piket.upload.form', 'Kirim Bukti', 'heroicon-o-camera', ['km', 'siswa']],
-                ['verification.index', 'Verifikasi', 'heroicon-o-shield-check', ['admin', 'guru', 'km']],
-                ['reports.index', 'Laporan', 'heroicon-o-clipboard-document-list', ['admin', 'guru', 'km']],
-            ];
-        @endphp
-        <nav class="grid gap-1">
-            @foreach ($navigation as $item)
-                @continue(! in_array(auth()->user()->role, $item[3], true))
-                <a class="group relative flex min-h-[48px] items-center gap-3 overflow-hidden rounded-xl px-3 py-3 text-[.8rem] font-semibold text-amber-950/75 transition hover:bg-white/20 hover:text-amber-950 {{ request()->routeIs($item[0].'*') ? 'bg-white text-amber-950 shadow-lg shadow-amber-900/10' : '' }}" href="{{ route($item[0]) }}">
-                    <span class="grid h-8 w-8 shrink-0 place-items-center rounded-lg {{ request()->routeIs($item[0].'*') ? 'bg-[#f3dfc5]' : 'bg-white/[.06] group-hover:bg-white/[.1]' }}"><x-icon name="{{ $item[2] ?? 'heroicon-o-queue-list' }}" class="h-5 w-5" /></span>
-                    <span>{{ $item[1] }}</span>
-                    <i class="ml-auto h-1.5 w-1.5 rounded-full {{ request()->routeIs($item[0].'*') ? 'bg-[#c88b24]' : 'bg-transparent' }}"></i>
+    <!-- SIDEBAR KUNING AMBER (Persis tema awal + spacing lega) -->
+    <aside id="app-sidebar" class="fixed inset-y-0 left-0 z-30 flex w-72 flex-col justify-between overflow-hidden bg-gradient-to-b from-amber-500 to-yellow-500 px-4 py-6 text-amber-950 shadow-[10px_0_30px_rgba(180,83,9,0.12)] transition-transform duration-300 ease-in-out lg:translate-x-0 -translate-x-full" aria-label="Navigasi utama">
+        
+        <div class="relative z-10 space-y-6">
+            <!-- Brand / Logo -->
+            <div class="flex items-center justify-between px-2">
+                <a class="flex items-center gap-3.5" href="{{ route('dashboard') }}">
+                    <span class="grid h-10 w-10 place-items-center rounded-xl bg-white shadow-md shadow-amber-900/10">
+                        <img src="{{ asset('Logo_SMAN_1_Tasikmalaya.png') }}" alt="Logo SMAN 1 Tasikmalaya" class="h-7 w-auto">
+                    </span>
+                    <div>
+                        <strong class="block text-base font-bold tracking-tight text-amber-950">SI-PIKET</strong>
+                        <small class="block text-[10px] font-extrabold uppercase tracking-widest text-amber-900/70">SMAN 1 Tasikmalaya</small>
+                    </div>
                 </a>
-            @endforeach
-        </nav>
+            </div>
 
-        <div class="relative mt-auto mb-4 overflow-hidden rounded-2xl border border-amber-900/10 bg-white/20 p-4 text-amber-950/75">
-            <span class="mb-3 grid h-9 w-9 place-items-center rounded-xl bg-white text-amber-700"><x-icon name="heroicon-o-heart" class="h-5 w-5" /></span>
-            <div>
-                <strong class="block text-sm text-amber-950">Kebiasaan baik, tiap hari.</strong>
-                <span class="mt-1 block text-[.68rem] leading-relaxed text-[#d9bba7]">Catat piket dengan jujur, rapi, dan tepat waktu.</span>
+            <!-- Navigation Menu -->
+            <div class="space-y-1.5">
+                <p class="px-3 text-[10px] font-extrabold uppercase tracking-widest text-amber-900/60">Menu Utama</p>
+                
+                @php
+                    $navigation = [
+                        ['dashboard', 'Dashboard', 'heroicon-o-squares-2x2', ['admin', 'guru', 'km', 'siswa']],
+                        ['schools.index', 'Pengaturan Sekolah', 'heroicon-o-academic-cap', ['admin']],
+                        ['classes.index', 'Kelas', 'heroicon-o-rectangle-group', ['admin']],
+                        ['students.index', 'Siswa', 'heroicon-o-user-group', ['admin']],
+                        ['users.index', 'Staf & Pengguna', 'heroicon-o-users', ['admin']],
+                        ['schedules.index', 'Jadwal Piket', 'heroicon-o-clock', ['admin', 'km']],
+                        ['piket.upload.form', 'Kirim Bukti', 'heroicon-o-camera', ['km', 'siswa']],
+                        ['verification.index', 'Verifikasi', 'heroicon-o-shield-check', ['admin', 'guru', 'km']],
+                        ['reports.index', 'Laporan', 'heroicon-o-clipboard-document-list', ['admin', 'guru', 'km']],
+                    ];
+                @endphp
+
+                <nav class="space-y-1 overflow-y-auto max-h-[calc(100vh-320px)] pr-1">
+                    @foreach ($navigation as $item)
+                        @continue(! in_array(auth()->user()->role, $item[3], true))
+                        @php $active = request()->routeIs($item[0].'*'); @endphp
+                        
+                        <a class="group flex items-center justify-between rounded-xl px-3 py-2.5 text-xs font-semibold transition-all {{ $active ? 'bg-white text-amber-950 shadow-md shadow-amber-900/10' : 'text-amber-950/80 hover:bg-white/20 hover:text-amber-950' }}" href="{{ route($item[0]) }}">
+                            <div class="flex items-center gap-3">
+                                <span class="grid h-7 w-7 place-items-center rounded-lg {{ $active ? 'bg-amber-100 text-amber-800' : 'bg-white/10 group-hover:bg-white/20' }}">
+                                    <x-icon name="{{ $item[2] ?? 'heroicon-o-queue-list' }}" class="h-4 w-4" />
+                                </span>
+                                <span>{{ $item[1] }}</span>
+                            </div>
+                            @if($active)
+                                <span class="h-1.5 w-1.5 rounded-full bg-amber-600"></span>
+                            @endif
+                        </a>
+                    @endforeach
+                </nav>
             </div>
         </div>
 
-        @auth
-        <div class="relative flex items-center gap-3 border-t border-white/10 px-1 pt-4">
-            <span class="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-[#e7ae48] font-extrabold text-[#551414]">{{ strtoupper(substr(auth()->user()->name, 0, 1)) }}</span>
-            <span class="min-w-0">
-                <strong class="block truncate text-xs text-white">{{ auth()->user()->name }}</strong>
-                <small class="mt-0.5 block capitalize text-[#d5ad91]">{{ auth()->user()->role }}</small>
-            </span>
-            <form method="POST" action="{{ route('logout') }}" class="ml-auto">
-                @csrf
-                <button class="grid place-items-center border-0 bg-transparent text-[#e6b98a]" aria-label="Keluar">
-                    <x-icon name="heroicon-o-arrow-right-on-rectangle" class="h-5 w-5" />
-                </button>
-            </form>
+        <!-- Bottom Area / User Profile -->
+        <div class="relative z-10 space-y-4 pt-4 border-t border-amber-900/10">
+            <!-- Small Note Card -->
+            <div class="rounded-xl border border-amber-900/10 bg-white/20 p-3.5 text-amber-950">
+                <div class="flex items-center gap-2 text-amber-900 mb-1">
+                    <x-icon name="heroicon-o-heart" class="h-4 w-4" />
+                    <span class="text-[11px] font-bold">Catatan Kedisiplinan</span>
+                </div>
+                <p class="text-[11px] leading-relaxed text-amber-950/70">Kirimkan bukti piket secara jujur dan tepat waktu dari lokasi sekolah.</p>
+            </div>
+
+            <!-- Profile Info & Logout Button -->
+            @auth
+            <div class="flex items-center justify-between gap-3 px-1">
+                <div class="flex items-center gap-3 min-w-0">
+                    <span class="grid h-9 w-9 shrink-0 place-items-center rounded-lg bg-white/80 text-sm font-extrabold text-amber-900 shadow-sm">
+                        {{ strtoupper(substr(auth()->user()->name, 0, 1)) }}
+                    </span>
+                    <div class="min-w-0">
+                        <strong class="block truncate text-xs font-bold text-amber-950">{{ auth()->user()->name }}</strong>
+                        <span class="block text-[10px] uppercase tracking-wider font-semibold text-amber-900/70">{{ auth()->user()->role }}</span>
+                    </div>
+                </div>
+
+                <form method="POST" action="{{ route('logout') }}">
+                    @csrf
+                    <button class="grid h-8 w-8 place-items-center rounded-lg text-amber-900 transition hover:bg-white/20" aria-label="Keluar" title="Keluar">
+                        <x-icon name="heroicon-o-arrow-right-on-rectangle" class="h-4 w-4" />
+                    </button>
+                </form>
+            </div>
+            @endauth
         </div>
-        @endauth
     </aside>
 
-    <main class="ml-[276px] min-w-0 w-[calc(100%-276px)] max-[1050px]:ml-0 max-[1050px]:w-full">
-        <header class="sticky top-0 z-10 flex h-[74px] items-center justify-between border-b border-[#e7ddd1] bg-[#f6f2eb]/90 px-[clamp(1.25rem,3.5vw,3.8rem)] backdrop-blur-xl max-[760px]:h-[65px] max-[760px]:px-4">
-            <div class="flex items-center gap-5">
-                <button id="menu-button" class="hidden border-0 bg-transparent max-[1050px]:grid" type="button" aria-label="Buka menu" aria-expanded="false" aria-controls="app-sidebar">
+    <!-- MAIN CONTENT AREA -->
+    <main class="lg:ml-72 min-w-0 flex-1">
+        <!-- HEADER NAVBAR -->
+        <header class="sticky top-0 z-20 flex h-16 items-center justify-between border-b border-slate-200 bg-white/90 px-4 backdrop-blur-md sm:px-8">
+            <div class="flex items-center gap-4">
+                <button id="menu-button" class="lg:hidden p-2 rounded-lg text-amber-900 hover:bg-amber-100" type="button" aria-label="Buka menu" aria-expanded="false" aria-controls="app-sidebar">
                     <x-icon name="heroicon-o-bars-3" class="h-5 w-5" />
                 </button>
                 <div>
-                    <span class="block text-[.58rem] font-bold uppercase tracking-[.18em] text-[#a27f6d]">SI-PIKET</span>
-                    <strong class="text-sm text-[#321919]">{{ $title }}</strong>
+                    <span class="block text-[10px] font-bold uppercase tracking-wider text-slate-400">SI-PIKET SYSTEM</span>
+                    <strong class="text-sm font-bold text-slate-900">{{ $title }}</strong>
                 </div>
             </div>
-            <div class="flex items-center gap-5">
-                <span class="rounded-full border border-[#ded1c3] bg-white/70 px-4 py-2 text-[.68rem] font-semibold text-[#795f52] max-[760px]:hidden">{{ now()->translatedFormat('l, d F Y') }}</span>
+
+            <div class="flex items-center gap-4">
+                    <span class="hidden rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-xs font-semibold text-slate-600 sm:inline-block">
+                    {{ now()->translatedFormat('l, d F Y') }}
+                </span>
                 @auth
-                <span class="hidden h-[34px] w-[34px] place-items-center rounded-full bg-[#fbc02d] text-[.75rem] font-extrabold text-white max-[1050px]:grid">{{ strtoupper(substr(auth()->user()->name, 0, 1)) }}</span>
+                    <span class="grid h-8 w-8 place-items-center rounded-lg bg-slate-900 text-xs font-bold text-white lg:hidden">
+                    {{ strtoupper(substr(auth()->user()->name, 0, 1)) }}
+                </span>
                 @endauth
             </div>
         </header>
 
-        <section class="mx-auto min-h-[calc(100vh-74px)] max-w-[1540px] p-[clamp(1.5rem,3.5vw,3.8rem)] max-[760px]:px-4 max-[760px]:py-6">
+        <!-- APP CONTENT -->
+        <section class="app-content mx-auto min-h-[calc(100vh-4rem)] max-w-7xl p-4 sm:p-6 lg:p-8">
             @if (session('success'))
-                <div class="flex items-center gap-[.7rem] mb-[1.2rem] rounded-[11px] border border-[#ffe0b2] bg-[#fff8e1] p-[1rem] text-[.8rem] font-[750] text-[#5d4037]">
-                    <x-icon name="heroicon-o-check" class="h-5 w-5" />
-                    {{ session('success') }}
+                <div class="mb-6 flex items-center gap-3 rounded-xl border border-emerald-200 bg-emerald-50 p-4 text-xs font-semibold text-emerald-800">
+                    <x-icon name="heroicon-o-check-circle" class="h-5 w-5 text-emerald-600 shrink-0" />
+                    <span>{{ session('success') }}</span>
                 </div>
             @endif
 
             @if ($errors->any())
-                <div class="flex items-center gap-[.7rem] mb-[1.2rem] rounded-[11px] border border-[#ffcdd2] bg-[#ffebee] p-[1rem] text-[.8rem] font-[750] text-[#b71c1c]">
-                    <x-icon name="heroicon-o-exclamation-circle" class="h-5 w-5" />
-                    {{ $errors->first() }}
+                <div class="mb-6 flex items-center gap-3 rounded-xl border border-rose-200 bg-rose-50 p-4 text-xs font-semibold text-rose-800">
+                    <x-icon name="heroicon-o-exclamation-triangle" class="h-5 w-5 text-rose-600 shrink-0" />
+                    <span>{{ $errors->first() }}</span>
                 </div>
             @endif
 
@@ -148,18 +186,24 @@
         </section>
     </main>
 </div>
+
 @vite('resources/js/app.js')
-<button id="sidebar-scrim" class="fixed inset-0 z-20 hidden border-0 bg-amber-950/40" type="button" aria-label="Tutup menu"></button>
+
+<!-- Mobile Overlay Screen -->
+<button id="sidebar-scrim" class="fixed inset-0 z-20 hidden border-0 bg-amber-950/40 backdrop-blur-xs lg:hidden" type="button" aria-label="Tutup menu"></button>
+
 <script>
     const sidebar = document.getElementById('app-sidebar');
     const menuButton = document.getElementById('menu-button');
     const scrim = document.getElementById('sidebar-scrim');
+
     const setSidebar = (open) => {
         sidebar.classList.toggle('translate-x-0', open);
-        sidebar.classList.toggle('max-[1050px]:-translate-x-full', !open);
+        sidebar.classList.toggle('-translate-x-full', !open);
         scrim.classList.toggle('hidden', !open);
-        menuButton.setAttribute('aria-expanded', String(open));
+        menuButton?.setAttribute('aria-expanded', String(open));
     };
+
     menuButton?.addEventListener('click', () => setSidebar(true));
     scrim?.addEventListener('click', () => setSidebar(false));
 </script>

@@ -1,11 +1,11 @@
 @extends('layouts.app', ['title' => $student->exists ? 'Edit Siswa' : 'Tambah Siswa'])
 @section('content')
 <div class="mb-5">
-    <p class="text-xs font-bold uppercase tracking-[.16em] text-amber-700">Sekolah → Kelas → Siswa → Jadwal</p>
-    <h1 class="mt-1 text-2xl font-bold">{{ $student->exists ? 'Edit' : 'Tambah' }} Siswa</h1>
-    <p class="mt-2 text-sm text-amber-900/65">KM tetap tercatat sebagai anggota kelas, dengan akses untuk mengatur jadwal kelasnya.</p>
+    <p class="text-xs font-bold uppercase tracking-[.16em] text-slate-400">Sekolah / Kelas / Siswa / Jadwal</p>
+    <h1 class="mt-1 text-2xl font-bold text-slate-900">{{ $student->exists ? 'Edit' : 'Tambah' }} Siswa</h1>
+    <p class="mt-2 text-sm text-slate-500">KM tetap tercatat sebagai anggota kelas, dengan akses untuk mengatur jadwal kelasnya.</p>
 </div>
-<form class="max-w-2xl space-y-4 rounded-xl border border-[#f0dfc9] bg-white p-6" method="POST" action="{{ $student->exists ? route('students.update', $student) : route('students.store') }}">
+<form class="form-card max-w-2xl space-y-4 p-6" method="POST" action="{{ $student->exists ? route('students.update', $student) : route('students.store') }}">
     @csrf
     @if($student->exists)@method('PUT')@endif
     <div class="grid gap-4 sm:grid-cols-2">
@@ -17,6 +17,6 @@
         <label class="block">Password<input type="password" name="password" class="mt-1 w-full rounded-lg border border-[#ead8c1] p-2.5" @required(!$student->exists)><small class="text-amber-900/55">{{ $student->exists ? 'Kosongkan jika tidak diubah.' : 'Minimal 8 karakter.' }}</small></label>
         <label class="block">Konfirmasi password<input type="password" name="password_confirmation" class="mt-1 w-full rounded-lg border border-[#ead8c1] p-2.5" @required(!$student->exists)></label>
     </div>
-    <div class="flex gap-3"><button class="rounded-lg bg-[#6d1a1a] px-5 py-2.5 font-semibold text-white">Simpan siswa</button><a href="{{ route('students.index') }}" class="rounded-lg border border-[#ead8c1] px-5 py-2.5 font-semibold">Batal</a></div>
+    <div class="flex justify-end gap-3 border-t border-slate-100 pt-4"><a href="{{ route('students.index') }}" class="btn btn-secondary">Batal</a><button class="btn btn-primary">Simpan Siswa</button></div>
 </form>
 @endsection

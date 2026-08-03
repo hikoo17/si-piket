@@ -32,5 +32,5 @@
     <p class="col-span-2 rounded-xl border border-dashed border-[#fce4c4] bg-white p-8 text-center text-sm text-[#8d6e63]">Belum ada bukti piket.</p>
     @endforelse
 </div>
-{{ $logs->links() }}
+<div class="app-pagination">{{ $logs->links() }}</div>
 @endsection

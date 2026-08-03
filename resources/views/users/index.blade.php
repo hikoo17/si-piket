@@ -7,15 +7,15 @@
     ['users.index', 'Pengguna', 'heroicon-o-users'],
 ]])
 @section('content')
-<div class="flex justify-between">
-    <h1 class="text-3xl font-bold">Pengguna</h1>
-    <a href="{{ route('users.create') }}" class="rounded bg-[#6d1a1a] px-4 py-2 font-semibold text-white">Tambah</a>
+<div class="flex items-end justify-between gap-4">
+    <div><h1 class="text-2xl font-bold text-slate-900">Staf & Pengguna</h1><p class="mt-1 text-sm text-slate-500">Kelola akun dan hak akses pengguna aplikasi.</p></div>
+    <a href="{{ route('users.create') }}" class="btn btn-primary">Tambah Pengguna</a>
 </div>
-<div class="mt-5 overflow-auto rounded bg-white">
-    <table class="w-full">
-        <thead><tr class="border-b border-[#fce4c4] text-left"><th class="p-3">Nama</th><th>Role</th><th>Kelas</th><th>Aksi</th></tr></thead>
-        <tbody>@foreach($users as $user)<tr class="border-b border-[#fce4c4]"><td class="p-3">{{ $user->name }}<small class="block text-[#8d6e63]">{{ $user->email }}</small></td><td class="font-semibold text-[#6d1a1a]">{{ strtoupper($user->role) }}</td><td>{{ $user->schoolClass?->name ?? '-' }}</td><td><a href="{{ route('users.edit',$user) }}" class="text-[#6d1a1a] font-semibold underline underline-offset-2">Edit</a> <form class="inline" method="POST" action="{{ route('users.destroy',$user) }}">@csrf @method('DELETE')<button class="text-[#c62828] font-semibold underline underline-offset-2">Hapus</button></form></td></tr>@endforeach</tbody>
+<div class="table-shell mt-5 overflow-auto">
+    <table class="data-table">
+        <thead><tr><th>Nama</th><th>Role</th><th>Kelas</th><th>Aksi</th></tr></thead>
+        <tbody>@foreach($users as $user)<tr><td><strong class="text-slate-900">{{ $user->name }}</strong><small class="block text-slate-500">{{ $user->email }}</small></td><td><span class="rounded-full bg-slate-100 px-2.5 py-1 text-xs font-semibold text-slate-600">{{ strtoupper($user->role) }}</span></td><td>{{ $user->schoolClass?->name ?? '-' }}</td><td><a href="{{ route('users.edit',$user) }}" class="font-semibold text-indigo-600">Edit</a> <form class="inline" method="POST" action="{{ route('users.destroy',$user) }}" onsubmit="return confirm('Hapus pengguna ini?')">@csrf @method('DELETE')<button class="ml-3 font-semibold text-rose-600">Hapus</button></form></td></tr>@endforeach</tbody>
     </table>
 </div>
-{{ $users->links() }}
+<div class="app-pagination">{{ $users->links() }}</div>
 @endsection

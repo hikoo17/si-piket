@@ -7,12 +7,25 @@
     --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
 }
 
+:root {
+    --ui-bg: #f8fafc;
+    --ui-surface: #ffffff;
+    --ui-surface-soft: #f1f5f9;
+    --ui-border: #e2e8f0;
+    --ui-text: #0f172a;
+    --ui-muted: #64748b;
+    --ui-brand: #334155;
+    --ui-brand-dark: #1e293b;
+    --ui-focus: rgba(79, 70, 229, .16);
+    --ui-shadow: 0 1px 3px rgba(15, 23, 42, .05), 0 8px 24px rgba(15, 23, 42, .04);
+}
+
 * { box-sizing: border-box; }
 html { scroll-behavior: smooth; }
 body {
     margin: 0;
-    color: #451a03;
-    background: #fffbeb;
+    color: var(--ui-text);
+    background: var(--ui-bg);
     font-family: 'Instrument Sans', sans-serif;
     -webkit-font-smoothing: antialiased;
 }
@@ -49,3 +62,26 @@ svg {
 .dashboard-action small { margin-top: .2rem; font-size: .65rem; color: #94796b; }
 .dashboard-action b { margin-left: auto; padding-right: .25rem; color: #a27b63; transition: transform .2s ease; }
 .dashboard-action:hover b { transform: translateX(3px); }
+
+/* Shared form and table design system. Keep selectors scoped so Leaflet and camera UI remain intact. */
+.app-content :where(.surface-card, .table-shell, .form-card, .filter-panel) { border: 1px solid var(--ui-border); border-radius: 14px; background: var(--ui-surface); box-shadow: var(--ui-shadow); }
+.app-content :where(input:not([type="hidden"]):not([type="checkbox"]):not([type="radio"]), select, textarea) { min-height: 42px; border: 1px solid var(--ui-border); border-radius: 9px; background: var(--ui-surface); padding: .65rem .8rem; color: var(--ui-text); outline: none; transition: border-color .2s, box-shadow .2s; }
+.app-content :where(input:not([type="hidden"]):not([type="checkbox"]):not([type="radio"]), select, textarea):focus { border-color: #6366f1; box-shadow: 0 0 0 4px var(--ui-focus); }
+.app-content :where(button, a).btn { display: inline-flex; min-height: 42px; align-items: center; justify-content: center; gap: .5rem; border-radius: 9px; padding: .65rem 1rem; font-size: .8125rem; font-weight: 700; transition: background-color .2s, border-color .2s, transform .2s; }
+.app-content .btn-primary { background: var(--ui-brand); color: #fff; }
+.app-content .btn-primary:hover { background: var(--ui-brand-dark); }
+.app-content .btn-secondary { border: 1px solid var(--ui-border); background: #fff; color: #475569; }
+.app-content .btn-secondary:hover { background: var(--ui-surface-soft); }
+.app-content .data-table { width: 100%; border-collapse: collapse; }
+.app-content .data-table thead { background: var(--ui-surface-soft); }
+.app-content .data-table th { padding: .8rem 1rem; color: #64748b; font-size: .68rem; font-weight: 700; letter-spacing: .08em; text-align: left; text-transform: uppercase; }
+.app-content .data-table td { border-top: 1px solid #edf2f7; padding: .85rem 1rem; color: #334155; }
+.app-content .data-table tbody tr { transition: background-color .18s; }
+.app-content .data-table tbody tr:hover { background: #f8fafc; }
+.app-content label { color: #475569; font-size: .8125rem; font-weight: 600; }
+.app-content .pagination, .app-pagination { color: #64748b; font-size: .8125rem; }
+.app-content :where(.rounded-xl.border, .rounded-2xl.border) { border-color: var(--ui-border); box-shadow: var(--ui-shadow); }
+.app-content :where(input, select, textarea):not([type="hidden"]) { border-color: var(--ui-border); border-radius: 9px; background: #fff; }
+.app-content :where(input, select, textarea):not([type="hidden"]):focus { border-color: #6366f1; box-shadow: 0 0 0 4px var(--ui-focus); }
+.app-content :where(.bg-\[\#6d1a1a\], .bg-indigo-600, .bg-amber-500) { background-color: var(--ui-brand) !important; color: #fff !important; }
+.app-content :where(.bg-\[\#6d1a1a\], .bg-indigo-600, .bg-amber-500):hover { background-color: var(--ui-brand-dark) !important; }
