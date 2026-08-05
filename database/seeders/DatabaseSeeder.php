@@ -29,6 +29,8 @@ class DatabaseSeeder extends Seeder
                 'radius_meters' => 100,
                 'upload_start_time' => '05:00',
                 'upload_deadline' => '23:59',
+                'return_upload_start_time' => '14:00',
+                'return_upload_deadline' => '23:59',
             ],
         );
 
@@ -52,7 +54,7 @@ class DatabaseSeeder extends Seeder
 
         foreach ([$km, $student, $otherStudent] as $scheduledUser) {
             PiketSchedule::query()->updateOrCreate(
-                ['user_id' => $scheduledUser->id, 'day_of_week' => $day],
+                ['user_id' => $scheduledUser->id, 'day_of_week' => $day, 'shift' => 'morning'],
                 [],
             );
         }

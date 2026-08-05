@@ -74,15 +74,57 @@
         <hr class="border-slate-100">
 
         <!-- Jam Upload -->
-        <div class="grid gap-4 sm:grid-cols-2">
+        <div class="space-y-4">
+            <div>
+                <h3 class="text-sm font-medium text-slate-800">Jam Piket Pagi</h3>
+                <p class="text-xs text-slate-500">Atur waktu siswa dapat mengirim bukti piket pagi.</p>
+            </div>
+            <div class="grid gap-4 sm:grid-cols-2">
             <div class="space-y-1.5">
-                <label class="text-xs font-semibold text-slate-600">Jam Mulai Upload</label>
+                <label class="text-xs font-semibold text-slate-600">Jam Mulai Pagi</label>
                 <input class="w-full rounded-xl border border-slate-200 bg-slate-50/50 p-3 text-sm text-slate-900 transition focus:border-indigo-500 focus:bg-white focus:outline-none focus:ring-4 focus:ring-indigo-500/10" name="upload_start_time" type="time" value="{{ old('upload_start_time', $school->upload_start_time ? substr($school->upload_start_time, 0, 5) : '') }}" required>
             </div>
             <div class="space-y-1.5">
-                <label class="text-xs font-semibold text-slate-600">Batas Akhir Upload</label>
+                <label class="text-xs font-semibold text-slate-600">Batas Akhir Pagi</label>
                 <input class="w-full rounded-xl border border-slate-200 bg-slate-50/50 p-3 text-sm text-slate-900 transition focus:border-indigo-500 focus:bg-white focus:outline-none focus:ring-4 focus:ring-indigo-500/10" name="upload_deadline" type="time" value="{{ old('upload_deadline', $school->upload_deadline ? substr($school->upload_deadline, 0, 5) : '') }}" required>
             </div>
+            </div>
+        </div>
+
+        <div class="space-y-4 rounded-xl border border-amber-200 bg-amber-50/50 p-4">
+            <div>
+                <h3 class="text-sm font-medium text-slate-800">Jam Piket Pulang</h3>
+                <p class="text-xs text-slate-500">Atur waktu siswa dapat mengirim bukti piket setelah kegiatan sekolah.</p>
+            </div>
+            <div class="grid gap-4 sm:grid-cols-2">
+                <div class="space-y-1.5">
+                    <label class="text-xs font-semibold text-slate-600">Jam Mulai Pulang</label>
+                    <input class="w-full rounded-xl border border-slate-200 bg-white p-3 text-sm text-slate-900 transition focus:border-indigo-500 focus:outline-none focus:ring-4 focus:ring-indigo-500/10" name="return_upload_start_time" type="time" value="{{ old('return_upload_start_time', $school->return_upload_start_time ? substr($school->return_upload_start_time, 0, 5) : '14:00') }}" required>
+                </div>
+                <div class="space-y-1.5">
+                    <label class="text-xs font-semibold text-slate-600">Batas Akhir Pulang</label>
+                    <input class="w-full rounded-xl border border-slate-200 bg-white p-3 text-sm text-slate-900 transition focus:border-indigo-500 focus:outline-none focus:ring-4 focus:ring-indigo-500/10" name="return_upload_deadline" type="time" value="{{ old('return_upload_deadline', $school->return_upload_deadline ? substr($school->return_upload_deadline, 0, 5) : '17:00') }}" required>
+                </div>
+            </div>
+        </div>
+
+        <hr class="border-slate-100">
+
+        <div class="space-y-4">
+            <div>
+                <h3 class="text-sm font-medium text-slate-800">Notifikasi WhatsApp</h3>
+                <p class="text-xs text-slate-500">Pengingat dikirim ke nomor WhatsApp siswa/KM yang memiliki jadwal hari itu.</p>
+            </div>
+            <label class="flex items-center gap-2 text-sm text-slate-700"><input type="checkbox" name="whatsapp_enabled" value="1" @checked(old('whatsapp_enabled', $school->whatsapp_enabled))> Aktifkan pengingat otomatis</label>
+            <div class="grid gap-4 sm:grid-cols-2">
+                <label class="space-y-1.5 text-xs font-semibold text-slate-600">Jam Pengiriman
+                    <input class="w-full rounded-xl border border-slate-200 bg-slate-50/50 p-3 text-sm font-normal text-slate-900" name="whatsapp_send_time" type="time" value="{{ old('whatsapp_send_time', $school->whatsapp_send_time ? substr($school->whatsapp_send_time, 0, 5) : '06:00') }}" required>
+                </label>
+            </div>
+            <label class="block space-y-1.5 text-xs font-semibold text-slate-600">Template Pesan
+                <textarea class="min-h-24 w-full rounded-xl border border-slate-200 bg-slate-50/50 p-3 text-sm font-normal text-slate-900" name="whatsapp_message_template" maxlength="1000" placeholder="Halo {nama}, hari ini jadwal piket kamu di kelas {kelas}.">{{ old('whatsapp_message_template', $school->whatsapp_message_template) }}</textarea>
+                <span class="font-normal text-slate-500">Placeholder: <code>{nama}</code>, <code>{kelas}</code>, <code>{jenis_piket}</code>, <code>{hari}</code>, <code>{tanggal}</code>.</span>
+            </label>
         </div>
 
         <!-- Submit Button -->
@@ -91,6 +133,12 @@
                 Simpan Perubahan
             </button>
         </div>
+    </form>
+
+    <form class="form-card space-y-4 p-6 sm:p-8" method="POST" action="{{ route('schools.test-whatsapp', $school) }}">
+        @csrf
+        <div><h3 class="text-sm font-medium text-slate-800">Tes Koneksi Fonnte</h3><p class="text-xs text-slate-500">Kirim satu pesan percobaan tanpa mengubah pengaturan di atas.</p></div>
+        <div class="flex flex-col gap-3 sm:flex-row"><div class="w-full"><input class="w-full rounded-xl border border-slate-200 bg-slate-50/50 p-3 text-sm text-slate-900" name="test_whatsapp_phone" type="text" value="{{ old('test_whatsapp_phone') }}" placeholder="628xxxxxxxxxx" required inputmode="numeric" aria-describedby="test-whatsapp-help"><p id="test-whatsapp-help" class="mt-1 text-xs text-slate-500">Wajib diisi dengan format 628xxxxxxxxxx.</p>@error('test_whatsapp_phone')<p class="mt-1 text-xs font-semibold text-red-600">{{ $message }}</p>@enderror</div><button class="btn btn-secondary whitespace-nowrap" type="submit">Kirim Pesan Tes</button></div>
     </form>
 </div>
 @endsection

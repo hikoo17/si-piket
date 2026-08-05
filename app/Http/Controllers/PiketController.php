@@ -19,7 +19,15 @@ class PiketController extends Controller
     {
         abort_unless(in_array($request->user()->role, ['siswa', 'km'], true), 403);
 
-        return view('piket.upload');
+        $schedules = PiketSchedule::query()
+            ->whereBelongsTo($request->user())
+            ->where('day_of_week', now()->englishDayOfWeek)
+            ->orderBy('shift')
+            ->get();
+
+        $school = $request->user()->schoolClass?->school;
+
+        return view('piket.upload', compact('schedules', 'school'));
     }
 
     public function storeUpload(Request $request): RedirectResponse
@@ -29,20 +37,27 @@ class PiketController extends Controller
             'latitude' => ['required', 'numeric', 'between:-90,90'],
             'longitude' => ['required', 'numeric', 'between:-180,180'],
             'accuracy' => ['required', 'numeric', 'between:0,1000'],
+            'schedule_id' => ['required', 'integer', 'exists:piket_schedules,id'],
+        ], [
+            'photo.required' => 'Foto bukti piket wajib diambil terlebih dahulu.',
+            'latitude.required' => 'Koordinat lokasi (latitude) tidak ditemukan.',
+            'longitude.required' => 'Koordinat lokasi (longitude) tidak ditemukan.',
         ]);
 
         $user = $request->user();
         abort_unless(in_array($user->role, ['siswa', 'km'], true), 403);
+
         if ((float) $validated['accuracy'] > 300) {
             return back()->withInput()->with('error', 'Akurasi lokasi masih di atas 300 meter. Aktifkan GPS dan lokasi presisi, lalu coba lagi.');
         }
-        $school = $user->schoolClass?->school;
 
+        $school = $user->schoolClass?->school;
         if (! $school) {
             return back()->withInput()->with('error', 'Data sekolah pengguna tidak ditemukan.');
         }
 
         $schedule = PiketSchedule::query()
+            ->whereKey($validated['schedule_id'])
             ->whereBelongsTo($user)
             ->where('day_of_week', now()->englishDayOfWeek)
             ->first();
@@ -52,15 +67,17 @@ class PiketController extends Controller
         }
 
         $currentTime = now()->format('H:i');
-        $startTime = substr($school->upload_start_time, 0, 5);
-        $deadlineTime = substr($school->upload_deadline, 0, 5);
+        $startTime = substr($schedule->shift === 'afternoon' ? $school->return_upload_start_time : $school->upload_start_time, 0, 5);
+        $deadlineTime = substr($schedule->shift === 'afternoon' ? $school->return_upload_deadline : $school->upload_deadline, 0, 5);
         $withinSchedule = $startTime <= $deadlineTime
             ? $currentTime >= $startTime && $currentTime <= $deadlineTime
             : $currentTime >= $startTime || $currentTime <= $deadlineTime;
 
         if (! $withinSchedule) {
-            return back()->withInput()->with('error', 'Upload hanya dapat dilakukan pada jam piket yang ditentukan.');
+            return back()->withInput()->with('error', 'Upload hanya dapat dilakukan pada jam '.$schedule->shift_label.' yang ditentukan.');
         }
+
+        [$image, $extension] = $this->decodePhoto($validated['photo']);
 
         $existingLog = $schedule->logs()->whereDate('date', today())->first();
 
@@ -76,23 +93,32 @@ class PiketController extends Controller
         ));
 
         if ($distance > $school->radius_meters) {
-            AuditLog::create(['user_id' => $user->id, 'action' => 'piket.upload.rejected_geofence', 'metadata' => ['distance' => $distance], 'ip_address' => $request->ip(), 'user_agent' => $request->userAgent()]);
+            AuditLog::create([
+                'user_id' => $user->id,
+                'action' => 'piket.upload.rejected_geofence',
+                'metadata' => ['distance' => $distance],
+                'ip_address' => $request->ip(),
+                'user_agent' => $request->userAgent()
+            ]);
 
             return back()->withInput()->with(
                 'error',
-                'Gagal! Kamu berada di luar area sekolah ('.$distance.'m dari lokasi).',
+                'Gagal! Kamu berada di luar area sekolah ('.$distance.'m dari lokasi sekolah).'
             );
         }
 
-        [$image, $extension] = $this->decodePhoto($validated['photo']);
         $path = $existingLog?->photo_path ?: 'piket/'.Str::uuid().'.'.$extension;
 
-        if ($existingLog?->photo_path) {
+        if ($existingLog?->photo_path && Storage::disk('public')->exists($existingLog->photo_path)) {
             Storage::disk('public')->delete($existingLog->photo_path);
         }
 
-        if (! Storage::disk('public')->put($path, $image)) {
-            return back()->withInput()->with('error', 'Gagal menyimpan foto bukti piket.');
+        try {
+            if (! Storage::disk('public')->put($path, $image)) {
+                return back()->withInput()->with('error', 'Gagal menyimpan foto bukti piket. Coba ambil foto ulang.');
+            }
+        } catch (\Throwable $exception) {
+            return back()->withInput()->with('error', 'Foto gagal dikirim ke penyimpanan. Coba ambil foto ulang.');
         }
 
         try {
@@ -103,12 +129,17 @@ class PiketController extends Controller
                     'longitude' => $validated['longitude'],
                     'distance_meters' => $distance,
                     'accuracy_meters' => $validated['accuracy'],
-                    'location_captured_at' => now(),
                     'photo_captured_at' => now(),
                     'status' => 'pending',
                 ]);
-                $log = $existingLog;
-                AuditLog::create(['user_id' => $user->id, 'action' => 'piket.upload.resubmitted', 'auditable_type' => PiketLog::class, 'auditable_id' => $log->id, 'ip_address' => $request->ip(), 'user_agent' => $request->userAgent()]);
+                AuditLog::create([
+                    'user_id' => $user->id,
+                    'action' => 'piket.upload.resubmitted',
+                    'auditable_type' => PiketLog::class,
+                    'auditable_id' => $existingLog->id,
+                    'ip_address' => $request->ip(),
+                    'user_agent' => $request->userAgent()
+                ]);
             } else {
                 $log = PiketLog::query()->create([
                     'schedule_id' => $schedule->id,
@@ -119,14 +150,20 @@ class PiketController extends Controller
                     'longitude' => $validated['longitude'],
                     'distance_meters' => $distance,
                     'accuracy_meters' => $validated['accuracy'],
-                    'location_captured_at' => now(), 'photo_captured_at' => now(), 'ip_address' => $request->ip(), 'user_agent' => $request->userAgent(),
+                    'photo_captured_at' => now(),
                     'status' => 'pending',
                 ]);
-                AuditLog::create(['user_id' => $user->id, 'action' => 'piket.upload.submitted', 'auditable_type' => PiketLog::class, 'auditable_id' => $log->id, 'ip_address' => $request->ip(), 'user_agent' => $request->userAgent()]);
+                AuditLog::create([
+                    'user_id' => $user->id,
+                    'action' => 'piket.upload.submitted',
+                    'auditable_type' => PiketLog::class,
+                    'auditable_id' => $log->id,
+                    'ip_address' => $request->ip(),
+                    'user_agent' => $request->userAgent()
+                ]);
             }
         } catch (\Throwable $exception) {
             Storage::disk('public')->delete($path);
-
             throw $exception;
         }
 

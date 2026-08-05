@@ -31,10 +31,13 @@ class ScheduleController extends Controller
             'day_of_week' => [
                 'required',
                 Rule::in(['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']),
-                Rule::unique('piket_schedules')->where(fn ($query) => $query->where('user_id', $request->input('user_id'))),
+                Rule::unique('piket_schedules')->where(fn ($query) => $query
+                    ->where('user_id', $request->input('user_id'))
+                    ->where('shift', $request->input('shift'))),
             ],
+            'shift' => ['required', Rule::in(['morning', 'afternoon'])],
         ], [
-            'day_of_week.unique' => 'Siswa tersebut sudah memiliki jadwal pada hari yang dipilih.',
+            'day_of_week.unique' => 'Siswa tersebut sudah memiliki jenis piket yang sama pada hari yang dipilih.',
         ]);
         $target = User::findOrFail($data['user_id']);
         if (! in_array($target->role, ['siswa', 'km'], true) || ! $target->class_id) {
@@ -44,6 +47,28 @@ class ScheduleController extends Controller
         PiketSchedule::query()->create($data);
 
         return back()->with('success', 'Jadwal berhasil ditambahkan.');
+    }
+
+    public function update(Request $request, PiketSchedule $schedule): RedirectResponse
+    {
+        abort_if($request->user()->role === 'km' && $schedule->user->class_id !== $request->user()->class_id, 403);
+
+        $data = $request->validate([
+            'day_of_week' => [
+                'required',
+                Rule::in(['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']),
+                Rule::unique('piket_schedules')->where(fn ($query) => $query
+                    ->where('user_id', $schedule->user_id)
+                    ->where('shift', $request->input('shift')))->ignore($schedule->id),
+            ],
+            'shift' => ['required', Rule::in(['morning', 'afternoon'])],
+        ], [
+            'day_of_week.unique' => 'Siswa tersebut sudah memiliki jenis piket yang sama pada hari yang dipilih.',
+        ]);
+
+        $schedule->update($data);
+
+        return back()->with('success', 'Jadwal berhasil diperbarui.');
     }
 
     public function destroy(Request $request, PiketSchedule $schedule): RedirectResponse

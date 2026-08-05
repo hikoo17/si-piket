@@ -65,14 +65,21 @@ class PhaseOneWorkflowTest extends TestCase
             'radius_meters' => $school->radius_meters,
             'upload_start_time' => '07:15',
             'upload_deadline' => '09:45',
+            'return_upload_start_time' => '14:15',
+            'return_upload_deadline' => '16:45',
         ])->assertSessionHas('success');
 
         $school->refresh();
         $this->assertSame('07:15', substr($school->upload_start_time, 0, 5));
         $this->assertSame('09:45', substr($school->upload_deadline, 0, 5));
+        $this->assertSame('14:15', substr($school->return_upload_start_time, 0, 5));
+        $this->assertSame('16:45', substr($school->return_upload_deadline, 0, 5));
         $this->actingAs($admin)->get(route('schools.edit', $school))
             ->assertSee('value="07:15"', false)
             ->assertSee('value="09:45"', false);
+        $this->actingAs($admin)->get(route('schools.edit', $school))
+            ->assertSee('value="14:15"', false)
+            ->assertSee('value="16:45"', false);
     }
 
     #[Test]
@@ -85,6 +92,7 @@ class PhaseOneWorkflowTest extends TestCase
         $this->actingAs($km)->post(route('schedules.store'), [
             'user_id' => $student->id,
             'day_of_week' => 'Monday',
+            'shift' => 'morning',
         ])->assertForbidden();
     }
 
@@ -95,11 +103,46 @@ class PhaseOneWorkflowTest extends TestCase
         $admin = User::factory()->create(['role' => 'admin']);
         $student = User::factory()->create(['role' => 'siswa', 'class_id' => $class->id]);
 
-        $data = ['user_id' => $student->id, 'day_of_week' => 'Sunday'];
+        $data = ['user_id' => $student->id, 'day_of_week' => 'Sunday', 'shift' => 'morning'];
         $this->actingAs($admin)->post(route('schedules.store'), $data)->assertSessionHas('success');
         $this->actingAs($admin)->post(route('schedules.store'), $data)->assertSessionHasErrors('day_of_week');
 
         $this->assertDatabaseCount('piket_schedules', 1);
+    }
+
+    #[Test]
+    public function admin_can_edit_a_schedule_day(): void
+    {
+        [$class] = $this->classes();
+        $admin = User::factory()->create(['role' => 'admin']);
+        $student = User::factory()->create(['role' => 'siswa', 'class_id' => $class->id]);
+        $schedule = PiketSchedule::create(['user_id' => $student->id, 'day_of_week' => 'Monday']);
+
+        $this->actingAs($admin)->put(route('schedules.update', $schedule), ['day_of_week' => 'Sunday', 'shift' => 'morning'])
+            ->assertSessionHas('success');
+
+        $this->assertDatabaseHas('piket_schedules', ['id' => $schedule->id, 'day_of_week' => 'Sunday']);
+    }
+
+    #[Test]
+    public function student_can_have_morning_and_afternoon_schedules_on_the_same_day(): void
+    {
+        [$class] = $this->classes();
+        $admin = User::factory()->create(['role' => 'admin']);
+        $student = User::factory()->create(['role' => 'siswa', 'class_id' => $class->id]);
+
+        $this->actingAs($admin)->post(route('schedules.store'), [
+            'user_id' => $student->id,
+            'day_of_week' => 'Monday',
+            'shift' => 'morning',
+        ])->assertSessionHas('success');
+        $this->actingAs($admin)->post(route('schedules.store'), [
+            'user_id' => $student->id,
+            'day_of_week' => 'Monday',
+            'shift' => 'afternoon',
+        ])->assertSessionHas('success');
+
+        $this->assertDatabaseCount('piket_schedules', 2);
     }
 
     #[Test]
@@ -114,6 +157,37 @@ class PhaseOneWorkflowTest extends TestCase
         $this->actingAs($teacher)->patch(route('verification.approve', $log))->assertSessionHas('success');
 
         $this->assertDatabaseHas('piket_logs', ['id' => $log->id, 'status' => 'approved', 'verified_by' => $teacher->id]);
+    }
+
+    #[Test]
+    public function approved_evidence_is_not_shown_on_verification_page(): void
+    {
+        [$class] = $this->classes();
+        $teacher = User::factory()->create(['role' => 'guru']);
+        $student = User::factory()->create(['role' => 'siswa', 'class_id' => $class->id]);
+        $schedule = PiketSchedule::create(['user_id' => $student->id, 'day_of_week' => 'Monday']);
+        PiketLog::create(['schedule_id' => $schedule->id, 'user_id' => $student->id, 'date' => today(), 'status' => 'approved']);
+
+        $this->actingAs($teacher)->get(route('verification.index'))
+            ->assertOk()
+            ->assertSee('Tidak ada bukti yang menunggu verifikasi.')
+            ->assertDontSee($student->name);
+    }
+
+    #[Test]
+    public function teacher_can_open_report_detail_page(): void
+    {
+        [$class] = $this->classes();
+        $teacher = User::factory()->create(['role' => 'guru']);
+        $student = User::factory()->create(['role' => 'siswa', 'class_id' => $class->id]);
+        $schedule = PiketSchedule::create(['user_id' => $student->id, 'day_of_week' => 'Monday']);
+        $log = PiketLog::create(['schedule_id' => $schedule->id, 'user_id' => $student->id, 'date' => today(), 'status' => 'approved', 'photo_path' => 'piket/example.jpg']);
+
+        $this->actingAs($teacher)->get(route('reports.show', $log))
+            ->assertOk()
+            ->assertSee('Detail Laporan Piket')
+            ->assertSee($student->name)
+            ->assertSee('piket/example.jpg');
     }
 
     /** @return array{SchoolClass, SchoolClass} */

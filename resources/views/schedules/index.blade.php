@@ -24,12 +24,19 @@
             @foreach(['Monday'=>'Senin','Tuesday'=>'Selasa','Wednesday'=>'Rabu','Thursday'=>'Kamis','Friday'=>'Jumat','Saturday'=>'Sabtu','Sunday'=>'Minggu'] as $key=>$label)<option value="{{ $key }}" @selected(old('day_of_week') === $key)>{{ $label }}</option>@endforeach
         </select>
     </div>
+    <div class="w-[170px]">
+        <label class="mb-1 block text-xs font-semibold text-[#5d4037]">Jenis Piket</label>
+        <select name="shift" class="w-full" required>
+            <option value="morning" @selected(old('shift', 'morning') === 'morning')>Piket Pagi</option>
+            <option value="afternoon" @selected(old('shift') === 'afternoon')>Piket Pulang</option>
+        </select>
+    </div>
     <button class="btn btn-primary">Tambah</button>
 </form>
 <div class="table-shell overflow-auto">
     <table class="data-table">
-        <thead><tr><th>Siswa</th><th>Kelas</th><th>Hari</th><th>Aksi</th></tr></thead>
-        <tbody class="divide-y divide-[#fce4c4]">@foreach($schedules as $schedule)<tr class="transition hover:bg-[#fffdf5]"><td class="p-3 font-medium text-[#4a1c1c]">{{ $schedule->user->name }}</td><td class="text-xs text-[#8d6e63]">{{ $schedule->user->schoolClass?->name }}</td><td><span class="inline-block rounded-md bg-[#6d1a1a] px-2 py-0.5 text-[.65rem] font-bold text-white">{{ $schedule->day_of_week }}</span></td><td class="p-3"><form method="POST" action="{{ route('schedules.destroy',$schedule) }}">@csrf @method('DELETE')<button class="text-xs font-semibold text-[#c62828] underline underline-offset-2">Hapus</button></form></td></tr>@endforeach</tbody>
+        <thead><tr><th>Siswa</th><th>Kelas</th><th>Hari</th><th>Jenis Piket</th><th>Aksi</th></tr></thead>
+        <tbody class="divide-y divide-[#fce4c4]">@foreach($schedules as $schedule)<tr class="transition hover:bg-[#fffdf5]"><td class="p-3 font-medium text-[#4a1c1c]">{{ $schedule->user->name }}</td><td class="text-xs text-[#8d6e63]">{{ $schedule->user->schoolClass?->name }}</td><td><span class="inline-block rounded-md bg-[#6d1a1a] px-2 py-0.5 text-[.65rem] font-bold text-white">{{ $schedule->day_of_week }}</span></td><td><span class="inline-block rounded-full px-2 py-1 text-xs font-semibold {{ $schedule->shift === 'afternoon' ? 'bg-indigo-100 text-indigo-700' : 'bg-amber-100 text-amber-800' }}">{{ $schedule->shift_label }}</span></td><td class="p-3"><div class="flex flex-wrap items-center gap-3"><details><summary class="cursor-pointer text-xs font-semibold text-[#6d1a1a] underline underline-offset-2">Edit</summary><form method="POST" action="{{ route('schedules.update', $schedule) }}" class="mt-2 flex flex-wrap items-center gap-2">@csrf @method('PUT')<select name="day_of_week" class="p-1 text-xs">@foreach(['Monday'=>'Senin','Tuesday'=>'Selasa','Wednesday'=>'Rabu','Thursday'=>'Kamis','Friday'=>'Jumat','Saturday'=>'Sabtu','Sunday'=>'Minggu'] as $key=>$label)<option value="{{ $key }}" @selected($schedule->day_of_week === $key)>{{ $label }}</option>@endforeach</select><select name="shift" class="p-1 text-xs"><option value="morning" @selected($schedule->shift === 'morning')>Piket Pagi</option><option value="afternoon" @selected($schedule->shift === 'afternoon')>Piket Pulang</option></select><button class="text-xs font-semibold text-emerald-700 underline underline-offset-2">Simpan</button></form></details><form method="POST" action="{{ route('schedules.destroy',$schedule) }}">@csrf @method('DELETE')<button class="text-xs font-semibold text-[#c62828] underline underline-offset-2">Hapus</button></form></div></td></tr>@endforeach</tbody>
     </table>
 </div>
 <div class="app-pagination">{{ $schedules->links() }}</div>

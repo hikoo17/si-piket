@@ -7,6 +7,7 @@
 ]])
 @section('content')
 <h1 class="mb-5 text-2xl font-bold text-[#6d1a1a]">Verifikasi Bukti</h1>
+<p class="mb-5 text-sm text-[#8d6e63]">Hanya bukti yang belum diproses yang ditampilkan. Bukti yang sudah disetujui dapat dilihat di halaman laporan.</p>
 <div class="grid gap-5 md:grid-cols-2">
     @forelse($logs as $log)
     <article class="rounded-xl border border-[#fce4c4] bg-white p-5 shadow-sm transition hover:shadow-md">
@@ -14,7 +15,7 @@
         <div class="flex items-start justify-between gap-3">
             <div>
                 <h2 class="text-lg font-bold text-[#6d1a1a]">{{ $log->user->name }}</h2>
-                <p class="text-xs text-[#8d6e63]">{{ $log->user->schoolClass?->name }} · {{ $log->date->format('d/m/Y') }}</p>
+                <p class="text-xs text-[#8d6e63]">{{ $log->user->schoolClass?->name }} · {{ $log->date->format('d/m/Y') }} · {{ $log->schedule?->shift_label }}</p>
             </div>
             <span class="inline-block rounded-full px-2 py-0.5 text-[.65rem] font-bold uppercase {{ $log->status==='approved' ? 'bg-emerald-100 text-emerald-800' : ($log->status==='pending' ? 'bg-amber-100 text-amber-800' : 'bg-red-100 text-red-800') }}">{{ strtoupper($log->status) }}</span>
         </div>
@@ -29,7 +30,7 @@
         @endif
     </article>
     @empty
-    <p class="col-span-2 rounded-xl border border-dashed border-[#fce4c4] bg-white p-8 text-center text-sm text-[#8d6e63]">Belum ada bukti piket.</p>
+     <p class="col-span-2 rounded-xl border border-dashed border-[#fce4c4] bg-white p-8 text-center text-sm text-[#8d6e63]">Tidak ada bukti yang menunggu verifikasi.</p>
     @endforelse
 </div>
 <div class="app-pagination">{{ $logs->links() }}</div>

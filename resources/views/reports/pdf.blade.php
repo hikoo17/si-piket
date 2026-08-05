@@ -8,7 +8,7 @@
 @section('content')
 <h1 class="mb-5 text-2xl font-bold text-amber-950">Laporan Piket</h1>
 <table width="100%" border="1" cellspacing="0" cellpadding="5">
-    <thead><tr class="border-b border-amber-200 bg-amber-500 text-left text-xs uppercase tracking-wider text-white"><th class="p-3">Tanggal</th><th class="p-3">Siswa</th><th class="p-3">Kelas</th><th class="p-3">Status</th><th class="p-3">Jarak</th></tr></thead>
-    <tbody class="divide-y divide-amber-100">@foreach($logs as $log)<tr class="transition hover:bg-amber-50/60"><td class="p-3">{{ $log->date->format('Y-m-d') }}</td><td class="p-3 font-medium text-amber-950">{{ $log->user->name }}</td><td class="p-3 text-xs text-amber-700">{{ $log->user->schoolClass?->name }}</td><td class="p-3">{{ $log->status }}</td><td class="p-3">{{ $log->distance_meters }} m</td></tr>@endforeach</tbody>
+    <thead><tr class="border-b border-amber-200 bg-amber-500 text-left text-xs uppercase tracking-wider text-white"><th class="p-3">Tanggal</th><th class="p-3">Siswa</th><th class="p-3">Kelas</th><th class="p-3">Jenis</th><th class="p-3">Status</th><th class="p-3">Jarak</th></tr></thead>
+    <tbody class="divide-y divide-amber-100">@foreach($logs as $log)<tr class="transition hover:bg-amber-50/60"><td class="p-3">{{ $log->date->format('Y-m-d') }}</td><td class="p-3 font-medium text-amber-950">{{ $log->user->name }}</td><td class="p-3 text-xs text-amber-700">{{ $log->user->schoolClass?->name }}</td><td class="p-3">{{ $log->schedule?->shift_label }}</td><td class="p-3">{{ $log->status }}</td><td class="p-3">{{ $log->distance_meters }} m</td></tr>@endforeach</tbody>
 </table>
 @endsection

@@ -12,7 +12,9 @@ class VerificationController extends Controller
 {
     public function index(Request $request): View
     {
-        $logs = PiketLog::with(['user.schoolClass', 'schedule'])->latest();
+        $logs = PiketLog::with(['user.schoolClass', 'schedule'])
+            ->where('status', 'pending')
+            ->latest();
         if ($request->user()->role === 'km') {
             $logs->whereHas('user', fn ($query) => $query->where('class_id', $request->user()->class_id));
         }

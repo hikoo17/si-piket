@@ -41,6 +41,6 @@ return [
         'sender' => env('WHATSAPP_SENDER'),
         'timeout' => (int) env('WHATSAPP_API_TIMEOUT', 15),
     ],
-    'fonnte' => ['url' => env('FONNTE_API_URL', 'https://api.fonnte.com/send'), 'token' => env('FONNTE_TOKEN'), 'timeout' => (int) env('FONNTE_TIMEOUT', 15)],
+    'fonnte' => ['url' => env('FONNTE_API_URL', 'https://api.fonnte.com/send'), 'token' => env('FONNTE_TOKEN'), 'timeout' => (int) env('FONNTE_TIMEOUT', 30)],
 
 ];

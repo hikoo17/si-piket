@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\PiketLog;
 use App\Models\PiketSchedule;
+use App\Models\School;
 use App\Models\SchoolClass;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -14,6 +15,7 @@ class DashboardController extends Controller
     public function __invoke(Request $request): View
     {
         $user = $request->user();
+        $school = School::primary();
         $logs = PiketLog::query()->whereDate('date', today());
 
         if ($user->role === 'km') {
@@ -23,7 +25,9 @@ class DashboardController extends Controller
         }
 
         return view('dashboard', [
-            'scheduleCount' => PiketSchedule::query()->where('day_of_week', now()->englishDayOfWeek)->count(),
+            'school' => $school,
+            'morningScheduleCount' => PiketSchedule::query()->where('day_of_week', now()->englishDayOfWeek)->where('shift', 'morning')->count(),
+            'afternoonScheduleCount' => PiketSchedule::query()->where('day_of_week', now()->englishDayOfWeek)->where('shift', 'afternoon')->count(),
             'pendingCount' => (clone $logs)->where('status', 'pending')->count(),
             'approvedCount' => (clone $logs)->where('status', 'approved')->count(),
             'studentCount' => User::query()->whereIn('role', ['siswa', 'km'])->count(),

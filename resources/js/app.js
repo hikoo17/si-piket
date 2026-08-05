@@ -153,7 +153,7 @@ if (mapElement) {
             try {
                 const nominatimResponse = await fetch(`https://nominatim.openstreetmap.org/search?format=jsonv2&limit=5&countrycodes=id&q=${encodeURIComponent(query)}`, { headers: { Accept: 'application/json' } });
                 if (!nominatimResponse.ok) throw new Error('Nominatim failed');
-                results = (await nominatimResponse.json()).map((result) => ({
+                const results = (await nominatimResponse.json()).map((result) => ({
                     name: result.name || result.display_name.split(',')[0],
                     address: result.display_name,
                     latitude: Number(result.lat),

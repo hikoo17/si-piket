@@ -37,14 +37,15 @@
     <!-- Stats Cards Grid -->
     @php
         $stats = [
-            ['Jadwal Hari Ini', $scheduleCount, 'heroicon-o-clock', 'Tugas piket terjadwal', 'text-amber-600 bg-amber-50 border-amber-100'],
+            ['Piket Pagi', $morningScheduleCount, 'heroicon-o-clock', 'Jadwal pagi hari ini', 'text-amber-600 bg-amber-50 border-amber-100'],
+            ['Piket Pulang', $afternoonScheduleCount, 'heroicon-o-clock', 'Jadwal pulang hari ini', 'text-indigo-600 bg-indigo-50 border-indigo-100'],
             ['Perlu Ditinjau', $pendingCount, 'heroicon-o-exclamation-triangle', 'Menunggu verifikasi', 'text-amber-600 bg-amber-50 border-amber-100'],
             ['Sudah Disetujui', $approvedCount, 'heroicon-o-check-circle', 'Bukti piket valid', 'text-emerald-600 bg-emerald-50 border-emerald-100'],
             ['Siswa & KM', $studentCount, 'heroicon-o-users', 'Pengguna terdaftar', 'text-slate-600 bg-slate-100 border-slate-200'],
         ];
     @endphp
 
-    <div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+    <div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-5">
         @foreach($stats as [$label, $value, $icon, $description, $style])
             <article class="group relative overflow-hidden rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition hover:border-slate-300 hover:shadow-md">
                 <div class="mb-4 flex items-center justify-between">
@@ -60,6 +61,28 @@
             </article>
         @endforeach
     </div>
+
+    <section class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+        <div class="mb-4 flex flex-wrap items-center justify-between gap-2">
+            <div>
+                <h2 class="text-lg font-bold tracking-tight text-slate-900">Jam Piket Hari Ini</h2>
+                <p class="text-xs text-slate-500">Ikuti rentang waktu yang ditentukan admin. Upload di luar jam ini akan ditolak.</p>
+            </div>
+            <span class="rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-600">{{ now()->translatedFormat('l, d F Y') }}</span>
+        </div>
+        <div class="grid gap-3 sm:grid-cols-2">
+            <div class="rounded-xl border border-amber-200 bg-amber-50 p-4">
+                <p class="text-xs font-bold uppercase tracking-wider text-amber-700">Piket Masuk / Pagi</p>
+                <p class="mt-2 text-2xl font-bold text-amber-950">{{ substr($school->upload_start_time, 0, 5) }}–{{ substr($school->upload_deadline, 0, 5) }}</p>
+                <p class="mt-1 text-xs text-amber-800">Foto bukti hanya dapat dikirim pada jam ini.</p>
+            </div>
+            <div class="rounded-xl border border-indigo-200 bg-indigo-50 p-4">
+                <p class="text-xs font-bold uppercase tracking-wider text-indigo-700">Piket Pulang</p>
+                <p class="mt-2 text-2xl font-bold text-indigo-950">{{ substr($school->return_upload_start_time, 0, 5) }}–{{ substr($school->return_upload_deadline, 0, 5) }}</p>
+                <p class="mt-1 text-xs text-indigo-800">Foto bukti hanya dapat dikirim pada jam ini.</p>
+            </div>
+        </div>
+    </section>
 
     <!-- Main Content & Side Note Section -->
     <div class="grid gap-6 xl:grid-cols-[1.35fr_.65fr]">

@@ -5,6 +5,7 @@ namespace App\Console\Commands;
 use App\Jobs\SendPiketReminderJob;
 use App\Models\NotificationLog;
 use App\Models\PiketSchedule;
+use App\Models\School;
 use Illuminate\Console\Command;
 
 class SendPiketReminders extends Command
@@ -16,16 +17,31 @@ class SendPiketReminders extends Command
     public function handle(): int
     {
         $date = $this->option('date') ? now()->createFromFormat('Y-m-d', $this->option('date')) : today();
+        $school = School::primary();
+        if (! $school->whatsapp_enabled) {
+            $this->info('Notifikasi WhatsApp sedang nonaktif.');
+
+            return self::SUCCESS;
+        }
+        if (! $this->option('date') && now()->format('H:i') !== substr($school->whatsapp_send_time, 0, 5)) {
+            return self::SUCCESS;
+        }
         $day = $date->englishDayOfWeek;
         $count = 0;
 
-        PiketSchedule::with(['user.schoolClass'])->where('day_of_week', $day)->chunkById(100, function ($schedules) use ($date, &$count) {
+        PiketSchedule::with(['user.schoolClass'])->where('day_of_week', $day)->chunkById(100, function ($schedules) use ($date, $day, $school, &$count) {
             foreach ($schedules as $schedule) {
                 $user = $schedule->user;
                 if (blank($user->phone)) {
                     continue;
                 }
-                $message = "Halo {$user->name}, hari ini jadwal piket kamu di kelas ".($user->schoolClass?->name ?? '-').'. Jangan lupa kerjakan piket dan kirim foto bukti sebelum jam 17:00 WIB ya!';
+                $message = strtr($school->whatsapp_message_template ?: 'Halo {nama}, hari ini jadwal {jenis_piket} kamu di kelas {kelas}. Jangan lupa kirim foto bukti piket.', [
+                    '{nama}' => $user->name,
+                    '{kelas}' => $user->schoolClass?->name ?? '-',
+                    '{jenis_piket}' => $schedule->shift_label,
+                    '{hari}' => $day,
+                    '{tanggal}' => $date->format('d/m/Y'),
+                ]);
                 $log = NotificationLog::query()
                     ->where('user_id', $user->id)
                     ->where('schedule_id', $schedule->id)

@@ -73,14 +73,13 @@
                 @php
                     $navigation = [
                         ['dashboard', 'Dashboard', 'heroicon-o-squares-2x2', ['admin', 'guru', 'km', 'siswa']],
-                        ['schools.index', 'Pengaturan Sekolah', 'heroicon-o-academic-cap', ['admin']],
-                        ['classes.index', 'Kelas', 'heroicon-o-rectangle-group', ['admin']],
-                        ['students.index', 'Siswa', 'heroicon-o-user-group', ['admin']],
-                        ['users.index', 'Staf & Pengguna', 'heroicon-o-users', ['admin']],
                         ['schedules.index', 'Jadwal Piket', 'heroicon-o-clock', ['admin', 'km']],
-                        ['piket.upload.form', 'Kirim Bukti', 'heroicon-o-camera', ['km', 'siswa']],
+                        ['piket.upload.form', 'Ambil Bukti', 'heroicon-o-camera', ['km', 'siswa']],
                         ['verification.index', 'Verifikasi', 'heroicon-o-shield-check', ['admin', 'guru', 'km']],
                         ['reports.index', 'Laporan', 'heroicon-o-clipboard-document-list', ['admin', 'guru', 'km']],
+                        ['users.index', 'Pengguna', 'heroicon-o-users', ['admin']],
+                        ['schools.index', 'Sekolah', 'heroicon-o-academic-cap', ['admin']],
+                        ['classes.index', 'Kelas', 'heroicon-o-rectangle-group', ['admin']],
                     ];
                 @endphp
 

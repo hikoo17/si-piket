@@ -22,13 +22,14 @@ class PiketUploadTest extends TestCase
     {
         Storage::fake('public');
         Carbon::setTestNow('2026-08-03 08:00:00');
-        [$user] = $this->createScheduledUser(radius: 100);
+        [$user, , $schedule] = $this->createScheduledUser(radius: 100);
 
         $response = $this->actingAs($user)->post(route('piket.upload'), [
             'photo' => $this->validPngDataUrl(),
             'latitude' => -6.200000,
             'longitude' => 106.816666,
             'accuracy' => 10,
+            'schedule_id' => $schedule->id,
         ]);
 
         $response->assertSessionHas('success', 'Berhasil upload bukti piket! Menunggu verifikasi Guru/KM.');
@@ -44,13 +45,14 @@ class PiketUploadTest extends TestCase
     {
         Storage::fake('public');
         Carbon::setTestNow('2026-08-03 08:00:00');
-        [$user] = $this->createScheduledUser(radius: 50);
+        [$user, , $schedule] = $this->createScheduledUser(radius: 50);
 
         $response = $this->actingAs($user)->post(route('piket.upload'), [
             'photo' => $this->validPngDataUrl(),
             'latitude' => -6.201000,
             'longitude' => 106.816666,
             'accuracy' => 10,
+            'schedule_id' => $schedule->id,
         ]);
 
         $response->assertSessionHas('error', 'Gagal! Kamu berada di luar area sekolah (111m dari lokasi).');
@@ -74,7 +76,7 @@ class PiketUploadTest extends TestCase
     {
         Storage::fake('public');
         Carbon::setTestNow('2026-08-03 08:00:00');
-        [$user, $school] = $this->createScheduledUser();
+        [$user, $school, $schedule] = $this->createScheduledUser();
 
         $log = PiketLog::query()->create([
             'schedule_id' => $user->piketSchedules()->sole()->id,
@@ -88,6 +90,7 @@ class PiketUploadTest extends TestCase
             'latitude' => $school->latitude,
             'longitude' => $school->longitude,
             'accuracy' => 10,
+            'schedule_id' => $schedule->id,
         ])->assertSessionHas('success');
 
         $this->assertDatabaseCount('piket_logs', 1);
@@ -100,13 +103,47 @@ class PiketUploadTest extends TestCase
             'latitude' => $school->latitude,
             'longitude' => $school->longitude,
             'accuracy' => 10,
+            'schedule_id' => $schedule->id,
         ])->assertSessionHas('error', 'Bukti piket hari ini sudah disetujui.');
 
         $this->assertDatabaseCount('piket_logs', 1);
     }
 
+    #[Test]
+    public function morning_and_afternoon_evidence_use_their_own_upload_windows(): void
+    {
+        Storage::fake('public');
+        Carbon::setTestNow('2026-08-03 15:00:00');
+        [$user, $school, $morning] = $this->createScheduledUser();
+        $school->update([
+            'upload_start_time' => '06:00',
+            'upload_deadline' => '08:00',
+            'return_upload_start_time' => '14:00',
+            'return_upload_deadline' => '17:00',
+        ]);
+        $afternoon = PiketSchedule::create([
+            'user_id' => $user->id,
+            'day_of_week' => 'Monday',
+            'shift' => 'afternoon',
+        ]);
+        $payload = [
+            'photo' => $this->validPngDataUrl(),
+            'latitude' => $school->latitude,
+            'longitude' => $school->longitude,
+            'accuracy' => 10,
+        ];
+
+        $this->actingAs($user)->post(route('piket.upload'), $payload + ['schedule_id' => $morning->id])
+            ->assertSessionHas('error', 'Upload hanya dapat dilakukan pada jam Piket Pagi yang ditentukan.');
+        $this->actingAs($user)->post(route('piket.upload'), $payload + ['schedule_id' => $afternoon->id])
+            ->assertSessionHas('success');
+
+        $this->assertDatabaseHas('piket_logs', ['schedule_id' => $afternoon->id, 'status' => 'pending']);
+        $this->assertDatabaseMissing('piket_logs', ['schedule_id' => $morning->id]);
+    }
+
     /**
-     * @return array{User, School}
+     * @return array{User, School, PiketSchedule}
      */
     private function createScheduledUser(int $radius = 100): array
     {
@@ -123,12 +160,13 @@ class PiketUploadTest extends TestCase
         ]);
         $user = User::factory()->create(['class_id' => $class->id]);
 
-        PiketSchedule::query()->create([
+        $schedule = PiketSchedule::query()->create([
             'user_id' => $user->id,
             'day_of_week' => 'Monday',
+            'shift' => 'morning',
         ]);
 
-        return [$user, $school];
+        return [$user, $school, $schedule];
     }
 
     private function validPngDataUrl(): string

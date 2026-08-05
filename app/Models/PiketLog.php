@@ -6,7 +6,6 @@ use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 
 #[Fillable([
     'schedule_id',
@@ -16,7 +15,6 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
     'latitude',
     'longitude',
     'distance_meters',
-    'wa_notif_sent',
     'status',
     'verified_by',
     'verified_at',
@@ -33,9 +31,9 @@ class PiketLog extends Model
             'latitude' => 'decimal:8',
             'longitude' => 'decimal:8',
             'distance_meters' => 'integer',
-            'wa_notif_sent' => 'boolean',
             'verified_at' => 'datetime',
-            'accuracy_meters' => 'decimal:2', 'location_captured_at' => 'datetime', 'photo_captured_at' => 'datetime',
+            'accuracy_meters' => 'decimal:2',
+            'photo_captured_at' => 'datetime',
         ];
     }
 
@@ -52,10 +50,5 @@ class PiketLog extends Model
     public function verifier(): BelongsTo
     {
         return $this->belongsTo(User::class, 'verified_by');
-    }
-
-    public function attempts(): HasMany
-    {
-        return $this->hasMany(PiketLogAttempt::class);
     }
 }

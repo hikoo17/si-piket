@@ -28,14 +28,16 @@ Route::middleware('auth')->group(function () {
     Route::get('/schools', [SchoolController::class, 'index'])->middleware('role:admin')->name('schools.index');
     Route::get('/schools/{school}/edit', [SchoolController::class, 'edit'])->middleware('role:admin')->name('schools.edit');
     Route::put('/schools/{school}', [SchoolController::class, 'update'])->middleware('role:admin')->name('schools.update');
+    Route::post('/schools/{school}/test-whatsapp', [SchoolController::class, 'testWhatsapp'])->middleware('role:admin')->name('schools.test-whatsapp');
     Route::resource('classes', SchoolClassController::class)->middleware('role:admin');
     Route::resource('students', StudentController::class)->except('show')->middleware('role:admin');
     Route::resource('users', UserController::class)->except('show')->middleware('role:admin');
-    Route::resource('schedules', ScheduleController::class)->only(['index', 'store', 'destroy'])->middleware('role:admin,km');
+    Route::resource('schedules', ScheduleController::class)->only(['index', 'store', 'update', 'destroy'])->middleware('role:admin,km');
     Route::get('/verification', [VerificationController::class, 'index'])->middleware('role:admin,guru,km')->name('verification.index');
     Route::patch('/verification/{log}/approve', [VerificationController::class, 'approve'])->middleware('role:admin,guru,km')->name('verification.approve');
     Route::patch('/verification/{log}/reject', [VerificationController::class, 'reject'])->middleware('role:admin,guru,km')->name('verification.reject');
     Route::get('/reports', [ReportController::class, 'index'])->middleware('role:admin,guru,km')->name('reports.index');
+    Route::get('/reports/{log}', [ReportController::class, 'show'])->middleware('role:admin,guru,km')->name('reports.show');
     Route::get('/reports.csv', [ReportController::class, 'csv'])->middleware('role:admin,guru,km')->name('reports.csv');
     Route::get('/reports.pdf', [ReportController::class, 'pdf'])->middleware('role:admin,guru,km')->name('reports.pdf');
 });

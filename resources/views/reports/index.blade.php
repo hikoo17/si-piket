@@ -17,6 +17,10 @@
          <select name="class_id" class="w-full"><option value="">Semua kelas</option>@foreach($classes as $class)<option value="{{ $class->id }}" @selected(request('class_id')==$class->id)>{{ $class->name }}</option>@endforeach</select>
     </div>
     <div class="flex-1 min-w-[140px]">
+        <label class="mb-1 block text-xs font-semibold text-amber-900">Jenis Piket</label>
+        <select name="shift" class="w-full"><option value="">Semua jenis</option><option value="morning" @selected(request('shift')==='morning')>Piket Pagi</option><option value="afternoon" @selected(request('shift')==='afternoon')>Piket Pulang</option></select>
+    </div>
+    <div class="flex-1 min-w-[140px]">
         <label class="mb-1 block text-xs font-semibold text-amber-900">Status</label>
          <select name="status" class="w-full"><option value="">Semua status</option>@foreach(['approved'=>'Disetujui','pending'=>'Menunggu','rejected'=>'Ditolak','absent'=>'Absen'] as $statusKey=>$statusLabel)<option value="{{ $statusKey }}" @selected(request('status')==$statusKey)>{{ $statusLabel }}</option>@endforeach</select>
     </div>
@@ -28,15 +32,17 @@
 </form>
 <div class="table-shell overflow-auto">
     <table class="data-table">
-        <thead><tr><th>Tanggal</th><th>Siswa</th><th>Kelas</th><th>Status</th><th>Jarak</th><th>Akurasi</th></tr></thead>
+        <thead><tr><th>Tanggal</th><th>Siswa</th><th>Kelas</th><th>Jenis Piket</th><th>Status</th><th>Jarak</th><th>Akurasi</th><th>Detail</th></tr></thead>
         <tbody class="divide-y divide-amber-100">@foreach($logs as $log)<tr class="transition hover:bg-amber-50/60">
             <td class="p-3 text-sm text-amber-950">{{ $log->date->format('d/m/Y') }}</td>
             <td class="p-3 text-sm font-medium text-amber-950">{{ $log->user->name }}</td>
             <td class="p-3 text-xs text-amber-700">{{ $log->user->schoolClass?->name }}</td>
+            <td class="p-3 text-xs font-semibold text-amber-900">{{ $log->schedule?->shift_label }}</td>
             <td class="p-3"><span class="inline-block rounded-full px-2 py-0.5 text-[.65rem] font-bold uppercase {{ $log->status==='approved' ? 'bg-emerald-100 text-emerald-700' : ($log->status==='pending' ? 'bg-amber-100 text-amber-900' : ($log->status==='rejected' ? 'bg-red-100 text-red-700' : 'bg-gray-100 text-gray-700')) }}">{{ $log->status }}</span></td>
             <td class="p-3 text-sm text-amber-950">{{ $log->distance_meters }} m</td>
-            <td class="p-3 text-sm text-amber-950">{{ $log->accuracy_meters }} m</td>
-        </tr>@endforeach</tbody>
+             <td class="p-3 text-sm text-amber-950">{{ $log->accuracy_meters }} m</td>
+             <td class="p-3"><a href="{{ route('reports.show', $log) }}" class="btn btn-secondary text-xs">Lihat detail</a></td>
+         </tr>@endforeach</tbody>
     </table>
 </div>
 <div class="app-pagination">{{ $logs->links() }}</div>

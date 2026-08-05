@@ -14,8 +14,9 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withSchedule(function (Schedule $schedule): void {
-        $schedule->command('piket:send-reminders')->dailyAt('06:00');
-        $schedule->command('piket:mark-absent')->dailyAt('17:01');
+        $schedule->command('piket:send-reminders')->everyMinute();
+        $schedule->command('piket:mark-absent --shift=morning')->everyMinute();
+        $schedule->command('piket:mark-absent --shift=afternoon')->everyMinute();
     })
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->alias(['role' => EnsureUserHasRole::class]);
