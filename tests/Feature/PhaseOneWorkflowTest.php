@@ -190,6 +190,54 @@ class PhaseOneWorkflowTest extends TestCase
             ->assertSee('piket/example.jpg');
     }
 
+    #[Test]
+    public function teacher_with_a_class_can_only_access_that_class(): void
+    {
+        [$firstClass, $secondClass] = $this->classes();
+        $teacher = User::factory()->create(['role' => 'guru', 'class_id' => $firstClass->id]);
+        $firstStudent = User::factory()->create(['role' => 'siswa', 'class_id' => $firstClass->id]);
+        $secondStudent = User::factory()->create(['role' => 'siswa', 'class_id' => $secondClass->id]);
+        $firstSchedule = PiketSchedule::create(['user_id' => $firstStudent->id, 'day_of_week' => 'Monday']);
+        $secondSchedule = PiketSchedule::create(['user_id' => $secondStudent->id, 'day_of_week' => 'Monday']);
+        $firstLog = PiketLog::create(['schedule_id' => $firstSchedule->id, 'user_id' => $firstStudent->id, 'date' => today(), 'status' => 'pending']);
+        $secondLog = PiketLog::create(['schedule_id' => $secondSchedule->id, 'user_id' => $secondStudent->id, 'date' => today(), 'status' => 'pending']);
+
+        $this->actingAs($teacher)->get(route('verification.index'))
+            ->assertOk()
+            ->assertSee($firstStudent->name)
+            ->assertDontSee($secondStudent->name);
+        $this->actingAs($teacher)->get(route('reports.index'))
+            ->assertOk()
+            ->assertSee($firstStudent->name)
+            ->assertDontSee($secondStudent->name);
+        $this->actingAs($teacher)->get(route('reports.show', $secondLog))->assertForbidden();
+        $this->actingAs($teacher)->patch(route('verification.approve', $secondLog))->assertForbidden();
+        $this->actingAs($teacher)->patch(route('verification.approve', $firstLog))->assertSessionHas('success');
+    }
+
+    #[Test]
+    public function teacher_without_a_class_can_access_all_classes(): void
+    {
+        [$firstClass, $secondClass] = $this->classes();
+        $teacher = User::factory()->create(['role' => 'guru', 'class_id' => null]);
+        $firstStudent = User::factory()->create(['role' => 'siswa', 'class_id' => $firstClass->id]);
+        $secondStudent = User::factory()->create(['role' => 'siswa', 'class_id' => $secondClass->id]);
+        $firstSchedule = PiketSchedule::create(['user_id' => $firstStudent->id, 'day_of_week' => 'Monday']);
+        $secondSchedule = PiketSchedule::create(['user_id' => $secondStudent->id, 'day_of_week' => 'Monday']);
+        PiketLog::create(['schedule_id' => $firstSchedule->id, 'user_id' => $firstStudent->id, 'date' => today(), 'status' => 'pending']);
+        $secondLog = PiketLog::create(['schedule_id' => $secondSchedule->id, 'user_id' => $secondStudent->id, 'date' => today(), 'status' => 'pending']);
+
+        $this->actingAs($teacher)->get(route('verification.index'))
+            ->assertOk()
+            ->assertSee($firstStudent->name)
+            ->assertSee($secondStudent->name);
+        $this->actingAs($teacher)->get(route('reports.index'))
+            ->assertOk()
+            ->assertSee($firstStudent->name)
+            ->assertSee($secondStudent->name);
+        $this->actingAs($teacher)->get(route('reports.show', $secondLog))->assertOk();
+    }
+
     /** @return array{SchoolClass, SchoolClass} */
     private function classes(): array
     {

@@ -17,21 +17,27 @@ class DashboardController extends Controller
         $user = $request->user();
         $school = School::primary();
         $logs = PiketLog::query()->whereDate('date', today());
+        $schedules = PiketSchedule::query()->where('day_of_week', now()->englishDayOfWeek);
+        $students = User::query()->whereIn('role', ['siswa', 'km']);
+        $classes = SchoolClass::query();
 
-        if ($user->role === 'km') {
+        if ($user->role === 'km' || ($user->role === 'guru' && $user->class_id)) {
             $logs->whereHas('user', fn ($query) => $query->where('class_id', $user->class_id));
+            $schedules->whereHas('user', fn ($query) => $query->where('class_id', $user->class_id));
+            $students->where('class_id', $user->class_id);
+            $classes->whereKey($user->class_id);
         } elseif ($user->role === 'siswa') {
             $logs->where('user_id', $user->id);
         }
 
         return view('dashboard', [
             'school' => $school,
-            'morningScheduleCount' => PiketSchedule::query()->where('day_of_week', now()->englishDayOfWeek)->where('shift', 'morning')->count(),
-            'afternoonScheduleCount' => PiketSchedule::query()->where('day_of_week', now()->englishDayOfWeek)->where('shift', 'afternoon')->count(),
+            'morningScheduleCount' => (clone $schedules)->where('shift', 'morning')->count(),
+            'afternoonScheduleCount' => (clone $schedules)->where('shift', 'afternoon')->count(),
             'pendingCount' => (clone $logs)->where('status', 'pending')->count(),
             'approvedCount' => (clone $logs)->where('status', 'approved')->count(),
-            'studentCount' => User::query()->whereIn('role', ['siswa', 'km'])->count(),
-            'classCount' => SchoolClass::query()->count(),
+            'studentCount' => $students->count(),
+            'classCount' => $classes->count(),
         ]);
     }
 }

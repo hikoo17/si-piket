@@ -90,7 +90,7 @@
             <table class="w-full text-left border-collapse">
                 <thead>
                     <tr class="border-b border-slate-100 bg-slate-50/80 text-[0.68rem] font-bold uppercase tracking-wider text-slate-500">
-                        <th class="py-3 px-4">Tanggal</th>
+                        <th class="py-3 px-4">Tanggal & Waktu</th>
                         <th class="py-3 px-4">Siswa</th>
                         <th class="py-3 px-4">Kelas</th>
                         <th class="py-3 px-4">Jenis Piket</th>
@@ -104,7 +104,8 @@
                     @forelse($logs as $log)
                         <tr class="transition hover:bg-slate-50/60">
                             <td class="py-3 px-4 whitespace-nowrap text-slate-900 font-semibold">
-                                {{ $log->date ? $log->date->format('d/m/Y') : '-' }}
+                                <span class="block">{{ $log->date ? $log->date->locale('id')->translatedFormat('j F Y') : '-' }}</span>
+                                <span class="mt-0.5 block text-[0.68rem] font-medium text-slate-500">{{ ($log->photo_captured_at ?? $log->created_at)?->format('H:i') ?? '-' }} WIB</span>
                             </td>
                             <td class="py-3 px-4">
                                 <div class="font-semibold text-slate-900">{{ $log->user->name ?? '-' }}</div>

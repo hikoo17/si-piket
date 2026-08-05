@@ -34,6 +34,7 @@ class PiketController extends Controller
     {
         $validated = $request->validate([
             'photo' => ['required', 'string'],
+            'description' => ['nullable', 'string', 'max:500'],
             'latitude' => ['required', 'numeric', 'between:-90,90'],
             'longitude' => ['required', 'numeric', 'between:-180,180'],
             'accuracy' => ['required', 'numeric', 'between:0,1000'],
@@ -125,6 +126,7 @@ class PiketController extends Controller
             if ($existingLog) {
                 $existingLog->update([
                     'photo_path' => $path,
+                    'description' => $validated['description'] ?? null,
                     'latitude' => $validated['latitude'],
                     'longitude' => $validated['longitude'],
                     'distance_meters' => $distance,
@@ -146,6 +148,7 @@ class PiketController extends Controller
                     'user_id' => $user->id,
                     'date' => today(),
                     'photo_path' => $path,
+                    'description' => $validated['description'] ?? null,
                     'latitude' => $validated['latitude'],
                     'longitude' => $validated['longitude'],
                     'distance_meters' => $distance,

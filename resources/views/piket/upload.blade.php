@@ -100,6 +100,13 @@
                         </select>
                     </div>
 
+                    <div class="rounded-xl border border-slate-200 bg-white p-3.5 text-left">
+                        <label for="description" class="mb-1.5 block text-[0.68rem] font-bold uppercase tracking-wider text-slate-500">
+                            Deskripsi <span class="font-medium normal-case text-slate-400">(opsional)</span>
+                        </label>
+                        <textarea name="description" id="description" rows="3" maxlength="500" placeholder="Tambahkan catatan tentang kondisi atau kegiatan piket..." class="w-full resize-none rounded-lg border border-slate-200 bg-slate-50/50 px-3 py-2 text-xs text-slate-800 transition placeholder:text-slate-400 focus:border-amber-500 focus:bg-white focus:outline-none focus:ring-1 focus:ring-amber-500">{{ old('description') }}</textarea>
+                    </div>
+
                     <input type="hidden" name="photo" id="photo" value="{{ old('photo') }}">
                     <input type="hidden" name="latitude" id="latitude" value="{{ old('latitude') }}">
                     <input type="hidden" name="longitude" id="longitude" value="{{ old('longitude') }}">

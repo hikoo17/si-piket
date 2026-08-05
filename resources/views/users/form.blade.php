@@ -13,7 +13,7 @@
     @if($user->exists)@method('PUT')@endif
     @foreach(['name'=>'Nama','email'=>'Email','phone'=>'WhatsApp (format 62...)'] as $field=>$label)
         <label class="block">{{ $label }}
-            <input name="{{ $field }}" value="{{ old($field,$user->{$field}) }}" class="mt-1 w-full" @if($field!=='phone')required@endif>
+            <input name="{{ $field }}" value="{{ old($field, $user->{$field}) }}" class="mt-1 w-full" @required($field !== 'phone')>
         </label>
     @endforeach
     <label class="block">Role
@@ -23,7 +23,7 @@
         <select name="class_id" class="mt-1 w-full"><option value="">Tanpa kelas</option>@foreach($classes as $class)<option value="{{ $class->id }}" @selected(old('class_id',$user->class_id)==$class->id)>{{ $class->school->name }} · {{ $class->name }}</option>@endforeach</select>
     </label>
     <label class="block">Password
-        <input type="password" name="password" class="mt-1 w-full" @if(!$user->exists)required@endif>
+        <input type="password" name="password" class="mt-1 w-full" @required(! $user->exists)>
     </label>
     <label class="block">Konfirmasi password
         <input type="password" name="password_confirmation" class="mt-1 w-full">
