@@ -32,7 +32,7 @@ Route::middleware('auth')->group(function () {
     Route::resource('classes', SchoolClassController::class)->middleware('role:admin');
     Route::resource('students', StudentController::class)->except('show')->middleware('role:admin');
     Route::resource('users', UserController::class)->except('show')->middleware('role:admin');
-    Route::resource('schedules', ScheduleController::class)->only(['index', 'store', 'update', 'destroy'])->middleware('role:admin,km');
+    Route::resource('schedules', ScheduleController::class)->only(['index', 'create', 'store', 'edit', 'update', 'destroy'])->middleware('role:admin,km');
     Route::get('/verification', [VerificationController::class, 'index'])->middleware('role:admin,guru,km')->name('verification.index');
     Route::patch('/verification/{log}/approve', [VerificationController::class, 'approve'])->middleware('role:admin,guru,km')->name('verification.approve');
     Route::patch('/verification/{log}/reject', [VerificationController::class, 'reject'])->middleware('role:admin,guru,km')->name('verification.reject');

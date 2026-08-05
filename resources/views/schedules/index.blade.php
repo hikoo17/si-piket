@@ -9,54 +9,60 @@
 @section('content')
 <div class="space-y-5">
     <!-- Header Section -->
-    <div>
-        <h1 class="text-xl font-bold tracking-tight text-slate-900 mt-0.5">Jadwal Piket</h1>
-        <p class="text-xs text-slate-500 mt-1">Pilih siswa yang sudah memiliki kelas. Setelah dijadwalkan, siswa dapat mengirim bukti piket pada hari tersebut.</p>
+    <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <div>
+            <h1 class="text-xl font-bold tracking-tight text-slate-900 mt-0.5">Jadwal Piket</h1>
+            <p class="text-xs text-slate-500 mt-1">Filter jadwal yang ingin dilihat, lalu gunakan aksi edit pada tabel untuk memperbaruinya.</p>
+        </div>
+        <a href="{{ route('schedules.create') }}" class="btn btn-primary shrink-0">
+            <x-icon name="heroicon-o-plus" class="h-4 w-4" />
+            Tambah Jadwal
+        </a>
     </div>
 
-    <!-- Form Tambah Jadwal -->
+    <!-- Filter Jadwal -->
     <div class="rounded-xl border border-slate-200 bg-white p-4">
-        <form method="POST" action="{{ route('schedules.store') }}" class="grid gap-3 sm:grid-cols-2 lg:grid-cols-4 lg:items-end">
-            @csrf
-            
-            <!-- Select Siswa -->
+        <form method="GET" action="{{ route('schedules.index') }}" class="grid gap-3 sm:grid-cols-2 lg:grid-cols-5 lg:items-end">
             <div>
-                <label class="mb-1 block text-[0.68rem] font-bold uppercase tracking-wider text-slate-500">Siswa</label>
-                <select name="user_id" required class="h-9 w-full rounded-lg border border-slate-200 bg-slate-50/50 px-3 text-xs font-medium text-slate-800 transition focus:border-amber-500 focus:bg-white focus:outline-none focus:ring-1 focus:ring-amber-500">
-                    <option value="">Pilih siswa</option>
-                    @foreach($users as $user)
-                        <option value="{{ $user->id }}" @selected(old('user_id') == $user->id)>
-                            {{ $user->schoolClass?->name ?? 'Tanpa Kelas' }} · {{ $user->name }}{{ $user->role === 'km' ? ' (KM)' : '' }}
-                        </option>
+                <label for="search" class="mb-1 block text-[0.68rem] font-bold uppercase tracking-wider text-slate-500">Cari Siswa</label>
+                <input id="search" type="search" name="search" value="{{ request('search') }}" placeholder="Nama siswa..." class="h-9 w-full rounded-lg border border-slate-200 bg-slate-50/50 px-3 text-xs font-medium text-slate-800 focus:border-amber-500 focus:bg-white focus:outline-none focus:ring-1 focus:ring-amber-500">
+            </div>
+            <div>
+                <label for="class_id" class="mb-1 block text-[0.68rem] font-bold uppercase tracking-wider text-slate-500">Kelas</label>
+                <select id="class_id" name="class_id" class="h-9 w-full rounded-lg border border-slate-200 bg-slate-50/50 px-3 text-xs font-medium text-slate-800 focus:border-amber-500 focus:bg-white focus:outline-none focus:ring-1 focus:ring-amber-500">
+                    <option value="">Semua kelas</option>
+                    @foreach($classes as $class)
+                        <option value="{{ $class->id }}" @selected((string) request('class_id') === (string) $class->id)>{{ $class->name }}</option>
                     @endforeach
                 </select>
             </div>
-
-            <!-- Select Hari -->
             <div>
                 <label class="mb-1 block text-[0.68rem] font-bold uppercase tracking-wider text-slate-500">Hari</label>
                 <select name="day_of_week" class="h-9 w-full rounded-lg border border-slate-200 bg-slate-50/50 px-3 text-xs font-medium text-slate-800 transition focus:border-amber-500 focus:bg-white focus:outline-none focus:ring-1 focus:ring-amber-500">
+                    <option value="">Semua hari</option>
                     @foreach(['Monday'=>'Senin','Tuesday'=>'Selasa','Wednesday'=>'Rabu','Thursday'=>'Kamis','Friday'=>'Jumat','Saturday'=>'Sabtu','Sunday'=>'Minggu'] as $key => $label)
-                        <option value="{{ $key }}" @selected(old('day_of_week') === $key)>{{ $label }}</option>
+                        <option value="{{ $key }}" @selected(request('day_of_week') === $key)>{{ $label }}</option>
                     @endforeach
                 </select>
             </div>
-
-            <!-- Select Jenis Piket -->
             <div>
                 <label class="mb-1 block text-[0.68rem] font-bold uppercase tracking-wider text-slate-500">Jenis Piket</label>
-                <select name="shift" required class="h-9 w-full rounded-lg border border-slate-200 bg-slate-50/50 px-3 text-xs font-medium text-slate-800 transition focus:border-amber-500 focus:bg-white focus:outline-none focus:ring-1 focus:ring-amber-500">
-                    <option value="morning" @selected(old('shift', 'morning') === 'morning')>Piket Pagi</option>
-                    <option value="afternoon" @selected(old('shift') === 'afternoon')>Piket Pulang</option>
+                <select name="shift" class="h-9 w-full rounded-lg border border-slate-200 bg-slate-50/50 px-3 text-xs font-medium text-slate-800 transition focus:border-amber-500 focus:bg-white focus:outline-none focus:ring-1 focus:ring-amber-500">
+                    <option value="">Semua jenis</option>
+                    <option value="morning" @selected(request('shift') === 'morning')>Piket Pagi</option>
+                    <option value="afternoon" @selected(request('shift') === 'afternoon')>Piket Pulang</option>
                 </select>
             </div>
-
-            <!-- Button Submit -->
-            <div>
-                <button type="submit" class="h-9 w-full inline-flex items-center justify-center gap-2 rounded-lg bg-amber-500 px-4 text-xs font-bold text-white transition hover:bg-amber-600 focus:outline-none">
-                    <x-icon name="heroicon-o-plus" class="h-4 w-4" />
-                    <span>Tambah Jadwal</span>
+            <div class="flex gap-2">
+                <button type="submit" class="inline-flex h-9 flex-1 items-center justify-center gap-2 rounded-lg bg-slate-900 px-4 text-xs font-bold text-white transition hover:bg-slate-800">
+                    <x-icon name="heroicon-o-magnifying-glass" class="h-4 w-4" />
+                    Filter
                 </button>
+                @if(request()->hasAny(['search', 'class_id', 'day_of_week', 'shift']))
+                    <a href="{{ route('schedules.index') }}" class="inline-flex h-9 items-center justify-center rounded-lg border border-slate-200 px-3 text-xs font-semibold text-slate-600 transition hover:bg-slate-50" title="Reset filter">
+                        <x-icon name="heroicon-o-x-mark" class="h-4 w-4" />
+                    </a>
+                @endif
             </div>
         </form>
     </div>
@@ -106,46 +112,10 @@
                             </td>
                             <td class="py-3 px-4 text-center whitespace-nowrap">
                                 <div class="inline-flex items-center justify-center gap-2">
-                                    <!-- Edit Dropdown / Details -->
-                                    <details class="group relative">
-                                        <summary class="inline-flex h-7 cursor-pointer items-center gap-1 rounded-md border border-slate-200 bg-white px-2 text-xs font-semibold text-slate-700 transition hover:border-amber-300 hover:bg-amber-50/50 hover:text-amber-700 list-none">
-                                            <x-icon name="heroicon-o-pencil-square" class="h-3.5 w-3.5 text-slate-400 group-hover:text-amber-600" />
-                                            <span>Edit</span>
-                                        </summary>
-                                        
-                                        <!-- Inline Edit Panel -->
-                                        <div class="absolute right-0 z-20 mt-2 w-72 rounded-xl border border-slate-200 bg-white p-3 shadow-lg text-left">
-                                            <div class="mb-2 text-[0.68rem] font-bold uppercase tracking-wider text-slate-400">Edit Jadwal</div>
-                                            <form method="POST" action="{{ route('schedules.update', $schedule) }}" class="space-y-2.5">
-                                                @csrf 
-                                                @method('PUT')
-                                                
-                                                <div>
-                                                    <label class="mb-1 block text-[0.65rem] font-semibold text-slate-500">Hari</label>
-                                                    <select name="day_of_week" class="h-8 w-full rounded-md border border-slate-200 bg-slate-50/50 px-2 text-xs font-medium text-slate-800 transition focus:border-amber-500 focus:bg-white focus:outline-none">
-                                                        @foreach(['Monday'=>'Senin','Tuesday'=>'Selasa','Wednesday'=>'Rabu','Thursday'=>'Kamis','Friday'=>'Jumat','Saturday'=>'Sabtu','Sunday'=>'Minggu'] as $key => $label)
-                                                            <option value="{{ $key }}" @selected($schedule->day_of_week === $key)>{{ $label }}</option>
-                                                        @endforeach
-                                                    </select>
-                                                </div>
-
-                                                <div>
-                                                    <label class="mb-1 block text-[0.65rem] font-semibold text-slate-500">Jenis Piket</label>
-                                                    <select name="shift" class="h-8 w-full rounded-md border border-slate-200 bg-slate-50/50 px-2 text-xs font-medium text-slate-800 transition focus:border-amber-500 focus:bg-white focus:outline-none">
-                                                        <option value="morning" @selected($schedule->shift === 'morning')>Piket Pagi</option>
-                                                        <option value="afternoon" @selected($schedule->shift === 'afternoon')>Piket Pulang</option>
-                                                    </select>
-                                                </div>
-
-                                                <div class="flex items-center justify-end gap-2 pt-1">
-                                                    <button type="submit" class="inline-flex h-7 items-center gap-1 rounded-md bg-emerald-600 px-3 text-xs font-semibold text-white transition hover:bg-emerald-700">
-                                                        <x-icon name="heroicon-o-check" class="h-3.5 w-3.5" />
-                                                        <span>Simpan</span>
-                                                    </button>
-                                                </div>
-                                            </form>
-                                        </div>
-                                    </details>
+                                    <a href="{{ route('schedules.edit', $schedule) }}" class="inline-flex h-7 items-center gap-1 rounded-md border border-slate-200 bg-white px-2 text-xs font-semibold text-slate-700 transition hover:border-amber-300 hover:bg-amber-50/50 hover:text-amber-700">
+                                        <x-icon name="heroicon-o-pencil-square" class="h-3.5 w-3.5 text-slate-400" />
+                                        <span>Edit</span>
+                                    </a>
 
                                     <!-- Delete Form -->
                                     <form method="POST" action="{{ route('schedules.destroy', $schedule) }}" onsubmit="return confirm('Yakin ingin menghapus jadwal ini?');">
@@ -167,7 +137,7 @@
                                         <x-icon name="heroicon-o-clock" class="h-5 w-5" />
                                     </span>
                                     <h3 class="mt-2 text-xs font-bold text-slate-800">Belum ada jadwal piket</h3>
-                                    <p class="text-[0.7rem] text-slate-500 mt-0.5">Silakan tambahkan jadwal piket menggunakan form di atas.</p>
+                                    <p class="text-[0.7rem] text-slate-500 mt-0.5">Ubah filter atau tambahkan jadwal piket baru.</p>
                                 </div>
                             </td>
                         </tr>
