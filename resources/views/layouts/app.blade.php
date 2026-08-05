@@ -1,5 +1,39 @@
 @props(['title' => 'Dashboard'])
 
+<style>
+    /* 1. Scrollbar halus untuk navigasi sidebar */
+    nav::-webkit-scrollbar {
+        width: 6px;
+    }
+    nav::-webkit-scrollbar-track {
+        background: rgba(255, 255, 255, 0.15);
+        border-radius: 9999px;
+    }
+    nav::-webkit-scrollbar-thumb {
+        background: rgba(120, 53, 15, 0.25); /* Warna amber-900 transparan */
+        border-radius: 9999px;
+    }
+    nav::-webkit-scrollbar-thumb:hover {
+        background: rgba(120, 53, 15, 0.45);
+    }
+
+    /* 2. Scrollbar global halaman Web (Opsional) */
+    ::-webkit-scrollbar {
+        width: 8px;
+        height: 8px;
+    }
+    ::-webkit-scrollbar-track {
+        background: #f8fafc; /* bg-slate-50 */
+    }
+    ::-webkit-scrollbar-thumb {
+        background: #f59e0b; /* amber-500 */
+        border-radius: 9999px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+        background: #d97706; /* amber-600 */
+    }
+</style>
+
 <!doctype html>
 <html lang="id">
 <head>
@@ -128,7 +162,7 @@
                     </div>
                 </div>
 
-                <form method="POST" action="{{ route('logout') }}">
+                <form method="POST" action="{{ route('logout') }}" data-confirm-logout>
                     @csrf
                     <button class="grid h-8 w-8 place-items-center rounded-lg text-amber-900 transition hover:bg-white/20" aria-label="Keluar" title="Keluar">
                         <x-icon name="heroicon-o-arrow-right-on-rectangle" class="h-4 w-4" />
@@ -167,26 +201,20 @@
 
         <!-- APP CONTENT -->
         <section class="app-content mx-auto min-h-[calc(100vh-4rem)] max-w-7xl p-4 sm:p-6 lg:p-8">
-            @if (session('success'))
-                <div class="mb-6 flex items-center gap-3 rounded-xl border border-emerald-200 bg-emerald-50 p-4 text-xs font-semibold text-emerald-800">
-                    <x-icon name="heroicon-o-check-circle" class="h-5 w-5 text-emerald-600 shrink-0" />
-                    <span>{{ session('success') }}</span>
-                </div>
-            @endif
-
-            @if ($errors->any())
-                <div class="mb-6 flex items-center gap-3 rounded-xl border border-rose-200 bg-rose-50 p-4 text-xs font-semibold text-rose-800">
-                    <x-icon name="heroicon-o-exclamation-triangle" class="h-5 w-5 text-rose-600 shrink-0" />
-                    <span>{{ $errors->first() }}</span>
-                </div>
-            @endif
-
             @yield('content')
         </section>
     </main>
 </div>
 
 @vite('resources/js/app.js')
+
+<div
+    id="flash-message"
+    class="hidden"
+    data-success="{{ session('success') }}"
+    data-error="{{ session('error') }}"
+    data-validation="{{ $errors->any() ? implode('\n', $errors->all()) : '' }}"
+></div>
 
 <!-- Mobile Overlay Screen -->
 <button id="sidebar-scrim" class="fixed inset-0 z-20 hidden border-0 bg-amber-950/40 backdrop-blur-xs lg:hidden" type="button" aria-label="Tutup menu"></button>

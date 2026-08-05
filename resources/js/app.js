@@ -1,5 +1,71 @@
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
+import Swal from 'sweetalert2';
+
+const flashMessageElement = document.getElementById('flash-message');
+
+if (flashMessageElement) {
+    const flash = flashMessageElement.dataset;
+    const message = flash.success || flash.error || flash.validation;
+
+    if (message) {
+        Swal.fire({
+            icon: flash.success ? 'success' : 'error',
+            title: flash.success ? 'Berhasil' : 'Terjadi Kesalahan',
+            text: message,
+            confirmButtonText: 'Tutup',
+            confirmButtonColor: '#d97706',
+        });
+    }
+}
+
+document.addEventListener('submit', (event) => {
+    const form = event.target;
+
+    if (!(form instanceof HTMLFormElement) || form.dataset.confirmed === 'true') return;
+
+    if (form.hasAttribute('data-confirm-logout')) {
+        event.preventDefault();
+        Swal.fire({
+            icon: 'question',
+            title: 'Keluar dari aplikasi?',
+            text: 'Anda harus masuk kembali untuk mengakses SI-PIKET.',
+            showCancelButton: true,
+            confirmButtonText: 'Ya, keluar',
+            cancelButtonText: 'Batal',
+            confirmButtonColor: '#d97706',
+            cancelButtonColor: '#64748b',
+            reverseButtons: true,
+        }).then(({ isConfirmed }) => {
+            if (isConfirmed) {
+                form.dataset.confirmed = 'true';
+                form.requestSubmit();
+            }
+        });
+        return;
+    }
+
+    const method = form.querySelector('input[name="_method"]')?.value.toUpperCase();
+    if (method !== 'DELETE') return;
+
+    event.preventDefault();
+    Swal.fire({
+        icon: 'warning',
+        title: 'Hapus data?',
+        text: form.dataset.confirmMessage || 'Data yang dihapus tidak dapat dikembalikan.',
+        showCancelButton: true,
+        confirmButtonText: 'Ya, hapus',
+        cancelButtonText: 'Batal',
+        confirmButtonColor: '#dc2626',
+        cancelButtonColor: '#64748b',
+        reverseButtons: true,
+    }).then(({ isConfirmed }) => {
+        if (isConfirmed) {
+            form.dataset.confirmed = 'true';
+            form.requestSubmit();
+        }
+    });
+});
 
 const mapElement = document.getElementById('school-location-map');
 
@@ -13,7 +79,15 @@ if (mapElement) {
     const searchButton = document.getElementById('search-location');
     const resultsElement = document.getElementById('location-results');
     const statusElement = document.getElementById('location-status');
-    const locationCatalog = JSON.parse(mapElement.dataset.locationCatalog || '[]');
+    const catalogElement = document.getElementById('location-catalog');
+    let locationCatalog = [];
+
+    try {
+        locationCatalog = JSON.parse(catalogElement?.textContent || '[]');
+    } catch (error) {
+        console.error('Katalog lokasi tidak dapat dibaca.', error);
+    }
+
     const defaultPosition = [
         Number(mapElement.dataset.defaultLatitude),
         Number(mapElement.dataset.defaultLongitude),
@@ -40,6 +114,7 @@ if (mapElement) {
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
         maxZoom: 19,
+        crossOrigin: true,
     }).addTo(map);
 
     const schoolIcon = L.divIcon({
@@ -114,13 +189,21 @@ if (mapElement) {
     };
     const searchLocation = async () => {
         const query = searchInput.value.trim();
-        if (!query) return;
+        if (!query) {
+            resultsElement.textContent = 'Masukkan nama lokasi atau alamat terlebih dahulu.';
+            searchInput.focus();
+            return;
+        }
+
         searchButton.disabled = true;
         resultsElement.textContent = 'Mencari lokasi...';
         const normalizedQuery = query.toLowerCase().replace(/\bsma\s*negeri\b/g, 'sman').replace(/[^a-z0-9]/g, '');
         const localResults = locationCatalog.filter((place) => {
-            const normalizedName = place.name.toLowerCase().replace(/\bsma\s*negeri\b/g, 'sman').replace(/[^a-z0-9]/g, '');
-            return normalizedName.includes(normalizedQuery) || normalizedQuery.includes(normalizedName);
+            const searchableText = `${place.name || ''} ${place.address || ''}`
+                .toLowerCase()
+                .replace(/\bsma\s*negeri\b/g, 'sman')
+                .replace(/[^a-z0-9]/g, '');
+            return searchableText.includes(normalizedQuery);
         });
         if (localResults.length) {
             showResults(localResults);
@@ -128,7 +211,9 @@ if (mapElement) {
             return;
         }
         try {
-            const photonResponse = await fetch(`https://photon.komoot.io/api/?limit=5&q=${encodeURIComponent(query)}`);
+            const photonResponse = await fetch(`https://photon.komoot.io/api/?limit=5&q=${encodeURIComponent(`${query}, Indonesia`)}`, {
+                headers: { Accept: 'application/json' },
+            });
             if (!photonResponse.ok) throw new Error('Photon failed');
             let results = (await photonResponse.json()).features.map((feature) => ({
                 name: feature.properties.name || query,
@@ -172,6 +257,8 @@ if (mapElement) {
     searchInput.addEventListener('keydown', (event) => {
         if (event.key === 'Enter') { event.preventDefault(); searchLocation(); }
     });
+
+    window.setTimeout(() => map.invalidateSize(), 0);
 
     locationButton.addEventListener('click', () => {
         if (!navigator.geolocation) {

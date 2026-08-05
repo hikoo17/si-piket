@@ -45,7 +45,8 @@
             
             <div id="location-results" class="space-y-1 text-xs text-slate-600"></div>
 
-            <div id="school-location-map" class="h-80 w-full overflow-hidden rounded-xl border border-slate-200 shadow-inner" data-default-latitude="-7.32709600" data-default-longitude="108.22034900" data-location-catalog='@json($locationCatalog)'></div>
+            <div id="school-location-map" class="h-80 w-full overflow-hidden rounded-xl border border-slate-200 shadow-inner" data-default-latitude="-7.32709600" data-default-longitude="108.22034900"></div>
+            <script id="location-catalog" type="application/json">{!! json_encode($locationCatalog, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) !!}</script>
             
             <div class="flex items-center gap-2 rounded-xl bg-slate-50 p-3 text-xs text-slate-600">
                 <span class="inline-block h-2.5 w-2.5 rounded-full bg-rose-500 ring-4 ring-rose-100"></span>

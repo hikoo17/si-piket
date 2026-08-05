@@ -5,45 +5,179 @@
     ['verification.index', 'Verifikasi', 'heroicon-o-shield-check'],
     ['reports.index', 'Laporan', 'heroicon-o-clipboard-document-list'],
 ]])
+
 @section('content')
-<h1 class="mb-5 text-2xl font-bold text-slate-900">Laporan Piket</h1>
-<form class="filter-panel mb-5 flex flex-wrap items-end gap-2 p-4">
-    <div class="flex-1 min-w-[160px]">
-        <label class="mb-1 block text-xs font-semibold text-amber-900">Bulan</label>
-         <input type="month" name="month" value="{{ request('month') }}" class="w-full">
+<div class="space-y-5">
+    <!-- Header Section -->
+    <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <div>
+            <h1 class="text-xl font-bold tracking-tight text-slate-900">Laporan Aktivitas Piket</h1>
+            <p class="text-xs text-slate-500 mt-0.5">Pantau, filter, dan unduh rekapan riwayat piket siswa.</p>
+        </div>
+        
+        <!-- Export Actions -->
+        <div class="flex items-center gap-2">
+            <a href="{{ route('reports.csv', request()->query()) }}" class="inline-flex h-9 items-center gap-2 rounded-lg border border-slate-200 bg-white px-3.5 text-xs font-semibold text-slate-700 transition hover:bg-slate-50 hover:text-slate-900">
+                <x-icon name="heroicon-o-document-text" class="h-4 w-4 text-emerald-600" />
+                <span>Export CSV</span>
+            </a>
+            <a href="{{ route('reports.pdf', request()->query()) }}" class="inline-flex h-9 items-center gap-2 rounded-lg border border-slate-200 bg-white px-3.5 text-xs font-semibold text-slate-700 transition hover:bg-slate-50 hover:text-slate-900">
+                <x-icon name="heroicon-o-arrow-down-tray" class="h-4 w-4 text-rose-600" />
+                <span>Export PDF</span>
+            </a>
+        </div>
     </div>
-    <div class="flex-1 min-w-[160px]">
-        <label class="mb-1 block text-xs font-semibold text-amber-900">Kelas</label>
-         <select name="class_id" class="w-full"><option value="">Semua kelas</option>@foreach($classes as $class)<option value="{{ $class->id }}" @selected(request('class_id')==$class->id)>{{ $class->name }}</option>@endforeach</select>
+
+    <!-- Filter Panel -->
+    <div class="rounded-xl border border-slate-200 bg-white p-4">
+        <form class="grid gap-3 sm:grid-cols-2 lg:grid-cols-5 lg:items-end">
+            <!-- Filter Bulan -->
+            <div>
+                <label class="mb-1 block text-[0.68rem] font-bold uppercase tracking-wider text-slate-500">Bulan</label>
+                <input type="month" name="month" value="{{ request('month') }}" class="h-9 w-full rounded-lg border border-slate-200 bg-slate-50/50 px-3 text-xs font-medium text-slate-800 transition focus:border-amber-500 focus:bg-white focus:outline-none focus:ring-1 focus:ring-amber-500">
+            </div>
+
+            <!-- Filter Kelas -->
+            <div>
+                <label class="mb-1 block text-[0.68rem] font-bold uppercase tracking-wider text-slate-500">Kelas</label>
+                <select name="class_id" class="h-9 w-full rounded-lg border border-slate-200 bg-slate-50/50 px-3 text-xs font-medium text-slate-800 transition focus:border-amber-500 focus:bg-white focus:outline-none focus:ring-1 focus:ring-amber-500">
+                    <option value="">Semua Kelas</option>
+                    @foreach($classes as $class)
+                        <option value="{{ $class->id }}" @selected(request('class_id') == $class->id)>{{ $class->name }}</option>
+                    @endforeach
+                </select>
+            </div>
+
+            <!-- Filter Jenis Piket -->
+            <div>
+                <label class="mb-1 block text-[0.68rem] font-bold uppercase tracking-wider text-slate-500">Jenis Piket</label>
+                <select name="shift" class="h-9 w-full rounded-lg border border-slate-200 bg-slate-50/50 px-3 text-xs font-medium text-slate-800 transition focus:border-amber-500 focus:bg-white focus:outline-none focus:ring-1 focus:ring-amber-500">
+                    <option value="">Semua Jenis</option>
+                    <option value="morning" @selected(request('shift') === 'morning')>Piket Pagi</option>
+                    <option value="afternoon" @selected(request('shift') === 'afternoon')>Piket Pulang</option>
+                </select>
+            </div>
+
+            <!-- Filter Status -->
+            <div>
+                <label class="mb-1 block text-[0.68rem] font-bold uppercase tracking-wider text-slate-500">Status</label>
+                <select name="status" class="h-9 w-full rounded-lg border border-slate-200 bg-slate-50/50 px-3 text-xs font-medium text-slate-800 transition focus:border-amber-500 focus:bg-white focus:outline-none focus:ring-1 focus:ring-amber-500">
+                    <option value="">Semua Status</option>
+                    @foreach(['approved' => 'Disetujui', 'pending' => 'Menunggu', 'rejected' => 'Ditolak', 'absent' => 'Absen'] as $statusKey => $statusLabel)
+                        <option value="{{ $statusKey }}" @selected(request('status') == $statusKey)>{{ $statusLabel }}</option>
+                    @endforeach
+                </select>
+            </div>
+
+            <!-- Action Filter Button -->
+            <div class="flex items-center gap-2">
+                <button type="submit" class="h-9 flex-1 inline-flex items-center justify-center gap-2 rounded-lg bg-amber-500 px-3 text-xs font-bold text-white transition hover:bg-amber-600 focus:outline-none">
+                    <x-icon name="heroicon-o-funnel" class="h-4 w-4" />
+                    <span>Filter</span>
+                </button>
+                @if(request()->hasAny(['month', 'class_id', 'shift', 'status']))
+                    <a href="{{ route('reports.index') }}" class="h-9 w-9 inline-flex shrink-0 items-center justify-center rounded-lg border border-slate-200 bg-slate-100 text-slate-600 transition hover:bg-slate-200" title="Reset Filter">
+                        <x-icon name="heroicon-o-x-mark" class="h-4 w-4" />
+                    </a>
+                @endif
+            </div>
+        </form>
     </div>
-    <div class="flex-1 min-w-[140px]">
-        <label class="mb-1 block text-xs font-semibold text-amber-900">Jenis Piket</label>
-        <select name="shift" class="w-full"><option value="">Semua jenis</option><option value="morning" @selected(request('shift')==='morning')>Piket Pagi</option><option value="afternoon" @selected(request('shift')==='afternoon')>Piket Pulang</option></select>
+
+    <!-- Table Section -->
+    <div class="overflow-hidden rounded-xl border border-slate-200 bg-white">
+        <div class="overflow-x-auto">
+            <table class="w-full text-left border-collapse">
+                <thead>
+                    <tr class="border-b border-slate-100 bg-slate-50/80 text-[0.68rem] font-bold uppercase tracking-wider text-slate-500">
+                        <th class="py-3 px-4">Tanggal</th>
+                        <th class="py-3 px-4">Siswa</th>
+                        <th class="py-3 px-4">Kelas</th>
+                        <th class="py-3 px-4">Jenis Piket</th>
+                        <th class="py-3 px-4">Status</th>
+                        <th class="py-3 px-4">Jarak GPS</th>
+                        <th class="py-3 px-4">Akurasi</th>
+                        <th class="py-3 px-4 text-center">Aksi</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-100 text-xs font-medium text-slate-700">
+                    @forelse($logs as $log)
+                        <tr class="transition hover:bg-slate-50/60">
+                            <td class="py-3 px-4 whitespace-nowrap text-slate-900 font-semibold">
+                                {{ $log->date ? $log->date->format('d/m/Y') : '-' }}
+                            </td>
+                            <td class="py-3 px-4">
+                                <div class="font-semibold text-slate-900">{{ $log->user->name ?? '-' }}</div>
+                            </td>
+                            <td class="py-3 px-4 whitespace-nowrap text-slate-500">
+                                {{ $log->user->schoolClass?->name ?? '-' }}
+                            </td>
+                            <td class="py-3 px-4 whitespace-nowrap">
+                                <span class="inline-flex items-center gap-1 font-semibold text-slate-800">
+                                    @if(($log->schedule?->shift ?? '') === 'morning')
+                                        <x-icon name="heroicon-o-sun" class="h-3.5 w-3.5 text-amber-500" />
+                                    @else
+                                        <x-icon name="heroicon-o-moon" class="h-3.5 w-3.5 text-indigo-500" />
+                                    @endif
+                                    {{ $log->schedule?->shift_label ?? '-' }}
+                                </span>
+                            </td>
+                            <td class="py-3 px-4 whitespace-nowrap">
+                                @php
+                                    $statusClasses = [
+                                        'approved' => 'bg-emerald-50 text-emerald-700 border-emerald-200/80',
+                                        'pending'  => 'bg-amber-50 text-amber-700 border-amber-200/80',
+                                        'rejected' => 'bg-rose-50 text-rose-700 border-rose-200/80',
+                                        'absent'   => 'bg-slate-100 text-slate-600 border-slate-200',
+                                    ];
+                                    $statusIcons = [
+                                        'approved' => 'heroicon-o-check-circle',
+                                        'pending'  => 'heroicon-o-clock',
+                                        'rejected' => 'heroicon-o-x-circle',
+                                        'absent'   => 'heroicon-o-minus-circle',
+                                    ];
+                                @endphp
+                                <span class="inline-flex items-center gap-1 rounded-full border px-2.5 py-0.5 text-[0.65rem] font-bold uppercase tracking-wider {{ $statusClasses[$log->status] ?? 'bg-slate-100 text-slate-600 border-slate-200' }}">
+                                    <x-icon name="{{ $statusIcons[$log->status] ?? 'heroicon-o-question-mark-circle' }}" class="h-3.5 w-3.5" />
+                                    {{ $log->status }}
+                                </span>
+                            </td>
+                            <td class="py-3 px-4 whitespace-nowrap text-slate-600">
+                                {{ $log->distance_meters ? $log->distance_meters . ' m' : '-' }}
+                            </td>
+                            <td class="py-3 px-4 whitespace-nowrap text-slate-600">
+                                {{ $log->accuracy_meters ? $log->accuracy_meters . ' m' : '-' }}
+                            </td>
+                            <td class="py-3 px-4 text-center whitespace-nowrap">
+                                <a href="{{ route('reports.show', $log) }}" class="inline-flex h-7 items-center gap-1 rounded-md border border-slate-200 bg-white px-2.5 text-xs font-semibold text-slate-700 transition hover:border-amber-300 hover:bg-amber-50/50 hover:text-amber-700">
+                                    <x-icon name="heroicon-o-eye" class="h-3.5 w-3.5 text-slate-400" />
+                                    <span>Detail</span>
+                                </a>
+                            </td>
+                        </tr>
+                    @empty
+                        <tr>
+                            <td colspan="8" class="py-10 text-center">
+                                <div class="flex flex-col items-center justify-center">
+                                    <span class="grid h-10 w-10 place-items-center rounded-xl bg-slate-100 text-slate-400">
+                                        <x-icon name="heroicon-o-clipboard-document-list" class="h-5 w-5" />
+                                    </span>
+                                    <h3 class="mt-2 text-xs font-bold text-slate-800">Tidak ada data laporan</h3>
+                                    <p class="text-[0.7rem] text-slate-500 mt-0.5">Coba sesuaikan kriteria filter Anda.</p>
+                                </div>
+                            </td>
+                        </tr>
+                    @endforelse
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Pagination Footer -->
+        @if($logs->hasPages())
+            <div class="border-t border-slate-100 bg-slate-50/50 px-4 py-2.5">
+                {{ $logs->links() }}
+            </div>
+        @endif
     </div>
-    <div class="flex-1 min-w-[140px]">
-        <label class="mb-1 block text-xs font-semibold text-amber-900">Status</label>
-         <select name="status" class="w-full"><option value="">Semua status</option>@foreach(['approved'=>'Disetujui','pending'=>'Menunggu','rejected'=>'Ditolak','absent'=>'Absen'] as $statusKey=>$statusLabel)<option value="{{ $statusKey }}" @selected(request('status')==$statusKey)>{{ $statusLabel }}</option>@endforeach</select>
-    </div>
-    <div class="flex gap-2">
-        <button class="btn btn-primary">Filter</button>
-        <a href="{{ route('reports.csv',request()->query()) }}" class="btn btn-secondary">CSV</a>
-        <a href="{{ route('reports.pdf',request()->query()) }}" class="btn btn-secondary">PDF</a>
-    </div>
-</form>
-<div class="table-shell overflow-auto">
-    <table class="data-table">
-        <thead><tr><th>Tanggal</th><th>Siswa</th><th>Kelas</th><th>Jenis Piket</th><th>Status</th><th>Jarak</th><th>Akurasi</th><th>Detail</th></tr></thead>
-        <tbody class="divide-y divide-amber-100">@foreach($logs as $log)<tr class="transition hover:bg-amber-50/60">
-            <td class="p-3 text-sm text-amber-950">{{ $log->date->format('d/m/Y') }}</td>
-            <td class="p-3 text-sm font-medium text-amber-950">{{ $log->user->name }}</td>
-            <td class="p-3 text-xs text-amber-700">{{ $log->user->schoolClass?->name }}</td>
-            <td class="p-3 text-xs font-semibold text-amber-900">{{ $log->schedule?->shift_label }}</td>
-            <td class="p-3"><span class="inline-block rounded-full px-2 py-0.5 text-[.65rem] font-bold uppercase {{ $log->status==='approved' ? 'bg-emerald-100 text-emerald-700' : ($log->status==='pending' ? 'bg-amber-100 text-amber-900' : ($log->status==='rejected' ? 'bg-red-100 text-red-700' : 'bg-gray-100 text-gray-700')) }}">{{ $log->status }}</span></td>
-            <td class="p-3 text-sm text-amber-950">{{ $log->distance_meters }} m</td>
-             <td class="p-3 text-sm text-amber-950">{{ $log->accuracy_meters }} m</td>
-             <td class="p-3"><a href="{{ route('reports.show', $log) }}" class="btn btn-secondary text-xs">Lihat detail</a></td>
-         </tr>@endforeach</tbody>
-    </table>
 </div>
-<div class="app-pagination">{{ $logs->links() }}</div>
 @endsection

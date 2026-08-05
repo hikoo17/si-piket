@@ -70,7 +70,7 @@
                                         class="rounded px-2 py-1 text-indigo-600 hover:bg-indigo-50 hover:text-indigo-700 transition-colors">
                                         Edit
                                     </a>
-                                    <form method="POST" action="{{ route('classes.destroy', $class) }}" class="inline" onsubmit="return confirm('Hapus kelas ini?')">
+                                    <form method="POST" action="{{ route('classes.destroy', $class) }}" class="inline" data-confirm-message="Hapus kelas ini?">
                                         @csrf 
                                         @method('DELETE')
                                          <button type="submit" class="rounded px-2 py-1 text-rose-600 hover:bg-rose-50 hover:text-rose-700 transition-colors">
