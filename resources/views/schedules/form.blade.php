@@ -15,7 +15,7 @@
 
     <div>
         <h1 class="text-2xl font-bold tracking-tight text-slate-900">{{ $schedule->exists ? 'Edit' : 'Tambah' }} Jadwal Piket</h1>
-        <p class="mt-1 text-sm text-slate-500">{{ $schedule->exists ? 'Perbarui hari dan jenis piket siswa.' : 'Pilih siswa, hari, dan jenis piket yang akan dijalankan.' }}</p>
+        <p class="mt-1 text-sm text-slate-500">{{ $schedule->exists ? 'Perbarui hari dan jenis piket siswa.' : 'Pilih siswa dan hari. Piket Pagi & Piket Pulang akan dibuat sekaligus.' }}</p>
     </div>
 
     <div class="rounded-xl border border-slate-200 bg-white p-6">
@@ -47,13 +47,9 @@
                     @error('day_of_week') <p class="mt-1 text-xs text-rose-600">{{ $message }}</p> @enderror
                 </div>
 
-                <div>
-                    <label for="shift" class="mb-1.5 block text-sm font-medium text-slate-700">Jenis Piket</label>
-                    <select id="shift" name="shift" required class="w-full">
-                        <option value="morning" @selected(old('shift', $schedule->shift ?? 'morning') === 'morning')>Piket Pagi</option>
-                        <option value="afternoon" @selected(old('shift', $schedule->shift ?? 'morning') === 'afternoon')>Piket Pulang</option>
-                    </select>
-                    @error('shift') <p class="mt-1 text-xs text-rose-600">{{ $message }}</p> @enderror
+                <div class="rounded-lg border border-amber-200/70 bg-amber-50/50 p-4">
+                    <p class="text-sm font-semibold text-amber-900">Piket Pagi & Pulang</p>
+                    <p class="mt-0.5 text-xs text-amber-800/90">{{ $schedule->exists ? 'Kedua jenis piket selalu dibuat berpasangan dan tidak dapat diubah satu per satu.' : 'Kedua jenis piket akan dibuat otomatis untuk hari yang dipilih.' }}</p>
                 </div>
             </div>
 

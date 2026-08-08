@@ -54,9 +54,23 @@
                                 <p id="overlay-status-text" class="text-xs font-semibold text-white leading-tight">Memproses...</p>
                             </div>
                         </div>
-                    </div>
+                        </div>
 
-                    <!-- Floating Badge Status Kamera (Kiri Atas) -->
+                        <!-- Centered "Mencari Lokasi" Animation Overlay -->
+                        <div id="location-search" class="hidden absolute inset-0 z-30 flex flex-col items-center justify-center gap-4 bg-slate-950/70 backdrop-blur-sm">
+                            <div class="relative h-24 w-24">
+                                <span class="absolute inset-0 rounded-full bg-amber-500/30 animate-ping"></span>
+                                <span class="absolute inset-4 rounded-full bg-amber-500/40 animate-ping" style="animation-delay: .45s"></span>
+                                <span class="absolute inset-0 rounded-full border-2 border-white/20 border-t-amber-500 animate-spin"></span>
+                                <span class="absolute inset-0 grid place-items-center">
+                                    <x-icon name="heroicon-o-map-pin" class="h-8 w-8 text-amber-400" />
+                                </span>
+                            </div>
+                            <p id="location-search-text" class="text-sm font-semibold text-white">Sedang mencari lokasi...</p>
+                            <p class="text-[0.7rem] font-medium text-white/60">Mohon izinkan akses lokasi & GPS</p>
+                        </div>
+
+                        <!-- Floating Badge Status Kamera (Kiri Atas) -->
                     <div class="absolute left-3 top-3 z-10">
                         <span id="cam-badge" class="inline-flex items-center gap-1.5 rounded-full bg-slate-900/80 px-2.5 py-1 text-[0.65rem] font-bold text-white backdrop-blur-md border border-white/10">
                             <span class="h-2 w-2 rounded-full bg-emerald-400 animate-pulse"></span>
@@ -146,13 +160,16 @@
           switchCamera = document.querySelector('#switch-camera'),
           videoOverlay = document.querySelector('#video-overlay-loading'),
           overlayStatusText = document.querySelector('#overlay-status-text'),
-          overlaySpinner = document.querySelector('#overlay-spinner');
+          overlaySpinner = document.querySelector('#overlay-spinner'),
+          locationSearch = document.querySelector('#location-search'),
+          locationSearchText = document.querySelector('#location-search-text');
 
     let cameraStream, cameraDevices = [], cameraIndex = 0, cameraStarting = false;
 
     function showStatus(msg, isLoading = false) {
         if (!msg) {
             videoOverlay.classList.add('hidden');
+            locationSearch.classList.add('hidden');
             return;
         }
 
@@ -164,6 +181,34 @@
         } else {
             overlaySpinner.classList.add('hidden');
         }
+    }
+
+    function startLocationSearch(msg = 'Sedang mencari lokasi...') {
+        videoOverlay.classList.add('hidden');
+        locationSearchText.textContent = msg;
+        locationSearch.classList.remove('hidden');
+    }
+
+    function stopLocationSearch() {
+        locationSearch.classList.add('hidden');
+    }
+
+    function setLocationSearchText(msg) {
+        locationSearchText.textContent = msg;
+    }
+
+    function prepareRetake() {
+        preview.classList.add('hidden');
+        video.classList.remove('hidden');
+        captureText.textContent = 'Ambil Foto';
+        submit.disabled = true;
+        photo.value = '';
+        camBadge.innerHTML = `<span class="h-2 w-2 rounded-full bg-emerald-400 animate-pulse"></span> Kamera Aktif`;
+        showStatus(null);
+        startCamera().catch(error => {
+            showStatus(cameraErrorMessage(error), false);
+            camBadge.innerHTML = `<span class="h-2 w-2 rounded-full bg-red-500"></span> Kamera Off`;
+        });
     }
 
     function cameraErrorMessage(error) {
@@ -243,8 +288,7 @@
     });
 
     if (photo.value) {
-        video.classList.add('hidden');
-        preview.classList.remove('hidden');
+        prepareRetake();
     }
 
     capture.addEventListener('click', async () => {
@@ -270,13 +314,7 @@
         const isRetake = !preview.classList.contains('hidden');
 
         if (isRetake) {
-            preview.classList.add('hidden');
-            video.classList.remove('hidden');
-            captureText.textContent = 'Ambil Foto';
-            submit.disabled = true;
-            photo.value = '';
-            camBadge.innerHTML = `<span class="h-2 w-2 rounded-full bg-emerald-400 animate-pulse"></span> Kamera Aktif`;
-            showStatus(null);
+            prepareRetake();
         } else {
             const scale = Math.min(1, 1600 / video.videoWidth);
             canvas.width = Math.round(video.videoWidth * scale);
@@ -313,7 +351,7 @@
         capture.disabled = true;
         let bestPosition = null, finished = false, watchId, timer;
 
-        showStatus('Mencari lokasi presisi...', true);
+        startLocationSearch('Sedang mencari lokasi...');
 
         const finish = () => {
             if (finished) return;
@@ -322,8 +360,8 @@
             clearTimeout(timer);
 
             if (!bestPosition) {
-                submit.disabled = false;
-                capture.disabled = false;
+                stopLocationSearch();
+                prepareRetake();
                 showStatus('Gagal mendapatkan lokasi. Aktifkan GPS.', false);
                 return;
             }
@@ -333,6 +371,7 @@
             document.querySelector('#longitude').value = coords.longitude;
             document.querySelector('#accuracy').value = coords.accuracy;
 
+            stopLocationSearch();
             showStatus(`Lokasi terkunci (±${Math.round(coords.accuracy)}m). Mengirim data...`, true);
             cameraStream?.getTracks().forEach(track => track.stop());
 
@@ -352,9 +391,9 @@
                     bestPosition = pos;
                 }
                 const accuracy = Math.round(bestPosition.coords.accuracy);
-                showStatus(accuracy <= 150
+                setLocationSearchText(accuracy <= 150
                     ? `Lokasi presisi didapat (±${accuracy}m). Mengirim...`
-                    : `Meningkatkan akurasi GPS... (±${accuracy}m)`, true);
+                    : `Meningkatkan akurasi GPS... (±${accuracy}m)`);
 
                 if (bestPosition.coords.accuracy <= 150) finish();
             },
@@ -363,8 +402,8 @@
                 finished = true;
                 clearTimeout(timer);
                 if (watchId !== undefined) navigator.geolocation.clearWatch(watchId);
-                submit.disabled = false;
-                capture.disabled = false;
+                stopLocationSearch();
+                prepareRetake();
                 const message = error.code === 1
                     ? 'Izin lokasi ditolak. Izinkan lokasi di browser.'
                     : 'Gagal mendapatkan lokasi GPS.';

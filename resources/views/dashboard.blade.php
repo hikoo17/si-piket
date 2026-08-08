@@ -7,9 +7,60 @@
     ['users.index', 'Pengguna', 'heroicon-o-users'],
 ]])
 
+@php
+    $role = $role ?? auth()->user()->role;
+
+    $cards = [];
+    if ($role === 'siswa') {
+        $statusLabel = match ($myLog?->status) {
+            'approved' => 'Disetujui',
+            'pending' => 'Menunggu',
+            'rejected' => 'Ditolak',
+            default => 'Belum',
+        };
+        $cards = [
+            ['Jadwal Piket', $mySchedule ? 1 : 0, 'heroicon-o-calendar-days', 'Giliran piket hari ini', 'text-amber-600 bg-amber-50 border-amber-200/60'],
+            ['Bukti Terkirim', $myLog ? 1 : 0, 'heroicon-o-camera', 'Foto bukti hari ini', 'text-indigo-600 bg-indigo-50 border-indigo-200/60'],
+            ['Status Bukti', $statusLabel, 'heroicon-o-information-circle', 'Verifikasi bukti piket', 'text-slate-600 bg-slate-100 border-slate-200'],
+        ];
+    } elseif ($role === 'km') {
+        $cards = [
+            ['Anggota Kelas', $memberCount, 'heroicon-o-users', 'Siswa & KM terdaftar', 'text-slate-600 bg-slate-100 border-slate-200'],
+            ['Piket Pagi', $morningScheduleCount, 'heroicon-o-sun', 'Jadwal pagi kelas', 'text-amber-600 bg-amber-50 border-amber-200/60'],
+            ['Piket Pulang', $afternoonScheduleCount, 'heroicon-o-moon', 'Jadwal pulang kelas', 'text-indigo-600 bg-indigo-50 border-indigo-200/60'],
+            ['Belum Kirim', max(0, $memberCount - $submittedCount), 'heroicon-o-exclamation-triangle', 'Anggota belum upload', 'text-rose-600 bg-rose-50 border-rose-200/60'],
+            ['Perlu Ditinjau', $pendingCount, 'heroicon-o-shield-check', 'Menunggu verifikasi', 'text-amber-600 bg-amber-50 border-amber-200/60'],
+        ];
+    } elseif ($role === 'guru') {
+        $cards = [
+            ['Piket Pagi', $morningScheduleCount, 'heroicon-o-sun', 'Jadwal pagi kelas', 'text-amber-600 bg-amber-50 border-amber-200/60'],
+            ['Piket Pulang', $afternoonScheduleCount, 'heroicon-o-moon', 'Jadwal pulang kelas', 'text-indigo-600 bg-indigo-50 border-indigo-200/60'],
+            ['Perlu Ditinjau', $pendingCount, 'heroicon-o-shield-check', 'Menunggu verifikasi', 'text-amber-600 bg-amber-50 border-amber-200/60'],
+            ['Disetujui', $approvedCount, 'heroicon-o-check-circle', 'Bukti piket valid', 'text-emerald-600 bg-emerald-50 border-emerald-200/60'],
+            ['Anggota', $memberCount, 'heroicon-o-users', 'Siswa & KM kelas', 'text-slate-600 bg-slate-100 border-slate-200'],
+        ];
+    } else {
+        $cards = [
+            ['Piket Pagi', $morningScheduleCount ?? 0, 'heroicon-o-sun', 'Jadwal pagi hari ini', 'text-amber-600 bg-amber-50 border-amber-200/60'],
+            ['Piket Pulang', $afternoonScheduleCount ?? 0, 'heroicon-o-moon', 'Jadwal pulang hari ini', 'text-indigo-600 bg-indigo-50 border-indigo-200/60'],
+            ['Perlu Ditinjau', $pendingCount ?? 0, 'heroicon-o-exclamation-triangle', 'Menunggu verifikasi', 'text-amber-600 bg-amber-50 border-amber-200/60'],
+            ['Sudah Disetujui', $approvedCount ?? 0, 'heroicon-o-check-circle', 'Bukti piket valid', 'text-emerald-600 bg-emerald-50 border-emerald-200/60'],
+            ['Siswa & KM', $studentCount ?? 0, 'heroicon-o-users', 'Pengguna terdaftar', 'text-slate-600 bg-slate-100 border-slate-200'],
+        ];
+    }
+
+    $roleLabel = match ($role) {
+        'siswa' => 'Siswa',
+        'km' => 'Ketua Kelas',
+        'guru' => 'Guru Piket',
+        'admin' => 'Administrator',
+        default => 'Pengguna',
+    };
+@endphp
+
 @section('content')
 <div class="space-y-5">
-    <!-- Hero / Welcome Banner (Versi Awal dengan Shadow Tipis) -->
+    <!-- Hero / Welcome Banner -->
     <section class="relative overflow-hidden rounded-[2rem] bg-gradient-to-br from-amber-400 via-yellow-400 to-amber-500 p-7 text-amber-950 shadow-sm border border-amber-500/20 before:absolute before:-right-24 before:-top-36 before:h-96 before:w-96 before:rounded-full before:border-[55px] before:border-white/20 lg:p-10">
         <div class="relative z-[1] grid items-end gap-8 lg:grid-cols-[1fr_auto]">
             <div class="max-w-2xl">
@@ -17,7 +68,7 @@
                     Selamat datang, <span class="rounded-lg bg-white/80 px-2 font-serif font-normal italic text-amber-950 shadow-sm">{{ explode(' ', auth()->user()->name)[0] }}</span>.
                 </h1>
                 <p class="mt-4 max-w-xl text-sm font-medium leading-7 text-amber-950/75">
-                    Pantau aktivitas piket dan selesaikan hal penting hari ini dari satu ruang kerja yang ringkas.
+                    Pantau aktivitas piket sebagai <span class="font-bold">{{ $roleLabel }}</span> dan selesaikan hal penting hari ini dari satu ruang kerja yang ringkas.
                 </p>
             </div>
 
@@ -33,19 +84,9 @@
         </div>
     </section>
 
-    <!-- Stats Cards Grid (Minimalis & Shadow Tipis) -->
-    @php
-        $stats = [
-            ['Piket Pagi', $morningScheduleCount ?? 0, 'heroicon-o-sun', 'Jadwal pagi hari ini', 'text-amber-600 bg-amber-50 border-amber-200/60'],
-            ['Piket Pulang', $afternoonScheduleCount ?? 0, 'heroicon-o-moon', 'Jadwal pulang hari ini', 'text-indigo-600 bg-indigo-50 border-indigo-200/60'],
-            ['Perlu Ditinjau', $pendingCount ?? 0, 'heroicon-o-exclamation-triangle', 'Menunggu verifikasi', 'text-amber-600 bg-amber-50 border-amber-200/60'],
-            ['Sudah Disetujui', $approvedCount ?? 0, 'heroicon-o-check-circle', 'Bukti piket valid', 'text-emerald-600 bg-emerald-50 border-emerald-200/60'],
-            ['Siswa & KM', $studentCount ?? 0, 'heroicon-o-users', 'Pengguna terdaftar', 'text-slate-600 bg-slate-100 border-slate-200'],
-        ];
-    @endphp
-
+    <!-- Stats Cards Grid (per role) -->
     <div class="grid gap-3.5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
-        @foreach($stats as [$label, $value, $icon, $description, $style])
+        @foreach($cards as [$label, $value, $icon, $description, $style])
             <article class="group flex flex-col justify-between rounded-xl border border-slate-200 bg-white p-4 shadow-sm transition hover:border-slate-300">
                 <div>
                     <div class="mb-3 flex items-center justify-between gap-2">
@@ -55,7 +96,7 @@
                         </span>
                     </div>
                     <strong class="block text-2xl font-bold tracking-tight text-slate-900">
-                        {{ str_pad($value, 2, '0', STR_PAD_LEFT) }}
+                        @if(is_numeric($value)){{ str_pad($value, 2, '0', STR_PAD_LEFT) }}@else{{ $value }}@endif
                     </strong>
                 </div>
                 <div class="mt-2.5 border-t border-slate-100 pt-2.5">
@@ -65,43 +106,225 @@
         @endforeach
     </div>
 
-    <!-- Jam Piket Hari Ini (Minimalis & Shadow Tipis) -->
-    <section class="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
-        <div class="mb-4 flex flex-wrap items-center justify-between gap-2">
-            <div>
-                <h2 class="text-base font-bold tracking-tight text-slate-900">Jam Piket Hari Ini</h2>
-                <p class="text-xs text-slate-500">Ikuti rentang waktu yang ditentukan. Upload di luar jam ini akan ditolak.</p>
-            </div>
-        </div>
-        
-        <div class="grid gap-3 sm:grid-cols-2">
-            <div class="flex flex-col justify-between rounded-lg border border-amber-200/80 bg-amber-50/50 p-4">
-                <div>
-                    <div class="flex items-center gap-1.5 text-amber-800">
-                        <x-icon name="heroicon-o-sun" class="h-4 w-4" />
-                        <p class="text-xs font-bold uppercase tracking-wider">Piket Masuk</p>
-                    </div>
-                    <p class="mt-2 text-xl font-bold tracking-tight text-amber-950">
-                        {{ substr($school->upload_start_time ?? '00:00', 0, 5) }} – {{ substr($school->upload_deadline ?? '00:00', 0, 5) }}
-                    </p>
-                </div>
-                <p class="mt-1.5 text-xs text-amber-800/80">Foto bukti hanya dapat dikirim pada jam ini.</p>
+    <!-- Role-specific Info Section -->
+    @if($role === 'siswa')
+        <section class="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
+            <div class="mb-4">
+                <h2 class="text-base font-bold tracking-tight text-slate-900">Piket Saya Hari Ini</h2>
+                <p class="text-xs text-slate-500">Lihat jadwal dan status bukti piket kamu hari ini.</p>
             </div>
 
-            <div class="flex flex-col justify-between rounded-lg border border-indigo-200/80 bg-indigo-50/50 p-4">
-                <div>
-                    <div class="flex items-center gap-1.5 text-indigo-800">
-                        <x-icon name="heroicon-o-moon" class="h-4 w-4" />
-                        <p class="text-xs font-bold uppercase tracking-wider">Piket Pulang</p>
+            @if($mySchedules->isNotEmpty())
+                @php
+                    $morningSchedule = $mySchedules->get('morning');
+                    $afternoonSchedule = $mySchedules->get('afternoon');
+                    $morningLog = $myLogs->get('morning');
+                    $afternoonLog = $myLogs->get('afternoon');
+                    $statusLabelFor = fn ($log) => match ($log?->status) {
+                        'approved' => 'Sudah diterima',
+                        'pending' => 'Menunggu verifikasi',
+                        'rejected' => 'Ditolak',
+                        default => 'Belum mengirim',
+                    };
+                    $statusBadgeFor = fn ($log) => match ($log?->status) {
+                        'approved' => 'bg-emerald-100 text-emerald-700 border-emerald-200',
+                        'pending' => 'bg-amber-100 text-amber-700 border-amber-200',
+                        'rejected' => 'bg-rose-100 text-rose-700 border-rose-200',
+                        default => 'bg-slate-100 text-slate-600 border-slate-200',
+                    };
+                @endphp
+                <div class="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
+                    <div class="flex flex-col justify-between rounded-lg border border-amber-200/80 bg-amber-50/50 p-4">
+                        <div>
+                            <div class="flex items-center gap-1.5 text-amber-800">
+                                <x-icon name="heroicon-o-sun" class="h-4 w-4" />
+                                <p class="text-xs font-bold uppercase tracking-wider">Piket Pagi</p>
+                            </div>
+                            <p class="mt-2 text-xl font-bold tracking-tight text-amber-950">
+                                {{ substr($school->upload_start_time ?? '00:00', 0, 5) }} – {{ substr($school->upload_deadline ?? '00:00', 0, 5) }}
+                            </p>
+                        </div>
+                        <p class="mt-1.5 text-xs text-amber-800/80">{{ $morningSchedule ? 'Jadwal aktif untuk kamu.' : 'Jadwal pagi belum tersedia.' }}</p>
                     </div>
-                    <p class="mt-2 text-xl font-bold tracking-tight text-indigo-950">
-                        {{ substr($school->return_upload_start_time ?? '00:00', 0, 5) }} – {{ substr($school->return_upload_deadline ?? '00:00', 0, 5) }}
-                    </p>
+
+                    <div class="flex flex-col justify-between rounded-lg border border-indigo-200/80 bg-indigo-50/50 p-4">
+                        <div>
+                            <div class="flex items-center gap-1.5 text-indigo-800">
+                                <x-icon name="heroicon-o-moon" class="h-4 w-4" />
+                                <p class="text-xs font-bold uppercase tracking-wider">Piket Pulang</p>
+                            </div>
+                            <p class="mt-2 text-xl font-bold tracking-tight text-indigo-950">
+                                {{ substr($school->return_upload_start_time ?? '00:00', 0, 5) }} – {{ substr($school->return_upload_deadline ?? '00:00', 0, 5) }}
+                            </p>
+                        </div>
+                        <p class="mt-1.5 text-xs text-indigo-800/80">{{ $afternoonSchedule ? 'Jadwal aktif untuk kamu.' : 'Jadwal pulang belum tersedia.' }}</p>
+                    </div>
+
+                    <div class="flex flex-col justify-between rounded-lg border border-slate-200 bg-slate-50/50 p-4">
+                        <div>
+                            <p class="text-xs font-bold uppercase tracking-wider text-slate-500">Status Bukti Piket</p>
+                            <p class="mt-2">
+                                <span class="inline-flex items-center rounded-full border px-3 py-1 text-xs font-bold {{ $statusBadgeFor($myLog) }}">{{ $statusLabelFor($myLog) }}</span>
+                            </p>
+                            <div class="mt-3 space-y-1.5 text-xs">
+                                <div class="flex items-center justify-between gap-2">
+                                    <span class="text-slate-500">Bukti pagi</span>
+                                    <span class="rounded-full border px-2 py-0.5 font-bold {{ $statusBadgeFor($morningLog) }}">{{ $statusLabelFor($morningLog) }}</span>
+                                </div>
+                                <div class="flex items-center justify-between gap-2">
+                                    <span class="text-slate-500">Bukti pulang</span>
+                                    <span class="rounded-full border px-2 py-0.5 font-bold {{ $statusBadgeFor($afternoonLog) }}">{{ $statusLabelFor($afternoonLog) }}</span>
+                                </div>
+                            </div>
+                        </div>
+                        <a href="{{ route('piket.upload.form') }}" class="mt-3 inline-flex h-9 items-center justify-center gap-2 rounded-lg bg-amber-500 px-4 text-xs font-bold text-amber-950 shadow-sm transition hover:bg-amber-400">
+                            <x-icon name="heroicon-o-camera" class="h-4 w-4" />
+                            <span>{{ $myLog ? 'Ambil Bukti Ulang' : 'Ambil Bukti Piket' }}</span>
+                        </a>
+                    </div>
                 </div>
-                <p class="mt-1.5 text-xs text-indigo-800/80">Foto bukti hanya dapat dikirim pada jam ini.</p>
+            @else
+                <div class="flex flex-col items-center justify-center py-8 text-center">
+                    <span class="grid h-10 w-10 place-items-center rounded-xl bg-slate-100 text-slate-400">
+                        <x-icon name="heroicon-o-calendar-days" class="h-5 w-5" />
+                    </span>
+                    <h3 class="mt-2 text-xs font-bold text-slate-800">Tidak ada jadwal piket</h3>
+                    <p class="mt-0.5 text-[0.7rem] text-slate-500">Kamu tidak memiliki jadwal piket yang terdaftar untuk hari ini.</p>
+                </div>
+            @endif
+        </section>
+    @elseif($role === 'km')
+        <section class="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
+            <div class="mb-4 flex flex-wrap items-center justify-between gap-2">
+                <div>
+                    <h2 class="text-base font-bold tracking-tight text-slate-900">Ringkasan Kelas</h2>
+                    <p class="text-xs text-slate-500">Pantau keikutsertaan piket anggota kelas kamu hari ini.</p>
+                </div>
             </div>
-        </div>
-    </section>
+            <div class="grid gap-3 sm:grid-cols-3">
+                <div class="rounded-lg border border-slate-200 bg-slate-50/50 p-4">
+                    <p class="text-xs font-bold uppercase tracking-wider text-slate-500">Sudah Kirim</p>
+                    <p class="mt-1 text-2xl font-bold text-slate-900">{{ $submittedCount }} <span class="text-sm font-medium text-slate-400">/ {{ $memberCount }}</span></p>
+                </div>
+                <div class="rounded-lg border border-rose-200/80 bg-rose-50/50 p-4">
+                    <p class="text-xs font-bold uppercase tracking-wider text-rose-700">Belum Kirim</p>
+                    <p class="mt-1 text-2xl font-bold text-rose-700">{{ max(0, $memberCount - $submittedCount) }}</p>
+                </div>
+                <div class="rounded-lg border border-amber-200/80 bg-amber-50/50 p-4">
+                    <p class="text-xs font-bold uppercase tracking-wider text-amber-700">Perlu Ditinjau</p>
+                    <p class="mt-1 text-2xl font-bold text-amber-700">{{ $pendingCount }}</p>
+                </div>
+            </div>
+
+            @if($unsubmitted->isNotEmpty())
+                <div class="mt-4 rounded-lg border border-rose-200/80 bg-rose-50/40 p-4">
+                    <p class="text-xs font-bold uppercase tracking-wider text-rose-700">Belum Kirim Bukti ({{ $unsubmitted->count() }})</p>
+                    <ul class="mt-2 max-h-56 space-y-1.5 overflow-y-auto pr-1">
+                        @foreach($unsubmitted as $student)
+                            <li class="flex items-center justify-between gap-2 rounded-md bg-white px-3 py-2 text-xs">
+                                <span class="font-semibold text-slate-800">{{ $student->name }}</span>
+                                <span class="text-[0.7rem] text-slate-400">{{ $student->schoolClass?->name }}</span>
+                            </li>
+                        @endforeach
+                    </ul>
+                </div>
+            @endif
+
+            <div class="mt-4 rounded-lg border border-slate-200 bg-slate-50/50 p-4">
+                <p class="text-xs font-bold uppercase tracking-wider text-slate-500">Bukti Piket Saya</p>
+                <div class="mt-2 grid gap-2 sm:grid-cols-2">
+                    @foreach(['morning' => 'Bukti pagi', 'afternoon' => 'Bukti pulang'] as $shift => $label)
+                        @php
+                            $log = $myLogs->get($shift);
+                            $status = match ($log?->status) {
+                                'approved' => ['Sudah diterima', 'bg-emerald-100 text-emerald-700 border-emerald-200'],
+                                'pending' => ['Menunggu verifikasi', 'bg-amber-100 text-amber-700 border-amber-200'],
+                                'rejected' => ['Ditolak', 'bg-rose-100 text-rose-700 border-rose-200'],
+                                default => ['Belum mengirim', 'bg-slate-100 text-slate-600 border-slate-200'],
+                            };
+                        @endphp
+                        <div class="flex items-center justify-between rounded-md bg-white px-3 py-2 text-xs">
+                            <span class="font-semibold text-slate-700">{{ $label }}</span>
+                            <span class="rounded-full border px-2 py-0.5 font-bold {{ $status[1] }}">{{ $status[0] }}</span>
+                        </div>
+                    @endforeach
+                </div>
+            </div>
+        </section>
+    @elseif($role === 'guru')
+        <section class="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
+            <div class="mb-4">
+                <h2 class="text-base font-bold tracking-tight text-slate-900">Verifikasi Bukti</h2>
+                <p class="text-xs text-slate-500">Tinjau kiriman bukti piket kelas yang masih menunggu persetujuan.</p>
+            </div>
+            <div class="flex flex-wrap items-center justify-between gap-3 rounded-lg border border-amber-200/80 bg-amber-50/50 p-4">
+                <div class="flex items-center gap-3">
+                    <span class="grid h-10 w-10 place-items-center rounded-xl bg-white text-amber-700 shadow-sm">
+                        <x-icon name="heroicon-o-shield-check" class="h-5 w-5" />
+                    </span>
+                    <div>
+                        <p class="text-sm font-bold text-amber-950">{{ $pendingCount }} bukti menunggu verifikasi</p>
+                        <p class="text-xs text-amber-800/80">Segera tinjau agar presensi tercatat.</p>
+                    </div>
+                </div>
+                <a href="{{ route('verification.index') }}" class="inline-flex h-9 items-center justify-center gap-2 rounded-lg bg-amber-500 px-4 text-xs font-bold text-amber-950 shadow-sm transition hover:bg-amber-400">
+                    <span>Verifikasi Sekarang</span>
+                    <x-icon name="heroicon-o-arrow-right" class="h-3.5 w-3.5" />
+                </a>
+            </div>
+
+            @if($unsubmitted->isNotEmpty())
+                <div class="mt-4 rounded-lg border border-rose-200/80 bg-rose-50/40 p-4">
+                    <p class="text-xs font-bold uppercase tracking-wider text-rose-700">Belum Kirim Bukti ({{ $unsubmitted->count() }})</p>
+                    <ul class="mt-2 max-h-56 space-y-1.5 overflow-y-auto pr-1">
+                        @foreach($unsubmitted as $student)
+                            <li class="flex items-center justify-between gap-2 rounded-md bg-white px-3 py-2 text-xs">
+                                <span class="font-semibold text-slate-800">{{ $student->name }}</span>
+                                <span class="text-[0.7rem] text-slate-400">{{ $student->schoolClass?->name }}</span>
+                            </li>
+                        @endforeach
+                    </ul>
+                </div>
+            @endif
+        </section>
+    @else
+        <section class="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
+            <div class="mb-4 flex flex-wrap items-center justify-between gap-2">
+                <div>
+                    <h2 class="text-base font-bold tracking-tight text-slate-900">Jam Piket Hari Ini</h2>
+                    <p class="text-xs text-slate-500">Ikuti rentang waktu yang ditentukan. Upload di luar jam ini akan ditolak.</p>
+                </div>
+            </div>
+
+            <div class="grid gap-3 sm:grid-cols-2">
+                <div class="flex flex-col justify-between rounded-lg border border-amber-200/80 bg-amber-50/50 p-4">
+                    <div>
+                        <div class="flex items-center gap-1.5 text-amber-800">
+                            <x-icon name="heroicon-o-sun" class="h-4 w-4" />
+                            <p class="text-xs font-bold uppercase tracking-wider">Piket Masuk</p>
+                        </div>
+                        <p class="mt-2 text-xl font-bold tracking-tight text-amber-950">
+                            {{ substr($school->upload_start_time ?? '00:00', 0, 5) }} – {{ substr($school->upload_deadline ?? '00:00', 0, 5) }}
+                        </p>
+                    </div>
+                    <p class="mt-1.5 text-xs text-amber-800/80">Foto bukti hanya dapat dikirim pada jam ini.</p>
+                </div>
+
+                <div class="flex flex-col justify-between rounded-lg border border-indigo-200/80 bg-indigo-50/50 p-4">
+                    <div>
+                        <div class="flex items-center gap-1.5 text-indigo-800">
+                            <x-icon name="heroicon-o-moon" class="h-4 w-4" />
+                            <p class="text-xs font-bold uppercase tracking-wider">Piket Pulang</p>
+                        </div>
+                        <p class="mt-2 text-xl font-bold tracking-tight text-indigo-950">
+                            {{ substr($school->return_upload_start_time ?? '00:00', 0, 5) }} – {{ substr($school->return_upload_deadline ?? '00:00', 0, 5) }}
+                        </p>
+                    </div>
+                    <p class="mt-1.5 text-xs text-indigo-800/80">Foto bukti hanya dapat dikirim pada jam ini.</p>
+                </div>
+            </div>
+        </section>
+    @endif
 
     <!-- Main Content & Side Note Section -->
     <div class="grid gap-5 xl:grid-cols-[1.35fr_.65fr]">
@@ -113,7 +336,7 @@
             </div>
 
             <div class="grid gap-2.5 sm:grid-cols-2">
-                @if(auth()->user()->role === 'admin')
+                @if($role === 'admin')
                     <a class="group flex items-center justify-between rounded-lg border border-slate-200 bg-slate-50/50 p-3.5 transition hover:border-amber-400 hover:bg-amber-50/30" href="{{ route('schools.index') }}">
                         <div class="flex items-center gap-3">
                             <span class="grid h-9 w-9 shrink-0 place-items-center rounded-lg bg-white border border-slate-200 text-slate-700 shadow-sm transition group-hover:border-amber-400 group-hover:text-amber-600">
@@ -167,7 +390,7 @@
                     </a>
                 @endif
 
-                @if(in_array(auth()->user()->role, ['siswa', 'km']))
+                @if(in_array($role, ['siswa', 'km']))
                     <a class="group flex items-center justify-between rounded-lg border border-slate-200 bg-slate-50/50 p-3.5 transition hover:border-amber-400 hover:bg-amber-50/30" href="{{ route('piket.upload.form') }}">
                         <div class="flex items-center gap-3">
                             <span class="grid h-9 w-9 shrink-0 place-items-center rounded-lg bg-white border border-slate-200 text-slate-700 shadow-sm transition group-hover:border-amber-400 group-hover:text-amber-600">
@@ -182,7 +405,7 @@
                     </a>
                 @endif
 
-                @if(in_array(auth()->user()->role, ['admin', 'km']))
+                @if(in_array($role, ['admin', 'km']))
                     <a class="group flex items-center justify-between rounded-lg border border-slate-200 bg-slate-50/50 p-3.5 transition hover:border-amber-400 hover:bg-amber-50/30" href="{{ route('schedules.index') }}">
                         <div class="flex items-center gap-3">
                             <span class="grid h-9 w-9 shrink-0 place-items-center rounded-lg bg-white border border-slate-200 text-slate-700 shadow-sm transition group-hover:border-amber-400 group-hover:text-amber-600">
@@ -197,7 +420,7 @@
                     </a>
                 @endif
 
-                @if(in_array(auth()->user()->role, ['admin', 'guru', 'km']))
+                @if(in_array($role, ['admin', 'guru', 'km']))
                     <a class="group flex items-center justify-between rounded-lg border border-slate-200 bg-slate-50/50 p-3.5 transition hover:border-amber-400 hover:bg-amber-50/30" href="{{ route('verification.index') }}">
                         <div class="flex items-center gap-3">
                             <span class="grid h-9 w-9 shrink-0 place-items-center rounded-lg bg-white border border-slate-200 text-slate-700 shadow-sm transition group-hover:border-amber-400 group-hover:text-amber-600">
@@ -206,6 +429,21 @@
                             <div>
                                 <strong class="block text-xs font-bold text-slate-800 group-hover:text-amber-900">Verifikasi Bukti</strong>
                                 <small class="text-[0.7rem] text-slate-500">Tinjau kiriman terbaru</small>
+                            </div>
+                        </div>
+                        <x-icon name="heroicon-o-arrow-right" class="h-3.5 w-3.5 text-slate-400 transition group-hover:translate-x-1 group-hover:text-amber-600" />
+                    </a>
+                @endif
+
+                @if($role === 'guru')
+                    <a class="group flex items-center justify-between rounded-lg border border-slate-200 bg-slate-50/50 p-3.5 transition hover:border-amber-400 hover:bg-amber-50/30" href="{{ route('reports.index') }}">
+                        <div class="flex items-center gap-3">
+                            <span class="grid h-9 w-9 shrink-0 place-items-center rounded-lg bg-white border border-slate-200 text-slate-700 shadow-sm transition group-hover:border-amber-400 group-hover:text-amber-600">
+                                <x-icon name="heroicon-o-clipboard-document-list" class="h-4 w-4" />
+                            </span>
+                            <div>
+                                <strong class="block text-xs font-bold text-slate-800 group-hover:text-amber-900">Laporan</strong>
+                                <small class="text-[0.7rem] text-slate-500">Rekap presensi piket</small>
                             </div>
                         </div>
                         <x-icon name="heroicon-o-arrow-right" class="h-3.5 w-3.5 text-slate-400 transition group-hover:translate-x-1 group-hover:text-amber-600" />
@@ -226,7 +464,7 @@
                     Pastikan setiap bukti piket diambil secara langsung dari lokasi sekolah dan diunggah sesuai tenggat waktu yang ditentukan.
                 </p>
             </div>
-            
+
             <div class="mt-5 border-t border-slate-100 pt-3 text-[0.7rem] font-semibold text-slate-400">
                 Piket App &bull; SMAN 1 Tasikmalaya
             </div>

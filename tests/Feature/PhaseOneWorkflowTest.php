@@ -103,11 +103,13 @@ class PhaseOneWorkflowTest extends TestCase
         $admin = User::factory()->create(['role' => 'admin']);
         $student = User::factory()->create(['role' => 'siswa', 'class_id' => $class->id]);
 
-        $data = ['user_id' => $student->id, 'day_of_week' => 'Sunday', 'shift' => 'morning'];
+        $data = ['user_id' => $student->id, 'day_of_week' => 'Sunday'];
         $this->actingAs($admin)->post(route('schedules.store'), $data)->assertSessionHas('success');
-        $this->actingAs($admin)->post(route('schedules.store'), $data)->assertSessionHasErrors('day_of_week');
+        $this->assertDatabaseCount('piket_schedules', 2);
 
-        $this->assertDatabaseCount('piket_schedules', 1);
+        // Mengirim ulang hari yang sama tidak menambah jadwal duplikat.
+        $this->actingAs($admin)->post(route('schedules.store'), $data)->assertSessionHas('success');
+        $this->assertDatabaseCount('piket_schedules', 2);
     }
 
     #[Test]

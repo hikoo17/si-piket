@@ -81,44 +81,57 @@
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-slate-100 text-xs font-medium text-slate-700">
-                    @forelse($schedules as $schedule)
+                    @php
+                        $dayMap = [
+                            'Monday' => 'Senin', 'Tuesday' => 'Selasa', 'Wednesday' => 'Rabu',
+                            'Thursday' => 'Kamis', 'Friday' => 'Jumat', 'Saturday' => 'Sabtu', 'Sunday' => 'Minggu'
+                        ];
+                    @endphp
+                    @forelse($schedules as $group)
+                        @php
+                            $first = $group->first();
+                            $user = $first->user;
+                            $morning = $group->firstWhere('shift', 'morning');
+                            $afternoon = $group->firstWhere('shift', 'afternoon');
+                            $editTarget = $morning ?? $afternoon;
+                        @endphp
                         <tr class="transition hover:bg-slate-50/50">
                             <td class="whitespace-nowrap px-4 py-3 font-semibold text-slate-900">
-                                {{ $schedule->user->name ?? '-' }}
+                                {{ $user->name ?? '-' }}
                             </td>
                             <td class="whitespace-nowrap px-4 py-3 text-slate-500">
-                                {{ $schedule->user->schoolClass?->name ?? '-' }}
+                                {{ $user->schoolClass?->name ?? '-' }}
                             </td>
                             <td class="whitespace-nowrap px-4 py-3">
-                                @php
-                                    $dayMap = [
-                                        'Monday' => 'Senin', 'Tuesday' => 'Selasa', 'Wednesday' => 'Rabu',
-                                        'Thursday' => 'Kamis', 'Friday' => 'Jumat', 'Saturday' => 'Sabtu', 'Sunday' => 'Minggu'
-                                    ];
-                                @endphp
                                 <span class="inline-flex items-center rounded-md border border-slate-200 bg-slate-100 px-2 py-0.5 text-[0.68rem] font-bold text-slate-700">
-                                    {{ $dayMap[$schedule->day_of_week] ?? $schedule->day_of_week }}
+                                    {{ $dayMap[$first->day_of_week] ?? $first->day_of_week }}
                                 </span>
                             </td>
                             <td class="whitespace-nowrap px-4 py-3">
-                                <span class="inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-[0.65rem] font-bold uppercase tracking-wider {{ $schedule->shift === 'afternoon' ? 'bg-indigo-50 text-indigo-700 border border-indigo-200/80' : 'bg-amber-50 text-amber-700 border border-amber-200/80' }}">
-                                    @if($schedule->shift === 'morning')
-                                        <x-icon name="heroicon-o-sun" class="h-3.5 w-3.5 text-amber-500" />
-                                    @else
-                                        <x-icon name="heroicon-o-moon" class="h-3.5 w-3.5 text-indigo-500" />
+                                <div class="flex flex-wrap gap-1.5">
+                                    @if($morning)
+                                        <span class="inline-flex items-center gap-1 rounded-full border border-amber-200/80 bg-amber-50 px-2.5 py-0.5 text-[0.65rem] font-bold uppercase tracking-wider text-amber-700">
+                                            <x-icon name="heroicon-o-sun" class="h-3.5 w-3.5 text-amber-500" />
+                                            Pagi
+                                        </span>
                                     @endif
-                                    {{ $schedule->shift_label }}
-                                </span>
+                                    @if($afternoon)
+                                        <span class="inline-flex items-center gap-1 rounded-full border border-indigo-200/80 bg-indigo-50 px-2.5 py-0.5 text-[0.65rem] font-bold uppercase tracking-wider text-indigo-700">
+                                            <x-icon name="heroicon-o-moon" class="h-3.5 w-3.5 text-indigo-500" />
+                                            Pulang
+                                        </span>
+                                    @endif
+                                </div>
                             </td>
                             <td class="whitespace-nowrap px-4 py-3 text-center">
                                 <div class="inline-flex items-center justify-center gap-1.5">
-                                    <a href="{{ route('schedules.edit', $schedule) }}" class="inline-flex h-7 items-center gap-1 rounded-md border border-slate-200 bg-white px-2.5 text-xs font-semibold text-slate-700 transition hover:border-amber-300 hover:bg-amber-50/50 hover:text-amber-700">
+                                    <a href="{{ route('schedules.edit', $editTarget) }}" class="inline-flex h-7 items-center gap-1 rounded-md border border-slate-200 bg-white px-2.5 text-xs font-semibold text-slate-700 transition hover:border-amber-300 hover:bg-amber-50/50 hover:text-amber-700">
                                         <x-icon name="heroicon-o-pencil-square" class="h-3.5 w-3.5 text-slate-400" />
                                         <span>Edit</span>
                                     </a>
 
                                     <!-- Delete Form -->
-                                    <form method="POST" action="{{ route('schedules.destroy', $schedule) }}" onsubmit="return confirm('Yakin ingin menghapus jadwal ini?');">
+                                    <form method="POST" action="{{ route('schedules.destroy', $editTarget) }}">
                                         @csrf 
                                         @method('DELETE')
                                         <button type="submit" class="inline-flex h-7 items-center gap-1 rounded-md border border-slate-200 bg-white px-2.5 text-xs font-semibold text-rose-600 transition hover:border-rose-200 hover:bg-rose-50" title="Hapus Jadwal">

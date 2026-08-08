@@ -7,6 +7,7 @@ use App\Models\PiketSchedule;
 use App\Models\School;
 use App\Models\SchoolClass;
 use App\Models\User;
+use Database\Seeders\ClassStudentsSeeder;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
@@ -49,6 +50,8 @@ class DatabaseSeeder extends Seeder
         $km = $this->user('Ketua Kelas RPL', 'km@si-piket.test', 'km', $rpl->id, $password, '628133333333');
         $student = $this->user('Siswa RPL', 'siswa@si-piket.test', 'siswa', $rpl->id, $password, '628144444444');
         $otherStudent = $this->user('Siswa TKJ', 'siswa.tkj@si-piket.test', 'siswa', $tkj->id, $password, '628155555555');
+
+        $this->call(ClassStudentsSeeder::class);
 
         $day = now()->englishDayOfWeek;
 

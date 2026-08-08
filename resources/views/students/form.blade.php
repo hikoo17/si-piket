@@ -1,7 +1,6 @@
 @extends('layouts.app', ['title' => $student->exists ? 'Edit Siswa' : 'Tambah Siswa'])
 @section('content')
 <div class="mb-5">
-    <p class="text-xs font-bold uppercase tracking-[.16em] text-slate-400">Sekolah / Kelas / Siswa / Jadwal</p>
     <h1 class="mt-1 text-2xl font-bold text-slate-900">{{ $student->exists ? 'Edit' : 'Tambah' }} Siswa</h1>
     <p class="mt-2 text-sm text-slate-500">KM tetap tercatat sebagai anggota kelas, dengan akses untuk mengatur jadwal kelasnya.</p>
 </div>

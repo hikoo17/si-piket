@@ -6,7 +6,7 @@ const passwordInput = document.getElementById('password');
 const passwordToggle = document.getElementById('password-toggle');
 const loginForm = document.getElementById('login-form');
 const loginSubmit = document.getElementById('login-submit');
-const loader = loginSubmit?.querySelector('[data-lucide="loader-circle"]');
+const loader = loginSubmit?.querySelector('svg.lucide-loader-circle');
 const submitLabel = loginSubmit?.querySelector('[data-submit-label]');
 const submitArrow = loginSubmit?.querySelector('[data-submit-arrow]');
 
