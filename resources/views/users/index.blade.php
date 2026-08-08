@@ -6,16 +6,179 @@
     ['reports.index', 'Laporan', 'heroicon-o-clipboard-document-list'],
     ['users.index', 'Pengguna', 'heroicon-o-users'],
 ]])
+
 @section('content')
-<div class="flex items-end justify-between gap-4">
-    <div><h1 class="text-2xl font-bold text-slate-900">Staf & Pengguna</h1><p class="mt-1 text-sm text-slate-500">Kelola akun dan hak akses pengguna aplikasi.</p></div>
-    <a href="{{ route('users.create') }}" class="btn btn-primary">Tambah Pengguna</a>
+<div class="space-y-5">
+    <!-- Header Section -->
+    <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <div>
+            <h1 class="text-xl font-bold tracking-tight text-slate-900">Staf & Pengguna</h1>
+            <p class="text-xs text-slate-500 mt-0.5">Kelola akun, peran, dan hak akses pengguna aplikasi.</p>
+        </div>
+        <a href="{{ route('users.create') }}" 
+           class="inline-flex h-9 shrink-0 items-center justify-center gap-1.5 rounded-lg bg-indigo-600 px-3.5 text-xs font-bold text-white shadow-sm transition hover:bg-indigo-700 focus:outline-none">
+            <x-icon name="heroicon-o-user-plus" class="h-4 w-4" />
+            <span>Tambah Pengguna</span>
+        </a>
+    </div>
+
+    <!-- Users Table/Card Shell Section -->
+    <div class="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
+        <div class="overflow-x-auto">
+            <table class="w-full text-left text-xs text-slate-600">
+                <thead class="border-b border-slate-200 bg-slate-50/80 text-[0.68rem] font-bold uppercase tracking-wider text-slate-500">
+                    <tr>
+                        <th scope="col" class="px-4 py-3">Pengguna</th>
+                        <th scope="col" class="px-4 py-3">Peran (Role)</th>
+                        <th scope="col" class="px-4 py-3">Kelas</th>
+                        <th scope="col" class="px-4 py-3 text-right">Aksi</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-100">
+                    @forelse($users as $user)
+                        <tr class="transition hover:bg-slate-50/60">
+                            <!-- User Detail -->
+                            <td class="px-4 py-3">
+                                <div class="flex items-center gap-3">
+                                    <div class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-slate-100 font-bold text-slate-600 border border-slate-200">
+                                        {{ strtoupper(substr($user->name, 0, 1)) }}
+                                    </div>
+                                    <div>
+                                        <div class="font-bold text-slate-900">{{ $user->name }}</div>
+                                        <div class="text-[0.7rem] text-slate-500">{{ $user->email }}</div>
+                                    </div>
+                                </div>
+                            </td>
+
+                            <!-- Role Badge -->
+                            <td class="px-4 py-3 whitespace-nowrap">
+                                @php
+                                    $roleClass = match(strtolower($user->role)) {
+                                        'admin' => 'bg-purple-50 text-purple-700 border-purple-200/80',
+                                        'guru', 'teacher' => 'bg-blue-50 text-blue-700 border-blue-200/80',
+                                        'siswa', 'student' => 'bg-emerald-50 text-emerald-700 border-emerald-200/80',
+                                        default => 'bg-slate-100 text-slate-600 border-slate-200',
+                                    };
+                                @endphp
+                                <span class="inline-flex items-center rounded-full border px-2.5 py-0.5 text-[0.65rem] font-bold uppercase tracking-wider {{ $roleClass }}">
+                                    {{ $user->role }}
+                                </span>
+                            </td>
+
+                            <!-- Class -->
+                            <td class="px-4 py-3 whitespace-nowrap text-slate-700 font-medium">
+                                <div class="flex items-center gap-1.5">
+                                    <x-icon name="heroicon-o-academic-cap" class="h-4 w-4 text-slate-400" />
+                                    <span>{{ $user->schoolClass?->name ?? '-' }}</span>
+                                </div>
+                            </td>
+
+                            <!-- Actions -->
+                            <td class="px-4 py-3 whitespace-nowrap text-right">
+                                <div class="inline-flex items-center gap-2">
+                                    <!-- Edit Link -->
+                                    <a href="{{ route('users.edit', $user) }}" 
+                                       class="inline-flex h-8 items-center gap-1 rounded-lg border border-slate-200 bg-white px-2.5 text-xs font-semibold text-slate-700 transition hover:bg-slate-50 hover:text-indigo-600 focus:outline-none">
+                                        <x-icon name="heroicon-o-pencil-square" class="h-3.5 w-3.5 text-slate-400" />
+                                        <span>Edit</span>
+                                    </a>
+
+                                    <!-- Delete Trigger -->
+                                    <button type="button" 
+                                            onclick="openDeleteModal('{{ route('users.destroy', $user) }}', '{{ addslashes($user->name) }}')"
+                                            class="inline-flex h-8 items-center gap-1 rounded-lg border border-slate-200 bg-white px-2.5 text-xs font-semibold text-rose-600 transition hover:bg-rose-50 hover:border-rose-200 focus:outline-none">
+                                        <x-icon name="heroicon-o-trash" class="h-3.5 w-3.5" />
+                                        <span>Hapus</span>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                    @empty
+                        <tr>
+                            <td colspan="4" class="px-4 py-10 text-center">
+                                <div class="flex flex-col items-center justify-center">
+                                    <span class="grid h-10 w-10 place-items-center rounded-xl bg-slate-100 text-slate-400">
+                                        <x-icon name="heroicon-o-users" class="h-5 w-5" />
+                                    </span>
+                                    <h3 class="mt-2 text-xs font-bold text-slate-800">Belum ada data pengguna</h3>
+                                    <p class="text-[0.7rem] text-slate-500 mt-0.5">Tambahkan pengguna baru untuk mulai mengelola akses.</p>
+                                </div>
+                            </td>
+                        </tr>
+                    @endforelse
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Pagination Footer -->
+    @if($users->hasPages())
+        <div class="rounded-xl border border-slate-200 bg-white px-4 py-2.5">
+            {{ $users->links() }}
+        </div>
+    @endif
 </div>
-<div class="table-shell mt-5 overflow-auto">
-    <table class="data-table">
-        <thead><tr><th>Nama</th><th>Role</th><th>Kelas</th><th>Aksi</th></tr></thead>
-        <tbody>@foreach($users as $user)<tr><td><strong class="text-slate-900">{{ $user->name }}</strong><small class="block text-slate-500">{{ $user->email }}</small></td><td><span class="rounded-full bg-slate-100 px-2.5 py-1 text-xs font-semibold text-slate-600">{{ strtoupper($user->role) }}</span></td><td>{{ $user->schoolClass?->name ?? '-' }}</td><td><a href="{{ route('users.edit',$user) }}" class="font-semibold text-indigo-600">Edit</a> <form class="inline" method="POST" action="{{ route('users.destroy',$user) }}" data-confirm-message="Hapus pengguna ini?">@csrf @method('DELETE')<button class="ml-3 font-semibold text-rose-600">Hapus</button></form></td></tr>@endforeach</tbody>
-    </table>
+
+<!-- Native Delete Confirmation Modal -->
+<div id="deleteModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-slate-900/40 p-4 backdrop-blur-sm">
+    <div class="w-full max-w-sm rounded-xl border border-slate-200 bg-white p-5 shadow-xl space-y-4">
+        <div class="flex items-center gap-3 text-rose-600">
+            <span class="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-rose-50 text-rose-600">
+                <x-icon name="heroicon-o-exclamation-triangle" class="h-5 w-5" />
+            </span>
+            <div>
+                <h3 class="text-sm font-bold text-slate-900">Hapus Pengguna</h3>
+                <p class="text-[0.7rem] text-slate-500">Tindakan ini tidak dapat dibatalkan.</p>
+            </div>
+        </div>
+
+        <p class="text-xs text-slate-600">
+            Apakah Anda yakin ingin menghapus akun <strong id="deleteUserName" class="text-slate-900"></strong>?
+        </p>
+
+        <form id="deleteForm" method="POST" action="" class="flex items-center justify-end gap-2 pt-2 border-t border-slate-100">
+            @csrf
+            @method('DELETE')
+            
+            <button type="button" 
+                    onclick="closeDeleteModal()" 
+                    class="h-9 rounded-lg border border-slate-200 bg-white px-4 text-xs font-semibold text-slate-700 transition hover:bg-slate-50">
+                Batal
+            </button>
+            <button type="submit" 
+                    class="h-9 rounded-lg bg-rose-600 px-4 text-xs font-bold text-white transition hover:bg-rose-700 shadow-sm">
+                Ya, Hapus
+            </button>
+        </form>
+    </div>
 </div>
-<div class="app-pagination">{{ $users->links() }}</div>
+
+<script>
+    function openDeleteModal(deleteUrl, userName) {
+        const modal = document.getElementById('deleteModal');
+        const form = document.getElementById('deleteForm');
+        const nameEl = document.getElementById('deleteUserName');
+
+        form.action = deleteUrl;
+        nameEl.textContent = userName;
+
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+    }
+
+    function closeDeleteModal() {
+        const modal = document.getElementById('deleteModal');
+        modal.classList.remove('flex');
+        modal.classList.add('hidden');
+    }
+
+    // Close on backdrop click & ESC
+    document.getElementById('deleteModal').addEventListener('click', function(e) {
+        if (e.target === this) closeDeleteModal();
+    });
+
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') closeDeleteModal();
+    });
+</script>
 @endsection

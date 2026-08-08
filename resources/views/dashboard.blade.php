@@ -8,9 +8,9 @@
 ]])
 
 @section('content')
-<div class="space-y-6">
-    <!-- Hero / Welcome Banner -->
-    <section class="relative overflow-hidden rounded-[2rem] bg-gradient-to-br from-amber-400 via-yellow-400 to-amber-500 p-7 text-amber-950 shadow-[0_24px_70px_rgba(217,119,6,.18)] before:absolute before:-right-24 before:-top-36 before:h-96 before:w-96 before:rounded-full before:border-[55px] before:border-white/20 lg:p-10">
+<div class="space-y-5">
+    <!-- Hero / Welcome Banner (Versi Awal dengan Shadow Tipis) -->
+    <section class="relative overflow-hidden rounded-[2rem] bg-gradient-to-br from-amber-400 via-yellow-400 to-amber-500 p-7 text-amber-950 shadow-sm border border-amber-500/20 before:absolute before:-right-24 before:-top-36 before:h-96 before:w-96 before:rounded-full before:border-[55px] before:border-white/20 lg:p-10">
         <div class="relative z-[1] grid items-end gap-8 lg:grid-cols-[1fr_auto]">
             <div class="max-w-2xl">
                 <h1 class="text-[clamp(2rem,4vw,3.7rem)] font-semibold leading-[1.04] tracking-[-.055em]">
@@ -33,7 +33,7 @@
         </div>
     </section>
 
-    <!-- Stats Cards Grid -->
+    <!-- Stats Cards Grid (Minimalis & Shadow Tipis) -->
     @php
         $stats = [
             ['Piket Pagi', $morningScheduleCount ?? 0, 'heroicon-o-sun', 'Jadwal pagi hari ini', 'text-amber-600 bg-amber-50 border-amber-200/60'],
@@ -44,193 +44,190 @@
         ];
     @endphp
 
-    <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
+    <div class="grid gap-3.5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
         @foreach($stats as [$label, $value, $icon, $description, $style])
-            <article class="group relative flex flex-col justify-between overflow-hidden rounded-2xl border border-slate-200/80 bg-white p-5 shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:border-slate-300 hover:shadow-md">
+            <article class="group flex flex-col justify-between rounded-xl border border-slate-200 bg-white p-4 shadow-sm transition hover:border-slate-300">
                 <div>
-                    <div class="mb-4 flex items-center justify-between gap-2">
-                        <span class="text-xs font-bold uppercase tracking-wider text-slate-500">{{ $label }}</span>
-                        <span class="grid h-10 w-10 shrink-0 place-items-center rounded-xl border {{ $style }}">
-                            {{-- Direct Icon Rendering tanpa iconMap --}}
-                            <x-icon name="{{ $icon }}" class="h-5 w-5" />
+                    <div class="mb-3 flex items-center justify-between gap-2">
+                        <span class="text-[0.7rem] font-bold uppercase tracking-wider text-slate-500">{{ $label }}</span>
+                        <span class="grid h-8 w-8 shrink-0 place-items-center rounded-lg border {{ $style }}">
+                            <x-icon name="{{ $icon }}" class="h-4 w-4" />
                         </span>
                     </div>
-                    <strong class="block text-3xl font-extrabold tracking-tight text-slate-900">
+                    <strong class="block text-2xl font-bold tracking-tight text-slate-900">
                         {{ str_pad($value, 2, '0', STR_PAD_LEFT) }}
                     </strong>
                 </div>
-                <div class="mt-3 border-t border-slate-100 pt-3">
-                    <span class="text-xs font-medium text-slate-500">{{ $description }}</span>
+                <div class="mt-2.5 border-t border-slate-100 pt-2.5">
+                    <span class="text-[0.7rem] font-medium text-slate-500">{{ $description }}</span>
                 </div>
             </article>
         @endforeach
     </div>
 
-    <!-- Jam Piket Hari Ini -->
-    <section class="rounded-2xl border border-slate-200/80 bg-white p-5 shadow-sm sm:p-6">
-        <div class="mb-5 flex flex-wrap items-center justify-between gap-2">
+    <!-- Jam Piket Hari Ini (Minimalis & Shadow Tipis) -->
+    <section class="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
+        <div class="mb-4 flex flex-wrap items-center justify-between gap-2">
             <div>
-                <h2 class="text-lg font-bold tracking-tight text-slate-900">Jam Piket Hari Ini</h2>
+                <h2 class="text-base font-bold tracking-tight text-slate-900">Jam Piket Hari Ini</h2>
                 <p class="text-xs text-slate-500">Ikuti rentang waktu yang ditentukan. Upload di luar jam ini akan ditolak.</p>
             </div>
-            <span class="rounded-full bg-slate-100 px-3.5 py-1 text-xs font-semibold text-slate-600 border border-slate-200/60">
-                {{ now()->translatedFormat('l, d F Y') }}
-            </span>
         </div>
-        <div class="grid gap-4 sm:grid-cols-2">
-            <div class="flex flex-col justify-between rounded-xl border border-amber-200/80 bg-amber-50/60 p-4">
+        
+        <div class="grid gap-3 sm:grid-cols-2">
+            <div class="flex flex-col justify-between rounded-lg border border-amber-200/80 bg-amber-50/50 p-4">
                 <div>
-                    <div class="flex items-center gap-2 text-amber-700">
+                    <div class="flex items-center gap-1.5 text-amber-800">
                         <x-icon name="heroicon-o-sun" class="h-4 w-4" />
                         <p class="text-xs font-bold uppercase tracking-wider">Piket Masuk</p>
                     </div>
-                    <p class="mt-2 text-2xl font-extrabold tracking-tight text-amber-950">
+                    <p class="mt-2 text-xl font-bold tracking-tight text-amber-950">
                         {{ substr($school->upload_start_time ?? '00:00', 0, 5) }} – {{ substr($school->upload_deadline ?? '00:00', 0, 5) }}
                     </p>
                 </div>
-                <p class="mt-2 text-xs font-medium text-amber-800/80">Foto bukti hanya dapat dikirim pada jam ini.</p>
+                <p class="mt-1.5 text-xs text-amber-800/80">Foto bukti hanya dapat dikirim pada jam ini.</p>
             </div>
 
-            <div class="flex flex-col justify-between rounded-xl border border-indigo-200/80 bg-indigo-50/60 p-4">
+            <div class="flex flex-col justify-between rounded-lg border border-indigo-200/80 bg-indigo-50/50 p-4">
                 <div>
-                    <div class="flex items-center gap-2 text-indigo-700">
+                    <div class="flex items-center gap-1.5 text-indigo-800">
                         <x-icon name="heroicon-o-moon" class="h-4 w-4" />
                         <p class="text-xs font-bold uppercase tracking-wider">Piket Pulang</p>
                     </div>
-                    <p class="mt-2 text-2xl font-extrabold tracking-tight text-indigo-950">
+                    <p class="mt-2 text-xl font-bold tracking-tight text-indigo-950">
                         {{ substr($school->return_upload_start_time ?? '00:00', 0, 5) }} – {{ substr($school->return_upload_deadline ?? '00:00', 0, 5) }}
                     </p>
                 </div>
-                <p class="mt-2 text-xs font-medium text-indigo-800/80">Foto bukti hanya dapat dikirim pada jam ini.</p>
+                <p class="mt-1.5 text-xs text-indigo-800/80">Foto bukti hanya dapat dikirim pada jam ini.</p>
             </div>
         </div>
     </section>
 
     <!-- Main Content & Side Note Section -->
-    <div class="grid gap-6 xl:grid-cols-[1.35fr_.65fr]">
+    <div class="grid gap-5 xl:grid-cols-[1.35fr_.65fr]">
         <!-- Akses Cepat / Quick Actions -->
-        <section class="rounded-2xl border border-slate-200/80 bg-white p-6 shadow-sm">
-            <div class="mb-5">
-                <h2 class="text-lg font-bold tracking-tight text-slate-900">Akses Cepat</h2>
+        <section class="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
+            <div class="mb-4">
+                <h2 class="text-base font-bold tracking-tight text-slate-900">Akses Cepat</h2>
                 <p class="text-xs text-slate-500">Pilih menu pekerjaan sesuai hak akses Anda</p>
             </div>
 
-            <div class="grid gap-3 sm:grid-cols-2">
+            <div class="grid gap-2.5 sm:grid-cols-2">
                 @if(auth()->user()->role === 'admin')
-                    <a class="group flex items-center justify-between rounded-xl border border-slate-200/80 bg-slate-50/50 p-4 transition duration-150 hover:border-amber-300 hover:bg-amber-50/40 hover:shadow-sm" href="{{ route('schools.index') }}">
+                    <a class="group flex items-center justify-between rounded-lg border border-slate-200 bg-slate-50/50 p-3.5 transition hover:border-amber-400 hover:bg-amber-50/30" href="{{ route('schools.index') }}">
                         <div class="flex items-center gap-3">
-                            <span class="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-white border border-slate-200 text-slate-700 shadow-sm transition group-hover:border-amber-300 group-hover:text-amber-600">
-                                <x-icon name="heroicon-o-academic-cap" class="h-5 w-5" />
+                            <span class="grid h-9 w-9 shrink-0 place-items-center rounded-lg bg-white border border-slate-200 text-slate-700 shadow-sm transition group-hover:border-amber-400 group-hover:text-amber-600">
+                                <x-icon name="heroicon-o-academic-cap" class="h-4 w-4" />
                             </span>
                             <div>
-                                <strong class="block text-sm font-semibold text-slate-800 group-hover:text-amber-700">Pengaturan Sekolah</strong>
-                                <small class="text-xs text-slate-500">Profil, lokasi & jam upload</small>
+                                <strong class="block text-xs font-bold text-slate-800 group-hover:text-amber-900">Pengaturan Sekolah</strong>
+                                <small class="text-[0.7rem] text-slate-500">Profil, lokasi & jam upload</small>
                             </div>
                         </div>
-                        <x-icon name="heroicon-o-arrow-right" class="h-4 w-4 text-slate-400 transition group-hover:translate-x-1 group-hover:text-amber-600" />
+                        <x-icon name="heroicon-o-arrow-right" class="h-3.5 w-3.5 text-slate-400 transition group-hover:translate-x-1 group-hover:text-amber-600" />
                     </a>
 
-                    <a class="group flex items-center justify-between rounded-xl border border-slate-200/80 bg-slate-50/50 p-4 transition duration-150 hover:border-amber-300 hover:bg-amber-50/40 hover:shadow-sm" href="{{ route('classes.index') }}">
+                    <a class="group flex items-center justify-between rounded-lg border border-slate-200 bg-slate-50/50 p-3.5 transition hover:border-amber-400 hover:bg-amber-50/30" href="{{ route('classes.index') }}">
                         <div class="flex items-center gap-3">
-                            <span class="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-white border border-slate-200 text-slate-700 shadow-sm transition group-hover:border-amber-300 group-hover:text-amber-600">
-                                <x-icon name="heroicon-o-squares-2x2" class="h-5 w-5" />
+                            <span class="grid h-9 w-9 shrink-0 place-items-center rounded-lg bg-white border border-slate-200 text-slate-700 shadow-sm transition group-hover:border-amber-400 group-hover:text-amber-600">
+                                <x-icon name="heroicon-o-squares-2x2" class="h-4 w-4" />
                             </span>
                             <div>
-                                <strong class="block text-sm font-semibold text-slate-800 group-hover:text-amber-700">Kelola Kelas</strong>
-                                <small class="text-xs text-slate-500">Susunan kelas aktif</small>
+                                <strong class="block text-xs font-bold text-slate-800 group-hover:text-amber-900">Kelola Kelas</strong>
+                                <small class="text-[0.7rem] text-slate-500">Susunan kelas aktif</small>
                             </div>
                         </div>
-                        <x-icon name="heroicon-o-arrow-right" class="h-4 w-4 text-slate-400 transition group-hover:translate-x-1 group-hover:text-amber-600" />
+                        <x-icon name="heroicon-o-arrow-right" class="h-3.5 w-3.5 text-slate-400 transition group-hover:translate-x-1 group-hover:text-amber-600" />
                     </a>
 
-                    <a class="group flex items-center justify-between rounded-xl border border-slate-200/80 bg-slate-50/50 p-4 transition duration-150 hover:border-amber-300 hover:bg-amber-50/40 hover:shadow-sm" href="{{ route('students.index') }}">
+                    <a class="group flex items-center justify-between rounded-lg border border-slate-200 bg-slate-50/50 p-3.5 transition hover:border-amber-400 hover:bg-amber-50/30" href="{{ route('students.index') }}">
                         <div class="flex items-center gap-3">
-                            <span class="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-white border border-slate-200 text-slate-700 shadow-sm transition group-hover:border-amber-300 group-hover:text-amber-600">
-                                <x-icon name="heroicon-o-user-group" class="h-5 w-5" />
+                            <span class="grid h-9 w-9 shrink-0 place-items-center rounded-lg bg-white border border-slate-200 text-slate-700 shadow-sm transition group-hover:border-amber-400 group-hover:text-amber-600">
+                                <x-icon name="heroicon-o-user-group" class="h-4 w-4" />
                             </span>
                             <div>
-                                <strong class="block text-sm font-semibold text-slate-800 group-hover:text-amber-700">Kelola Siswa</strong>
-                                <small class="text-xs text-slate-500">Anggota kelas dan KM</small>
+                                <strong class="block text-xs font-bold text-slate-800 group-hover:text-amber-900">Kelola Siswa</strong>
+                                <small class="text-[0.7rem] text-slate-500">Anggota kelas dan KM</small>
                             </div>
                         </div>
-                        <x-icon name="heroicon-o-arrow-right" class="h-4 w-4 text-slate-400 transition group-hover:translate-x-1 group-hover:text-amber-600" />
+                        <x-icon name="heroicon-o-arrow-right" class="h-3.5 w-3.5 text-slate-400 transition group-hover:translate-x-1 group-hover:text-amber-600" />
                     </a>
 
-                    <a class="group flex items-center justify-between rounded-xl border border-slate-200/80 bg-slate-50/50 p-4 transition duration-150 hover:border-amber-300 hover:bg-amber-50/40 hover:shadow-sm" href="{{ route('users.index') }}">
+                    <a class="group flex items-center justify-between rounded-lg border border-slate-200 bg-slate-50/50 p-3.5 transition hover:border-amber-400 hover:bg-amber-50/30" href="{{ route('users.index') }}">
                         <div class="flex items-center gap-3">
-                            <span class="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-white border border-slate-200 text-slate-700 shadow-sm transition group-hover:border-amber-300 group-hover:text-amber-600">
-                                <x-icon name="heroicon-o-users" class="h-5 w-5" />
+                            <span class="grid h-9 w-9 shrink-0 place-items-center rounded-lg bg-white border border-slate-200 text-slate-700 shadow-sm transition group-hover:border-amber-400 group-hover:text-amber-600">
+                                <x-icon name="heroicon-o-users" class="h-4 w-4" />
                             </span>
                             <div>
-                                <strong class="block text-sm font-semibold text-slate-800 group-hover:text-amber-700">Kelola Pengguna</strong>
-                                <small class="text-xs text-slate-500">Akun dan hak akses</small>
+                                <strong class="block text-xs font-bold text-slate-800 group-hover:text-amber-900">Kelola Pengguna</strong>
+                                <small class="text-[0.7rem] text-slate-500">Akun dan hak akses</small>
                             </div>
                         </div>
-                        <x-icon name="heroicon-o-arrow-right" class="h-4 w-4 text-slate-400 transition group-hover:translate-x-1 group-hover:text-amber-600" />
+                        <x-icon name="heroicon-o-arrow-right" class="h-3.5 w-3.5 text-slate-400 transition group-hover:translate-x-1 group-hover:text-amber-600" />
                     </a>
                 @endif
 
                 @if(in_array(auth()->user()->role, ['siswa', 'km']))
-                    <a class="group flex items-center justify-between rounded-xl border border-slate-200/80 bg-slate-50/50 p-4 transition duration-150 hover:border-amber-300 hover:bg-amber-50/40 hover:shadow-sm" href="{{ route('piket.upload.form') }}">
+                    <a class="group flex items-center justify-between rounded-lg border border-slate-200 bg-slate-50/50 p-3.5 transition hover:border-amber-400 hover:bg-amber-50/30" href="{{ route('piket.upload.form') }}">
                         <div class="flex items-center gap-3">
-                            <span class="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-white border border-slate-200 text-slate-700 shadow-sm transition group-hover:border-amber-300 group-hover:text-amber-600">
-                                <x-icon name="heroicon-o-qr-code" class="h-5 w-5" />
+                            <span class="grid h-9 w-9 shrink-0 place-items-center rounded-lg bg-white border border-slate-200 text-slate-700 shadow-sm transition group-hover:border-amber-400 group-hover:text-amber-600">
+                                <x-icon name="heroicon-o-qr-code" class="h-4 w-4" />
                             </span>
                             <div>
-                                <strong class="block text-sm font-semibold text-slate-800 group-hover:text-amber-700">Ambil Bukti Piket</strong>
-                                <small class="text-xs text-slate-500">Foto dan kirim bukti</small>
+                                <strong class="block text-xs font-bold text-slate-800 group-hover:text-amber-900">Ambil Bukti Piket</strong>
+                                <small class="text-[0.7rem] text-slate-500">Foto dan kirim bukti</small>
                             </div>
                         </div>
-                        <x-icon name="heroicon-o-arrow-right" class="h-4 w-4 text-slate-400 transition group-hover:translate-x-1 group-hover:text-amber-600" />
+                        <x-icon name="heroicon-o-arrow-right" class="h-3.5 w-3.5 text-slate-400 transition group-hover:translate-x-1 group-hover:text-amber-600" />
                     </a>
                 @endif
 
                 @if(in_array(auth()->user()->role, ['admin', 'km']))
-                    <a class="group flex items-center justify-between rounded-xl border border-slate-200/80 bg-slate-50/50 p-4 transition duration-150 hover:border-amber-300 hover:bg-amber-50/40 hover:shadow-sm" href="{{ route('schedules.index') }}">
+                    <a class="group flex items-center justify-between rounded-lg border border-slate-200 bg-slate-50/50 p-3.5 transition hover:border-amber-400 hover:bg-amber-50/30" href="{{ route('schedules.index') }}">
                         <div class="flex items-center gap-3">
-                            <span class="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-white border border-slate-200 text-slate-700 shadow-sm transition group-hover:border-amber-300 group-hover:text-amber-600">
-                                <x-icon name="heroicon-o-clock" class="h-5 w-5" />
+                            <span class="grid h-9 w-9 shrink-0 place-items-center rounded-lg bg-white border border-slate-200 text-slate-700 shadow-sm transition group-hover:border-amber-400 group-hover:text-amber-600">
+                                <x-icon name="heroicon-o-clock" class="h-4 w-4" />
                             </span>
                             <div>
-                                <strong class="block text-sm font-semibold text-slate-800 group-hover:text-amber-700">Atur Jadwal</strong>
-                                <small class="text-xs text-slate-500">Kelola giliran piket</small>
+                                <strong class="block text-xs font-bold text-slate-800 group-hover:text-amber-900">Atur Jadwal</strong>
+                                <small class="text-[0.7rem] text-slate-500">Kelola giliran piket</small>
                             </div>
                         </div>
-                        <x-icon name="heroicon-o-arrow-right" class="h-4 w-4 text-slate-400 transition group-hover:translate-x-1 group-hover:text-amber-600" />
+                        <x-icon name="heroicon-o-arrow-right" class="h-3.5 w-3.5 text-slate-400 transition group-hover:translate-x-1 group-hover:text-amber-600" />
                     </a>
                 @endif
 
                 @if(in_array(auth()->user()->role, ['admin', 'guru', 'km']))
-                    <a class="group flex items-center justify-between rounded-xl border border-slate-200/80 bg-slate-50/50 p-4 transition duration-150 hover:border-amber-300 hover:bg-amber-50/40 hover:shadow-sm" href="{{ route('verification.index') }}">
+                    <a class="group flex items-center justify-between rounded-lg border border-slate-200 bg-slate-50/50 p-3.5 transition hover:border-amber-400 hover:bg-amber-50/30" href="{{ route('verification.index') }}">
                         <div class="flex items-center gap-3">
-                            <span class="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-white border border-slate-200 text-slate-700 shadow-sm transition group-hover:border-amber-300 group-hover:text-amber-600">
-                                <x-icon name="heroicon-o-shield-check" class="h-5 w-5" />
+                            <span class="grid h-9 w-9 shrink-0 place-items-center rounded-lg bg-white border border-slate-200 text-slate-700 shadow-sm transition group-hover:border-amber-400 group-hover:text-amber-600">
+                                <x-icon name="heroicon-o-shield-check" class="h-4 w-4" />
                             </span>
                             <div>
-                                <strong class="block text-sm font-semibold text-slate-800 group-hover:text-amber-700">Verifikasi Bukti</strong>
-                                <small class="text-xs text-slate-500">Tinjau kiriman terbaru</small>
+                                <strong class="block text-xs font-bold text-slate-800 group-hover:text-amber-900">Verifikasi Bukti</strong>
+                                <small class="text-[0.7rem] text-slate-500">Tinjau kiriman terbaru</small>
                             </div>
                         </div>
-                        <x-icon name="heroicon-o-arrow-right" class="h-4 w-4 text-slate-400 transition group-hover:translate-x-1 group-hover:text-amber-600" />
+                        <x-icon name="heroicon-o-arrow-right" class="h-3.5 w-3.5 text-slate-400 transition group-hover:translate-x-1 group-hover:text-amber-600" />
                     </a>
                 @endif
             </div>
         </section>
 
         <!-- Side Card Info -->
-        <aside class="flex flex-col justify-between rounded-2xl border border-slate-200/80 bg-slate-50 p-6">
+        <aside class="flex flex-col justify-between rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
             <div>
-                <span class="grid h-10 w-10 place-items-center rounded-xl bg-amber-500 text-white shadow-sm">
-                    <x-icon name="heroicon-o-chart-bar" class="h-5 w-5" />
+                <span class="grid h-9 w-9 place-items-center rounded-lg bg-amber-500 text-amber-950 shadow-sm">
+                    <x-icon name="heroicon-o-chart-bar" class="h-4 w-4" />
                 </span>
-                <span class="mt-6 block text-xs font-bold uppercase tracking-wider text-slate-400">Catatan Hari Ini</span>
-                <h3 class="mt-2 text-xl font-bold tracking-tight text-slate-900">Konsistensi kecil membangun budaya sekolah.</h3>
-                <p class="mt-3 text-xs leading-relaxed text-slate-600">
+                <span class="mt-4 block text-[0.65rem] font-bold uppercase tracking-wider text-slate-400">Catatan Hari Ini</span>
+                <h3 class="mt-1.5 text-base font-bold tracking-tight text-slate-900">Konsistensi kecil membangun budaya sekolah.</h3>
+                <p class="mt-2 text-xs leading-relaxed text-slate-500">
                     Pastikan setiap bukti piket diambil secara langsung dari lokasi sekolah dan diunggah sesuai tenggat waktu yang ditentukan.
                 </p>
             </div>
             
-            <div class="mt-6 border-t border-slate-200/80 pt-4 text-xs font-medium text-slate-500">
+            <div class="mt-5 border-t border-slate-100 pt-3 text-[0.7rem] font-semibold text-slate-400">
                 Piket App &bull; SMAN 1 Tasikmalaya
             </div>
         </aside>

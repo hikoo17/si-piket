@@ -12,11 +12,6 @@
     <!-- Header Section -->
     <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-            <div class="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-slate-400">
-                <span>Langkah 2 dari 4</span>
-                <span>•</span>
-                <span>Data Master</span>
-            </div>
              <h1 class="mt-1 text-2xl font-bold tracking-tight text-slate-900">Kelas</h1>
              <p class="mt-1 text-sm text-slate-500">
                 Buat kelas, lalu buka kelas untuk memasukkan siswa dan menentukan KM.

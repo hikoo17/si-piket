@@ -1,4 +1,19 @@
-@props(['title' => 'Dashboard'])
+@props(['title' => null])
+
+@php
+    $pageTitle = $title ?? match (true) {
+        request()->routeIs('dashboard') => 'Dashboard',
+        request()->routeIs('schedules.*') => 'Jadwal Piket',
+        request()->routeIs('piket.upload.*') => 'Ambil Bukti',
+        request()->routeIs('verification.*') => 'Verifikasi',
+        request()->routeIs('reports.*') => 'Laporan',
+        request()->routeIs('users.*') => request()->routeIs('users.create') ? 'Tambah Pengguna' : (request()->routeIs('users.edit') ? 'Edit Pengguna' : 'Pengguna'),
+        request()->routeIs('schools.*') => 'Pengaturan Sekolah',
+        request()->routeIs('classes.*') => 'Kelas',
+        request()->routeIs('students.*') => request()->routeIs('students.create') ? 'Tambah Siswa' : (request()->routeIs('students.edit') ? 'Edit Siswa' : 'Siswa'),
+        default => 'SI-PIKET',
+    };
+@endphp
 
 <style>
     /* 1. Scrollbar halus untuk navigasi sidebar */
@@ -39,7 +54,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>{{ $title }} | SI-PIKET</title>
+    <title>{{ $pageTitle }} | SI-PIKET</title>
     <link rel="icon" href="{{ asset('Logo_SMAN_1_Tasikmalaya.png') }}" type="image/png">
     <link rel="shortcut icon" href="{{ asset('Logo_SMAN_1_Tasikmalaya.png') }}" type="image/png">
     @vite('resources/css/app.css')
@@ -183,7 +198,7 @@
                 </button>
                 <div>
                     <span class="block text-[10px] font-bold uppercase tracking-wider text-slate-400">SI-PIKET SYSTEM</span>
-                    <strong class="text-sm font-bold text-slate-900">{{ $title }}</strong>
+                    <strong class="text-sm font-bold text-slate-900">{{ $pageTitle }}</strong>
                 </div>
             </div>
 

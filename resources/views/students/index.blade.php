@@ -2,7 +2,6 @@
 @section('content')
 <div class="flex flex-wrap items-end justify-between gap-4">
     <div>
-        <p class="text-xs font-bold uppercase tracking-[.16em] text-slate-400">Langkah 3 dari 4 · Data master</p>
         <h1 class="mt-1 text-2xl font-bold text-slate-900">Siswa & KM</h1>
         <p class="mt-2 text-sm text-slate-500">Masukkan siswa ke kelas sebelum menyusun jadwal piket.</p>
     </div>
