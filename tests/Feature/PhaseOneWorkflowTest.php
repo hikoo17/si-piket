@@ -218,6 +218,44 @@ class PhaseOneWorkflowTest extends TestCase
     }
 
     #[Test]
+    public function km_can_verify_classmate_on_any_day_not_only_own_piket_day(): void
+    {
+        [$class] = $this->classes();
+        $km = User::factory()->create(['role' => 'km', 'class_id' => $class->id]);
+        $classmate = User::factory()->create(['role' => 'siswa', 'class_id' => $class->id]);
+        PiketSchedule::create(['user_id' => $km->id, 'day_of_week' => 'Monday']);
+        $classmateSchedule = PiketSchedule::create(['user_id' => $classmate->id, 'day_of_week' => 'Wednesday']);
+        $log = PiketLog::create([
+            'schedule_id' => $classmateSchedule->id,
+            'user_id' => $classmate->id,
+            'date' => today()->subWeek(),
+            'status' => 'pending',
+        ]);
+
+        $this->actingAs($km)->get(route('verification.index'))
+            ->assertOk()
+            ->assertSee($classmate->name);
+        $this->actingAs($km)->patch(route('verification.approve', $log))->assertSessionHas('success');
+
+        $this->assertDatabaseHas('piket_logs', ['id' => $log->id, 'status' => 'approved', 'verified_by' => $km->id]);
+    }
+
+    #[Test]
+    public function km_cannot_verify_student_from_other_class(): void
+    {
+        [$firstClass, $secondClass] = $this->classes();
+        $km = User::factory()->create(['role' => 'km', 'class_id' => $firstClass->id]);
+        $otherStudent = User::factory()->create(['role' => 'siswa', 'class_id' => $secondClass->id]);
+        $schedule = PiketSchedule::create(['user_id' => $otherStudent->id, 'day_of_week' => 'Monday']);
+        $log = PiketLog::create(['schedule_id' => $schedule->id, 'user_id' => $otherStudent->id, 'date' => today(), 'status' => 'pending']);
+
+        $this->actingAs($km)->get(route('verification.index'))
+            ->assertOk()
+            ->assertDontSee($otherStudent->name);
+        $this->actingAs($km)->patch(route('verification.approve', $log))->assertForbidden();
+    }
+
+    #[Test]
     public function teacher_without_a_class_can_access_all_classes(): void
     {
         [$firstClass, $secondClass] = $this->classes();

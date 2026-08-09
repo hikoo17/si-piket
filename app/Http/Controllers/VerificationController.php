@@ -15,8 +15,9 @@ class VerificationController extends Controller
         $logs = PiketLog::with(['user.schoolClass', 'schedule'])
             ->where('status', 'pending')
             ->latest();
-        if ($request->user()->role === 'km' || $request->user()->role === 'wali_kelas') {
-            $logs->whereHas('user', fn ($query) => $query->where('class_id', $request->user()->class_id));
+        $user = $request->user();
+        if (($user->role === 'km' || $user->role === 'wali_kelas') && $user->class_id) {
+            $logs->whereHas('user', fn ($query) => $query->where('class_id', $user->class_id));
         }
 
         return view('verification.index', ['logs' => $logs->paginate(20)]);
@@ -46,7 +47,7 @@ class VerificationController extends Controller
     private function authorizeLog(Request $request, PiketLog $log): void
     {
         $user = $request->user();
-        $restrictedToClass = $user->role === 'km' || $user->role === 'wali_kelas';
+        $restrictedToClass = ($user->role === 'km' || $user->role === 'wali_kelas') && $user->class_id;
 
         abort_if($restrictedToClass && $log->user->class_id !== $user->class_id, 403);
     }
