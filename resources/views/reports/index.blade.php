@@ -207,10 +207,10 @@
                                 </span>
                             </td>
                             <td class="py-3 px-4 whitespace-nowrap text-slate-600">
-                                {{ $log->distance_meters ? $log->distance_meters . ' m' : '-' }}
+                                {{ $log->distance_meters !== null ? $log->distance_meters . ' m' : '-' }}
                             </td>
                             <td class="py-3 px-4 whitespace-nowrap text-slate-600">
-                                {{ $log->accuracy_meters ? $log->accuracy_meters . ' m' : '-' }}
+                                {{ $log->accuracy_meters !== null ? $log->accuracy_meters . ' m' : '-' }}
                             </td>
                             <td class="py-3 px-4 text-center whitespace-nowrap">
                                 <a href="{{ route('reports.show', $log) }}" class="inline-flex h-7 items-center gap-1 rounded-md border border-slate-200 bg-white px-2.5 text-xs font-semibold text-slate-700 transition hover:border-amber-300 hover:bg-amber-50/50 hover:text-amber-700">
