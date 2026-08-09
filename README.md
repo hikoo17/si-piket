@@ -353,8 +353,55 @@ Setiap kali ingin membuka aplikasi, ikuti langkah berikut:
 
 1. Buka **Laragon** → klik **Start All**
 2. Buka folder `si-piket` → klik address bar → ketik `cmd` → tekan **Enter**
-3. Ketik: `php artisan serve`
-4. Buka browser ke: http://localhost:8000
+3. Buka **3 terminal** pada folder project yang sama.
+4. Pada terminal pertama, jalankan server aplikasi:
+   ```bash
+   php artisan serve
+   ```
+5. Pada terminal kedua, jalankan pemeriksa jadwal otomatis:
+   ```bash
+   php artisan schedule:work
+   ```
+6. Pada terminal ketiga, jalankan proses antrean pengiriman WhatsApp:
+   ```bash
+   php artisan queue:work --queue=notifications
+   ```
+7. Buka browser ke: http://localhost:8000
+
+> `schedule:work` diperlukan untuk memeriksa jadwal pengiriman setiap menit. `queue:work` diperlukan agar pesan yang sudah masuk antrean benar-benar dikirim melalui WhatsApp.
+
+### Zona Waktu Pengiriman
+
+Pengiriman otomatis menggunakan zona waktu Indonesia Barat (WIB/Asia Jakarta), sesuai pengaturan aplikasi. Jadi, jika jam pengiriman diatur ke `20:11`, sistem akan menjalankannya pada pukul 20:11 WIB.
+
+Pastikan pengaturan berikut tersedia di file `.env`:
+
+```env
+APP_TIMEZONE=Asia/Jakarta
+```
+
+Jika baru mengubah file `.env`, jalankan:
+
+```bash
+php artisan config:clear
+php artisan cache:clear
+```
+
+### Tes Pengiriman WhatsApp Manual
+
+Untuk menguji pengingat tanpa menunggu jam yang telah diatur, jalankan:
+
+```bash
+php artisan piket:send-reminders --date=YYYY-MM-DD
+```
+
+Contoh:
+
+```bash
+php artisan piket:send-reminders --date=2026-08-09
+```
+
+Setelah itu, pastikan terminal `queue:work` tetap berjalan agar pesan dalam antrean dapat dikirim.
 
 Untuk **menutup aplikasi**:
 - Tekan **Ctrl+C** di terminal
