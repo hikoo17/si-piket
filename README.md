@@ -2,6 +2,123 @@
 
 Sistem Informasi Piket - Aplikasi presensi dan manajemen piket kelas berbasis web untuk SMAN 1 Tasikmalaya.
 
+## Tech Stack
+
+### Backend
+- **Laravel 13** — Framework PHP (minimal PHP 8.3)
+- **MySQL** — Database (via Laragon)
+- **barryvdh/laravel-dompdf** — Export laporan PDF
+
+### Frontend
+- **Vite 8** — Build tool & dev server
+- **Tailwind CSS 4** — Utility CSS framework
+- **Blade Templates** — Server-side rendering (Laravel)
+- **blade-ui-kit/blade-heroicons** — Komponen ikon Heroicons di Blade
+
+### JavaScript Libraries
+- **Leaflet 1.9.4** — Peta interaktif untuk konfirmasi lokasi sekolah
+- **Lucide 1.30.0** — Ikon SVG di halaman login
+- **SweetAlert2 11.26.25** — Notifikasi toast/alert yang menggantikan `alert()` bawaan
+
+### Dev Tools
+- **Laravel Pint** — Code style fixer
+- **Laravel Pail** — Log viewer saat development
+- **Laravel PAO** — Performance monitoring
+
+---
+
+## Arsitektur & Alur Project
+
+### Role-Based Access Control
+
+Aplikasi menggunakan 4 role pengguna:
+
+| Role | Akses |
+|------|-------|
+| **admin** | Dashboard, Manajemen Pengguna, Manajemen Kelas, Pengaturan Sekolah, Manajemen Jadwal, Verifikasi, Laporan |
+| **wali_kelas** | Verifikasi bukti piket, Laporan |
+| **km** (Ketua Kelas) | Upload bukti piket, Manajemen Jadwal, Verifikasi, Laporan |
+| **siswa** | Upload bukti piket |
+
+### Alur Presensi Piket
+
+```
+1. Admin/KM membuat jadwal piket (pagi & pulang) untuk setiap siswa
+2. Siswa/KM login → buka "Ambil Bukti" → upload foto + otomatis capture koordinat GPS
+3. Sistem validasi:
+   - Jarak dari lokasi sekolah (radius default 100m)
+   - Waktu upload sesuai jadwal
+4. Wali Kelas/Admin/KM verifikasi bukti piket
+5. Laporan dapat dicetak PDF atau diexport CSV
+```
+
+### Struktur Folder
+
+```
+si-piket/
+├── app/
+│   ├── Http/Controllers/    # Controller aplikasi
+│   │   ├── AuthController.php
+│   │   ├── DashboardController.php
+│   │   ├── PiketController.php
+│   │   ├── ReportController.php
+│   │   ├── ScheduleController.php
+│   │   ├── SchoolController.php
+│   │   ├── SchoolClassController.php
+│   │   ├── StudentController.php
+│   │   ├── UserController.php
+│   │   └── VerificationController.php
+│   └── Models/              # Model Eloquent
+├── database/
+│   ├── migrations/          # Skema tabel
+│   └── seeders/             # Data awal (admin, wali kelas, siswa, jadwal)
+├── resources/
+│   ├── css/app.css          # Tailwind + Leaflet CSS
+│   ├── js/
+│   │   ├── app.js           # Logic global (map, SweetAlert, sidebar)
+│   │   └── login.js         # Logic halaman login (toggle password, Lucide icons)
+│   └── views/               # Template Blade
+│       ├── layouts/app.blade.php   # Layout utama (sidebar + header)
+│       ├── auth/login.blade.php    # Halaman login
+│       ├── dashboard.blade.php     # Dashboard statistik
+│       ├── schedules/              # Manajemen jadwal piket
+│       ├── schools/                 # Pengaturan sekolah + peta Leaflet
+│       ├── students/                # Manajemen siswa
+│       └── ...
+├── routes/web.php           # Definisi route + middleware role
+├── vite.config.js           # Konfigurasi Vite (entry: app.css + app.js + login.js)
+└── .env                     # Konfigurasi environment
+```
+
+### Alur Request
+
+1. **Guest** → `/login` (halaman login dengan Lucide icons + toggle password)
+2. **Auth** → Redirect ke `/dashboard` (statistik: piket hari ini, pending verifikasi, ringkasan per role)
+3. **Siswa/KM** → Upload bukti piket via `PiketController` (form dengan capture foto + GPS)
+4. **Verifikator** → `VerificationController` approve/reject bukti piket
+5. **Admin** → `SchoolController` edit koordinat sekolah + radius pada peta Leaflet
+6. **Admin/KM** → `ScheduleController` kelola jadwal pagi & pulang
+7. **All auth** → `ReportController` lihat laporan + export PDF/CSV
+
+### Asset Pipeline
+
+```
+resources/js/app.js      → public/build/assets/app-[hash].js
+resources/js/login.js    → public/build/assets/login-[hash].js
+resources/css/app.css    → public/build/assets/app-[hash].css
+         ↓
+    vite.config.js (Laravel Vite Plugin)
+         ↓
+    public/build/manifest.json
+         ↓
+    @vite() directive di Blade templates
+```
+
+- **Development**: `npm run dev` → Vite dev server (HMR) di `http://127.0.0.1:5173`
+- **Production**: `npm run build` → Compile + minify + hash + simpan di `public/build/`
+
+---
+
 ## Fitur
 
 - Manajemen pengguna (Administrator, Wali Kelas, Ketua Kelas, Siswa)
