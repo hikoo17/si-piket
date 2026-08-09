@@ -84,8 +84,71 @@
         </form>
     </div>
 
-    <!-- Table Section -->
-    <div class="overflow-hidden rounded-xl border border-slate-200 bg-white">
+    <!-- Card list (mobile) -->
+    @php
+        $statusClasses = [
+            'approved' => 'bg-emerald-50 text-emerald-700 border-emerald-200/80',
+            'pending'  => 'bg-amber-50 text-amber-700 border-amber-200/80',
+            'rejected' => 'bg-rose-50 text-rose-700 border-rose-200/80',
+            'absent'   => 'bg-slate-100 text-slate-600 border-slate-200',
+        ];
+        $statusIcons = [
+            'approved' => 'heroicon-o-check-circle',
+            'pending'  => 'heroicon-o-clock',
+            'rejected' => 'heroicon-o-x-circle',
+            'absent'   => 'heroicon-o-minus-circle',
+        ];
+    @endphp
+    <div class="space-y-3 sm:hidden">
+        @forelse($logs as $log)
+            <div class="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
+                <div class="flex items-start justify-between gap-3">
+                    <div class="min-w-0">
+                        <div class="truncate text-sm font-bold text-slate-900">{{ $log->user->name ?? '-' }}</div>
+                        <div class="mt-0.5 text-[0.7rem] text-slate-500">
+                            {{ $log->date ? $log->date->locale('id')->translatedFormat('j F Y') : '-' }} · {{ ($log->photo_captured_at ?? $log->created_at)?->format('H:i') ?? '-' }} WIB
+                        </div>
+                        <div class="mt-0.5 text-[0.7rem] text-slate-500">{{ $log->user->schoolClass?->name ?? '-' }}</div>
+                    </div>
+                    <span class="inline-flex shrink-0 items-center gap-1 rounded-full border px-2.5 py-0.5 text-[0.65rem] font-bold uppercase tracking-wider {{ $statusClasses[$log->status] ?? 'bg-slate-100 text-slate-600 border-slate-200' }}">
+                        <x-icon name="{{ $statusIcons[$log->status] ?? 'heroicon-o-question-mark-circle' }}" class="h-3.5 w-3.5" />
+                        {{ $log->status }}
+                    </span>
+                </div>
+                <div class="mt-3 flex flex-wrap items-center gap-x-4 gap-y-1.5 text-xs text-slate-600 border-t border-slate-100 pt-3">
+                    <span class="inline-flex items-center gap-1 font-semibold text-slate-800">
+                        @if(($log->schedule?->shift ?? '') === 'morning')
+                            <x-icon name="heroicon-o-sun" class="h-3.5 w-3.5 text-amber-500" />
+                        @else
+                            <x-icon name="heroicon-o-moon" class="h-3.5 w-3.5 text-indigo-500" />
+                        @endif
+                        {{ $log->schedule?->shift_label ?? '-' }}
+                    </span>
+                    <span>Jarak: <strong class="{{ $log->distance_meters > 50 ? 'text-amber-600' : 'text-slate-800' }}">{{ $log->distance_meters ?? 0 }} m</strong></span>
+                    @if($log->accuracy_meters)
+                        <span>Akurasi: <strong class="text-slate-800">{{ $log->accuracy_meters }} m</strong></span>
+                    @endif
+                </div>
+                <a href="{{ route('reports.show', $log) }}" class="mt-3 inline-flex h-8 w-full items-center justify-center gap-1 rounded-lg border border-slate-200 bg-white text-xs font-semibold text-slate-700 transition hover:border-amber-300 hover:bg-amber-50/50 hover:text-amber-700">
+                    <x-icon name="heroicon-o-eye" class="h-3.5 w-3.5 text-slate-400" />
+                    <span>Detail</span>
+                </a>
+            </div>
+        @empty
+            <div class="rounded-xl border border-slate-200 bg-white p-10 text-center">
+                <div class="flex flex-col items-center justify-center">
+                    <span class="grid h-10 w-10 place-items-center rounded-xl bg-slate-100 text-slate-400">
+                        <x-icon name="heroicon-o-clipboard-document-list" class="h-5 w-5" />
+                    </span>
+                    <h3 class="mt-2 text-xs font-bold text-slate-800">Tidak ada data laporan</h3>
+                    <p class="text-[0.7rem] text-slate-500 mt-0.5">Coba sesuaikan kriteria filter Anda.</p>
+                </div>
+            </div>
+        @endforelse
+    </div>
+
+    <!-- Table (desktop) -->
+    <div class="hidden overflow-hidden rounded-xl border border-slate-200 bg-white sm:block">
         <div class="overflow-x-auto">
             <table class="w-full text-left border-collapse">
                 <thead>

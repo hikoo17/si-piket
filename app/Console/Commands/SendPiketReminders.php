@@ -27,9 +27,27 @@ class SendPiketReminders extends Command
             return self::SUCCESS;
         }
         $day = $date->englishDayOfWeek;
+        $nowTime = $this->option('date') ? null : now()->format('H:i');
+
+        // Tentukan shift yang dikirim berdasarkan jam pengiriman
+        // (mode tes --date: kirim semua shift)
+        if ($this->option('date')) {
+            $shift = null;
+        } elseif ($nowTime === substr($school->whatsapp_send_time, 0, 5)) {
+            $shift = 'morning';
+        } elseif ($nowTime === substr($school->whatsapp_send_time_return ?? '14:00', 0, 5)) {
+            $shift = 'afternoon';
+        } else {
+            return self::SUCCESS;
+        }
+
         $count = 0;
 
-        PiketSchedule::with(['user.schoolClass'])->where('day_of_week', $day)->chunkById(100, function ($schedules) use ($date, $day, $school, &$count) {
+        $schedulesQuery = PiketSchedule::with(['user.schoolClass'])
+            ->where('day_of_week', $day)
+            ->when($shift, fn ($query) => $query->where('shift', $shift));
+
+        $schedulesQuery->chunkById(100, function ($schedules) use ($date, $day, $school, &$count) {
             foreach ($schedules as $schedule) {
                 $user = $schedule->user;
                 if (blank($user->phone)) {

@@ -134,19 +134,32 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
         const marker = L.marker(initialPosition, { draggable: true, icon: schoolIcon }).addTo(map);
-        
-        // Lingkaran Radius dengan styling border eksplisit
+
+        // Lingkaran Radius: border merah tegas + isi tipis agar terbaca sebagai batas jangkauan.
+        // Angka pada peta menunjukkan besaran radius (meter) sesuai input pengguna.
         const radiusCircle = L.circle(initialPosition, {
-            color: '#dc2626',       // Warna border (Merah)
-            weight: 3,             // Ketebalan border garis
-            opacity: 0.9,          // Opasitas border
+            color: '#ef4444',       // Warna border (Merah)
+            weight: 3,              // Ketebalan border garis
+            opacity: 1,             // Opasitas border (kontras)
             fillColor: '#ef4444',   // Warna isian
-            fillOpacity: 0.2,      // Transparansi isian
+            fillOpacity: 0.12,      // Isi tipis agar ring merah menonjol
             radius: getSafeRadius(),
         }).addTo(map);
-        
+
         radiusCircle.bindPopup(`Radius: ${getSafeRadius()} meter`);
+        radiusCircle.bindTooltip(`${getSafeRadius()} m`, {
+            permanent: true,
+            direction: 'top',
+            offset: [0, -8],
+            className: 'radius-tooltip',
+        });
         radiusCircle.bringToFront();
+
+        const syncRadiusLabel = () => {
+            const rad = getSafeRadius();
+            radiusCircle.setTooltipContent(`${rad} m`);
+            radiusCircle.setPopupContent(`Radius: ${rad} meter`);
+        };
 
         const setPosition = (position, recenter = false) => {
             latitudeInput.value = position.lat.toFixed(8);
@@ -178,7 +191,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const updateRadius = () => {
             const rad = getSafeRadius();
             radiusCircle.setRadius(rad);
-            radiusCircle.setPopupContent(`Radius: ${rad} meter`);
+            syncRadiusLabel();
         };
 
         radiusInput.addEventListener('input', updateRadius);
@@ -261,10 +274,11 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
         // Re-render ukuran peta dan fokuskan tampilan ke lingkaran radius
+        // (padding lebih besar + maxZoom agar seluruh ring merah & lingkungan terlihat jelas)
         setTimeout(() => {
             map.invalidateSize();
             if (radiusCircle.getBounds().isValid()) {
-                map.fitBounds(radiusCircle.getBounds(), { padding: [30, 30] });
+                map.fitBounds(radiusCircle.getBounds(), { padding: [50, 50], maxZoom: 17 });
             }
         }, 300);
 

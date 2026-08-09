@@ -67,8 +67,76 @@
         </form>
     </div>
 
-    <!-- Table Section (Minimalis & Shadow Tipis) -->
-    <div class="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
+    <!-- Card list (mobile) -->
+    @php
+        $dayMap = [
+            'Monday' => 'Senin', 'Tuesday' => 'Selasa', 'Wednesday' => 'Rabu',
+            'Thursday' => 'Kamis', 'Friday' => 'Jumat', 'Saturday' => 'Sabtu', 'Sunday' => 'Minggu'
+        ];
+    @endphp
+    <div class="space-y-3 sm:hidden">
+        @forelse($schedules as $group)
+            @php
+                $first = $group->first();
+                $user = $first->user;
+                $morning = $group->firstWhere('shift', 'morning');
+                $afternoon = $group->firstWhere('shift', 'afternoon');
+                $editTarget = $morning ?? $afternoon;
+            @endphp
+            <div class="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
+                <div class="flex items-start justify-between gap-3">
+                    <div class="min-w-0">
+                        <div class="truncate text-sm font-bold text-slate-900">{{ $user->name ?? '-' }}</div>
+                        <div class="mt-0.5 truncate text-[0.7rem] text-slate-500">{{ $user->schoolClass?->name ?? '-' }}</div>
+                    </div>
+                    <span class="inline-flex shrink-0 items-center rounded-md border border-slate-200 bg-slate-100 px-2 py-0.5 text-[0.68rem] font-bold text-slate-700">
+                        {{ $dayMap[$first->day_of_week] ?? $first->day_of_week }}
+                    </span>
+                </div>
+                <div class="mt-3 flex flex-wrap gap-1.5">
+                    @if($morning)
+                        <span class="inline-flex items-center gap-1 rounded-full border border-amber-200/80 bg-amber-50 px-2.5 py-0.5 text-[0.65rem] font-bold uppercase tracking-wider text-amber-700">
+                            <x-icon name="heroicon-o-sun" class="h-3.5 w-3.5 text-amber-500" />
+                            Pagi
+                        </span>
+                    @endif
+                    @if($afternoon)
+                        <span class="inline-flex items-center gap-1 rounded-full border border-indigo-200/80 bg-indigo-50 px-2.5 py-0.5 text-[0.65rem] font-bold uppercase tracking-wider text-indigo-700">
+                            <x-icon name="heroicon-o-moon" class="h-3.5 w-3.5 text-indigo-500" />
+                            Pulang
+                        </span>
+                    @endif
+                </div>
+                <div class="mt-3 flex gap-2 border-t border-slate-100 pt-3">
+                        <a href="{{ route('schedules.edit', $editTarget) }}" class="inline-flex h-8 flex-1 items-center justify-center gap-1 rounded-lg border border-slate-200 bg-white text-xs font-semibold text-slate-700 transition hover:border-amber-300 hover:bg-amber-50/50 hover:text-amber-700">
+                        <x-icon name="heroicon-o-pencil-square" class="h-3.5 w-3.5 text-slate-400" />
+                        <span>Edit</span>
+                    </a>
+                    <form method="POST" action="{{ route('schedules.destroy', $editTarget) }}" class="inline-flex flex-1">
+                        @csrf
+                        @method('DELETE')
+                        <button type="submit" class="inline-flex h-8 w-full items-center justify-center gap-1 rounded-lg border border-slate-200 bg-white text-xs font-semibold text-rose-600 transition hover:border-rose-200 hover:bg-rose-50" title="Hapus Jadwal">
+                            <x-icon name="heroicon-o-trash" class="h-3.5 w-3.5" />
+                            <span>Hapus</span>
+                        </button>
+                    </form>
+                </div>
+            </div>
+        @empty
+            <div class="rounded-xl border border-slate-200 bg-white p-10 text-center">
+                <div class="flex flex-col items-center justify-center">
+                    <span class="grid h-10 w-10 place-items-center rounded-xl bg-slate-100 text-slate-400">
+                        <x-icon name="heroicon-o-clock" class="h-5 w-5" />
+                    </span>
+                    <h3 class="mt-2 text-xs font-bold text-slate-800">Belum ada jadwal piket</h3>
+                    <p class="mt-0.5 text-[0.7rem] text-slate-500">Ubah filter atau tambahkan jadwal piket baru.</p>
+                </div>
+            </div>
+        @endforelse
+    </div>
+
+    <!-- Table (desktop) -->
+    <div class="hidden overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm sm:block">
         <div class="overflow-x-auto">
             <table class="w-full border-collapse text-left">
                 <thead>

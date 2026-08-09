@@ -99,11 +99,11 @@
 
 <div class="flex min-h-screen">
     <!-- SIDEBAR KUNING AMBER (Persis tema awal + spacing lega) -->
-    <aside id="app-sidebar" class="fixed inset-y-0 left-0 z-30 flex w-72 flex-col justify-between overflow-hidden bg-gradient-to-b from-amber-500 to-yellow-500 px-4 py-6 text-amber-950 shadow-[10px_0_30px_rgba(180,83,9,0.12)] transition-transform duration-300 ease-in-out lg:translate-x-0 -translate-x-full" aria-label="Navigasi utama">
+    <aside id="app-sidebar" class="fixed inset-y-0 left-0 z-30 flex w-72 flex-col justify-between overflow-hidden bg-gradient-to-b from-amber-500 to-yellow-500 px-4 py-4 text-amber-950 shadow-[10px_0_30px_rgba(180,83,9,0.12)] transition-transform duration-300 ease-in-out lg:translate-x-0 -translate-x-full" aria-label="Navigasi utama">
         
         <div class="relative z-10 space-y-6">
             <!-- Brand / Logo -->
-            <div class="flex items-center justify-between px-2">
+            <div class="flex items-center justify-between px-1">
                 <a class="flex items-center gap-3.5" href="{{ route('dashboard') }}">
                     <span class="grid h-10 w-10 place-items-center rounded-xl bg-white shadow-md shadow-amber-900/10">
                         <img src="{{ asset('Logo_SMAN_1_Tasikmalaya.png') }}" alt="Logo SMAN 1 Tasikmalaya" class="h-7 w-auto">
@@ -116,54 +116,56 @@
             </div>
 
             <!-- Navigation Menu -->
-            <div class="space-y-1.5">
-                <p class="px-3 text-[10px] font-extrabold uppercase tracking-widest text-amber-900/60">Menu Utama</p>
-                
+            <nav class="space-y-4">
                 @php
-                    $navigation = [
-                        ['dashboard', 'Dashboard', 'heroicon-o-squares-2x2', ['admin', 'guru', 'km', 'siswa']],
-                        ['schedules.index', 'Jadwal Piket', 'heroicon-o-clock', ['admin', 'km']],
-                        ['piket.upload.form', 'Ambil Bukti', 'heroicon-o-camera', ['km', 'siswa']],
-                        ['verification.index', 'Verifikasi', 'heroicon-o-shield-check', ['admin', 'guru', 'km']],
-                        ['reports.index', 'Laporan', 'heroicon-o-clipboard-document-list', ['admin', 'guru', 'km']],
-                        ['users.index', 'Pengguna', 'heroicon-o-users', ['admin']],
-                        ['schools.index', 'Sekolah', 'heroicon-o-academic-cap', ['admin']],
-                        ['classes.index', 'Kelas', 'heroicon-o-rectangle-group', ['admin']],
+                    $navGroups = [
+                        'Utama' => [
+                            ['dashboard', 'Dashboard', 'heroicon-o-squares-2x2', ['admin', 'guru', 'km', 'siswa']],
+                        ],
+                        'Presensi Piket' => [
+                            ['schedules.index', 'Jadwal Piket', 'heroicon-o-clock', ['admin', 'km']],
+                            ['piket.upload.form', 'Ambil Bukti', 'heroicon-o-camera', ['km', 'siswa']],
+                            ['verification.index', 'Verifikasi', 'heroicon-o-shield-check', ['admin', 'guru', 'km']],
+                            ['reports.index', 'Laporan', 'heroicon-o-clipboard-document-list', ['admin', 'guru', 'km']],
+                        ],
+                        'Manajemen & Data' => [
+                            ['users.index', 'Pengguna', 'heroicon-o-users', ['admin']],
+                            ['schools.index', 'Sekolah', 'heroicon-o-academic-cap', ['admin']],
+                            ['classes.index', 'Kelas', 'heroicon-o-rectangle-group', ['admin']],
+                        ],
                     ];
+                    $userRole = auth()->user()->role;
                 @endphp
 
-                <nav class="space-y-1 overflow-y-auto max-h-[calc(100vh-320px)] pr-1">
-                    @foreach ($navigation as $item)
-                        @continue(! in_array(auth()->user()->role, $item[3], true))
-                        @php $active = request()->routeIs($item[0].'*'); @endphp
-                        
-                        <a class="group flex items-center justify-between rounded-xl px-3 py-2.5 text-xs font-semibold transition-all {{ $active ? 'bg-white text-amber-950 shadow-md shadow-amber-900/10' : 'text-amber-950/80 hover:bg-white/20 hover:text-amber-950' }}" href="{{ route($item[0]) }}">
-                            <div class="flex items-center gap-3">
-                                <span class="grid h-7 w-7 place-items-center rounded-lg {{ $active ? 'bg-amber-100 text-amber-800' : 'bg-white/10 group-hover:bg-white/20' }}">
-                                    <x-icon name="{{ $item[2] ?? 'heroicon-o-queue-list' }}" class="h-4 w-4" />
-                                </span>
-                                <span>{{ $item[1] }}</span>
-                            </div>
-                            @if($active)
-                                <span class="h-1.5 w-1.5 rounded-full bg-amber-600"></span>
-                            @endif
-                        </a>
-                    @endforeach
-                </nav>
-            </div>
+                @foreach ($navGroups as $groupLabel => $items)
+                    @php
+                        $visibleItems = collect($items)->filter(fn ($item) => in_array($userRole, $item[3], true))->values();
+                    @endphp
+                    @if ($visibleItems->isNotEmpty())
+                        <div class="space-y-1">
+                            <p class="px-4 pb-1 text-[10px] font-extrabold uppercase tracking-widest text-amber-900/60">{{ $groupLabel }}</p>
+                            @foreach ($visibleItems as $item)
+                                @php $active = request()->routeIs($item[0].'*'); @endphp
+                                <a class="group flex items-center justify-between rounded-xl px-4 py-2.5 text-xs font-semibold transition-all {{ $active ? 'bg-white text-amber-950 shadow-md shadow-amber-900/10' : 'text-amber-950/80 hover:bg-white/20 hover:text-amber-950' }}" href="{{ route($item[0]) }}">
+                                    <div class="flex items-center gap-3">
+                                        <span class="grid h-7 w-7 place-items-center rounded-lg {{ $active ? 'bg-amber-100 text-amber-800' : 'bg-white/10 group-hover:bg-white/20' }}">
+                                            <x-icon name="{{ $item[2] ?? 'heroicon-o-queue-list' }}" class="h-4 w-4" />
+                                        </span>
+                                        <span>{{ $item[1] }}</span>
+                                    </div>
+                                    @if($active)
+                                        <span class="h-1.5 w-1.5 rounded-full bg-amber-600"></span>
+                                    @endif
+                                </a>
+                            @endforeach
+                        </div>
+                    @endif
+                @endforeach
+            </nav>
         </div>
 
         <!-- Bottom Area / User Profile -->
-        <div class="relative z-10 space-y-4 pt-4 border-t border-amber-900/10">
-            <!-- Small Note Card -->
-            <div class="rounded-xl border border-amber-900/10 bg-white/20 p-3.5 text-amber-950">
-                <div class="flex items-center gap-2 text-amber-900 mb-1">
-                    <x-icon name="heroicon-o-heart" class="h-4 w-4" />
-                    <span class="text-[11px] font-bold">Catatan Kedisiplinan</span>
-                </div>
-                <p class="text-[11px] leading-relaxed text-amber-950/70">Kirimkan bukti piket secara jujur dan tepat waktu dari lokasi sekolah.</p>
-            </div>
-
+        <div class="relative z-10 space-y-3 pt-3 border-t border-amber-900/10">
             <!-- Profile Info & Logout Button -->
             @auth
             <div class="flex items-center justify-between gap-3 px-1">

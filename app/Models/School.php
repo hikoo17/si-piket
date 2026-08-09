@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
-#[Fillable(['name', 'address', 'latitude', 'longitude', 'radius_meters', 'upload_start_time', 'upload_deadline', 'return_upload_start_time', 'return_upload_deadline', 'whatsapp_enabled', 'whatsapp_send_time', 'whatsapp_message_template'])]
+#[Fillable(['name', 'address', 'latitude', 'longitude', 'radius_meters', 'upload_start_time', 'upload_deadline', 'return_upload_start_time', 'return_upload_deadline', 'whatsapp_enabled', 'whatsapp_send_time', 'whatsapp_send_time_return', 'whatsapp_message_template'])]
 class School extends Model
 {
     use HasFactory;
@@ -41,6 +41,7 @@ class School extends Model
             'return_upload_deadline' => 'string',
             'whatsapp_enabled' => 'boolean',
             'whatsapp_send_time' => 'string',
+            'whatsapp_send_time_return' => 'string',
         ];
     }
 

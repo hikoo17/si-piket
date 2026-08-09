@@ -74,6 +74,7 @@ class SchoolController extends Controller
             'return_upload_deadline' => ['required', 'date_format:H:i'],
             'whatsapp_enabled' => ['nullable', 'boolean'],
             'whatsapp_send_time' => ['sometimes', 'required', 'date_format:H:i'],
+            'whatsapp_send_time_return' => ['sometimes', 'required', 'date_format:H:i'],
             'whatsapp_message_template' => ['nullable', 'string', 'max:1000'],
         ]);
     }
