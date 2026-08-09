@@ -61,7 +61,7 @@ class DashboardController extends Controller
             $data['myLog'] = $data['myLogs']->first();
         }
 
-        if (in_array($role, ['km', 'guru_piket', 'wali_kelas'], true)) {
+        if (in_array($role, ['km', 'wali_kelas'], true)) {
             $data['memberCount'] = $students->count();
             $data['scheduleCount'] = (clone $schedules)->count();
             $data['morningScheduleCount'] = (clone $schedules)->where('shift', 'morning')->count();

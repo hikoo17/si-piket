@@ -99,13 +99,13 @@
 
 <div class="flex min-h-screen">
     <!-- SIDEBAR KUNING AMBER (Persis tema awal + spacing lega) -->
-    <aside id="app-sidebar" class="fixed inset-y-0 left-0 z-30 flex w-72 flex-col justify-between overflow-hidden bg-gradient-to-b from-amber-500 to-yellow-500 px-4 py-4 text-amber-950 shadow-[10px_0_30px_rgba(180,83,9,0.12)] transition-transform duration-300 ease-in-out lg:translate-x-0 -translate-x-full" aria-label="Navigasi utama">
+    <aside id="app-sidebar" class="fixed inset-y-0 left-0 z-30 flex w-72 flex-col justify-between overflow-hidden bg-gradient-to-b from-amber-500 to-yellow-500 px-4 py-4 text-amber-950 shadow-[6px_0_12px_rgba(180,83,9,0.08)] transition-transform duration-300 ease-in-out lg:translate-x-0 -translate-x-full" aria-label="Navigasi utama">
         
         <div class="relative z-10 space-y-6">
             <!-- Brand / Logo -->
             <div class="flex items-center justify-between px-1">
                 <a class="flex items-center gap-3.5" href="{{ route('dashboard') }}">
-                    <span class="grid h-10 w-10 place-items-center rounded-xl bg-white shadow-md shadow-amber-900/10">
+                    <span class="grid h-10 w-10 place-items-center rounded-xl bg-white shadow-sm shadow-amber-900/10">
                         <img src="{{ asset('Logo_SMAN_1_Tasikmalaya.png') }}" alt="Logo SMAN 1 Tasikmalaya" class="h-7 w-auto">
                     </span>
                     <div>
@@ -120,13 +120,13 @@
                 @php
                     $navGroups = [
                         'Utama' => [
-                            ['dashboard', 'Dashboard', 'heroicon-o-squares-2x2', ['admin', 'guru_piket', 'wali_kelas', 'km', 'siswa']],
+                            ['dashboard', 'Dashboard', 'heroicon-o-squares-2x2', ['admin', 'wali_kelas', 'km', 'siswa']],
                         ],
                         'Presensi Piket' => [
                             ['schedules.index', 'Jadwal Piket', 'heroicon-o-clock', ['admin', 'km']],
                             ['piket.upload.form', 'Ambil Bukti', 'heroicon-o-camera', ['km', 'siswa']],
-                            ['verification.index', 'Verifikasi', 'heroicon-o-shield-check', ['admin', 'guru_piket', 'wali_kelas', 'km']],
-                            ['reports.index', 'Laporan', 'heroicon-o-clipboard-document-list', ['admin', 'guru_piket', 'wali_kelas', 'km']],
+                            ['verification.index', 'Verifikasi', 'heroicon-o-shield-check', ['admin', 'wali_kelas', 'km']],
+                            ['reports.index', 'Laporan', 'heroicon-o-clipboard-document-list', ['admin', 'wali_kelas', 'km']],
                         ],
                         'Manajemen & Data' => [
                             ['users.index', 'Manajemen Pengguna', 'heroicon-o-users', ['admin']],
@@ -146,7 +146,7 @@
                             <p class="px-4 pb-1 text-[10px] font-extrabold uppercase tracking-widest text-amber-900/60">{{ $groupLabel }}</p>
                             @foreach ($visibleItems as $item)
                                 @php $active = request()->routeIs($item[0].'*'); @endphp
-                                <a class="group flex items-center justify-between rounded-xl px-4 py-2.5 text-xs font-semibold transition-all {{ $active ? 'bg-white text-amber-950 shadow-md shadow-amber-900/10' : 'text-amber-950/80 hover:bg-white/20 hover:text-amber-950' }}" href="{{ route($item[0]) }}">
+                                <a class="group flex items-center justify-between rounded-xl px-4 py-2.5 text-xs font-semibold transition-all {{ $active ? 'bg-white text-amber-950 shadow-sm shadow-amber-900/10' : 'text-amber-950/80 hover:bg-white/20 hover:text-amber-950' }}" href="{{ route($item[0]) }}">
                                     <div class="flex items-center gap-3">
                                         <span class="grid h-7 w-7 place-items-center rounded-lg {{ $active ? 'bg-amber-100 text-amber-800' : 'bg-white/10 group-hover:bg-white/20' }}">
                                             <x-icon name="{{ $item[2] ?? 'heroicon-o-queue-list' }}" class="h-4 w-4" />

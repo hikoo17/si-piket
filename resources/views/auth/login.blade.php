@@ -56,7 +56,8 @@
                            class="w-full rounded-lg border border-slate-300 bg-white px-3.5 py-2.5 pr-10 text-xs sm:text-sm text-slate-900 outline-none transition focus:border-amber-500 focus:ring-1 focus:ring-amber-500 placeholder:text-slate-400">
                     
                     <button id="password-toggle" type="button" class="absolute right-3 text-slate-400 hover:text-amber-600 transition" aria-label="Tampilkan kata sandi">
-                        <x-icon name="heroicon-o-eye" class="h-4 w-4" />
+                        <x-icon name="heroicon-o-eye" class="h-4 w-4" id="icon-eye" />
+                        <x-icon name="heroicon-o-eye-slash" class="h-4 w-4 hidden" id="icon-eye-slash" />
                     </button>
                 </div>
             </div>

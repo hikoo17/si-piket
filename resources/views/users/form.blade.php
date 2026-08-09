@@ -45,13 +45,12 @@
                     @php
                         $roleLabels = [
                             'admin' => 'Administrator',
-                            'guru_piket' => 'Guru Piket',
                             'wali_kelas' => 'Wali Kelas',
                             'km' => 'Ketua Kelas',
                             'siswa' => 'Siswa',
                         ];
                     @endphp
-                    @foreach(['admin','guru_piket','wali_kelas','km','siswa'] as $role)
+                    @foreach(['admin','wali_kelas','km','siswa'] as $role)
                         <option value="{{ $role }}" @selected(old('role',$user->role)===$role)>{{ $roleLabels[$role] }}</option>
                     @endforeach
                 </select>
@@ -67,14 +66,22 @@
                 </select>
                 @error('class_id') <p class="mt-1 text-xs text-rose-600">{{ $message }}</p> @enderror
             </div>
-            <div class="space-y-1.5">
+            <div class="space-y-1.5 relative">
                 <label class="text-xs font-semibold uppercase tracking-wider text-slate-600">Password</label>
-                <input type="password" name="password" placeholder="Minimal 8 karakter" class="w-full rounded-xl border border-slate-200 bg-slate-50/50 px-4 py-3 text-sm text-slate-900 transition focus:border-indigo-500 focus:bg-white focus:outline-none focus:ring-4 focus:ring-indigo-500/10" @required(! $user->exists)>
+                <input id="user-password" type="password" name="password" placeholder="Minimal 8 karakter" class="w-full rounded-xl border border-slate-200 bg-slate-50/50 px-4 py-3 pr-10 text-sm text-slate-900 transition focus:border-indigo-500 focus:bg-white focus:outline-none focus:ring-4 focus:ring-indigo-500/10" @required(! $user->exists)>
+                <button type="button" onclick="togglePassword('user-password', this)" class="absolute right-3 top-[1.7rem] text-slate-400 hover:text-indigo-600 transition">
+                    <x-icon name="heroicon-o-eye" class="h-4 w-4" id="user-icon-eye" />
+                    <x-icon name="heroicon-o-eye-slash" class="h-4 w-4 hidden" id="user-icon-eye-slash" />
+                </button>
                 @error('password') <p class="mt-1 text-xs text-rose-600">{{ $message }}</p> @enderror
             </div>
-            <div class="space-y-1.5">
+            <div class="space-y-1.5 relative">
                 <label class="text-xs font-semibold uppercase tracking-wider text-slate-600">Konfirmasi Password</label>
-                <input type="password" name="password_confirmation" placeholder="Ulangi password" class="w-full rounded-xl border border-slate-200 bg-slate-50/50 px-4 py-3 text-sm text-slate-900 transition focus:border-indigo-500 focus:bg-white focus:outline-none focus:ring-4 focus:ring-indigo-500/10">
+                <input id="user-password_confirmation" type="password" name="password_confirmation" placeholder="Ulangi password" class="w-full rounded-xl border border-slate-200 bg-slate-50/50 px-4 py-3 pr-10 text-sm text-slate-900 transition focus:border-indigo-500 focus:bg-white focus:outline-none focus:ring-4 focus:ring-indigo-500/10">
+                <button type="button" onclick="togglePassword('user-password_confirmation', this)" class="absolute right-3 top-[1.7rem] text-slate-400 hover:text-indigo-600 transition">
+                    <x-icon name="heroicon-o-eye" class="h-4 w-4" id="user-icon-eye-confirm" />
+                    <x-icon name="heroicon-o-eye-slash" class="h-4 w-4 hidden" id="user-icon-eye-slash-confirm" />
+                </button>
                 @error('password_confirmation') <p class="mt-1 text-xs text-rose-600">{{ $message }}</p> @enderror
             </div>
         </div>
@@ -87,7 +94,7 @@
 
                 function updateClassState() {
                     const role = roleSelect.value;
-                    const disabled = role === 'admin' || role === 'guru_piket';
+                    const disabled = role === 'admin';
 
                     classSelect.disabled = disabled;
                     classSelect.classList.toggle('opacity-60', disabled);
@@ -101,6 +108,26 @@
                 roleSelect.addEventListener('change', updateClassState);
                 updateClassState();
             })();
+
+            function togglePassword(inputId, button) {
+                const input = document.getElementById(inputId);
+                const isPassword = input.type === 'password';
+                input.type = isPassword ? 'text' : 'password';
+
+                const eyeId = inputId === 'user-password' ? 'user-icon-eye' : 'user-icon-eye-confirm';
+                const eyeSlashId = inputId === 'user-password' ? 'user-icon-eye-slash' : 'user-icon-eye-slash-confirm';
+
+                const eyeIcon = document.getElementById(eyeId);
+                const eyeSlashIcon = document.getElementById(eyeSlashId);
+
+                if (isPassword) {
+                    eyeIcon?.classList.remove('hidden');
+                    eyeSlashIcon?.classList.add('hidden');
+                } else {
+                    eyeIcon?.classList.add('hidden');
+                    eyeSlashIcon?.classList.remove('hidden');
+                }
+            }
         </script>
 
         <div class="flex flex-col-reverse gap-2 border-t border-slate-100 pt-4 sm:flex-row sm:justify-end">

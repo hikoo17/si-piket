@@ -4,11 +4,11 @@ Sistem Informasi Piket - Aplikasi presensi dan manajemen piket kelas berbasis we
 
 ## Fitur
 
-- Manajemen pengguna (Administrator, Guru Piket, Wali Kelas, Ketua Kelas, Siswa)
+- Manajemen pengguna (Administrator, Wali Kelas, Ketua Kelas, Siswa)
 - Manajemen kelas
 - Jadwal piket pagi & pulang
 - Upload bukti piket dengan verifikasi lokasi
-- Verifikasi bukti piket oleh guru/wali kelas
+- Verifikasi bukti piket oleh wali kelas
 - Laporan piket
 - Pengingat otomatis WhatsApp
 - Peta lokasi sekolah
@@ -168,7 +168,7 @@ php artisan migrate --seed
 
 Perintah ini akan:
 - Membuat tabel-tabel di database
-- Mengisi data awal (admin, guru, siswa, kelas, jadwal)
+- Mengisi data awal (admin, wali kelas, siswa, kelas, jadwal)
 
 Tunggu sampai proses selesai.
 
@@ -222,7 +222,6 @@ Setelah aplikasi terbuka, login menggunakan akun berikut:
 | Email | Password | Role |
 |-------|----------|------|
 | admin@si-piket.test | password | Administrator |
-| guru@si-piket.test | password | Guru Piket |
 | wali.kelas@si-piket.test | password | Wali Kelas XII-4 |
 | km@si-piket.test | password | Ketua Kelas XII-4 |
 | siswa@si-piket.test | password | Siswa XII-4 |

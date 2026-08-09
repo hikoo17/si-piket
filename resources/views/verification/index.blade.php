@@ -134,7 +134,7 @@
 
 <!-- Native Overlay Modal Container -->
 <div id="rejectModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-slate-900/40 p-4 backdrop-blur-sm">
-    <div class="w-full max-w-md rounded-xl border border-slate-200 bg-white p-5 shadow-xl space-y-4">
+    <div class="w-full max-w-md rounded-xl border border-slate-200 bg-white p-5 shadow-sm space-y-4">
         <div class="flex items-center justify-between border-b border-slate-100 pb-3">
             <div class="flex items-center gap-2 text-rose-600">
                 <x-icon name="heroicon-o-x-circle" class="h-5 w-5" />

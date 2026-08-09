@@ -34,7 +34,6 @@
                 <select id="role" name="role" class="h-9 w-full rounded-lg border border-slate-200 bg-slate-50/50 px-3 text-xs font-medium text-slate-800 transition focus:border-amber-500 focus:bg-white focus:outline-none focus:ring-1 focus:ring-amber-500">
                     <option value="">Semua Peran</option>
                     <option value="admin" @selected($roleFilter === 'admin')>Administrator</option>
-                    <option value="guru_piket" @selected($roleFilter === 'guru_piket')>Guru Piket</option>
                     <option value="wali_kelas" @selected($roleFilter === 'wali_kelas')>Wali Kelas</option>
                     <option value="km" @selected($roleFilter === 'km')>Ketua Kelas</option>
                     <option value="siswa" @selected($roleFilter === 'siswa')>Siswa</option>
@@ -55,7 +54,7 @@
             @php
                 $roleClass = match(strtolower($user->role)) {
                     'admin' => 'bg-purple-50 text-purple-700 border-purple-200/80',
-                    'guru_piket', 'wali_kelas', 'teacher' => 'bg-blue-50 text-blue-700 border-blue-200/80',
+                    'wali_kelas', 'teacher' => 'bg-blue-50 text-blue-700 border-blue-200/80',
                     'siswa', 'student' => 'bg-emerald-50 text-emerald-700 border-emerald-200/80',
                     default => 'bg-slate-100 text-slate-600 border-slate-200',
                 };
@@ -134,7 +133,7 @@
                                 @php
                                     $roleClass = match(strtolower($user->role)) {
                                         'admin' => 'bg-purple-50 text-purple-700 border-purple-200/80',
-                                        'guru_piket', 'wali_kelas', 'teacher' => 'bg-blue-50 text-blue-700 border-blue-200/80',
+                    'wali_kelas', 'teacher' => 'bg-blue-50 text-blue-700 border-blue-200/80',
                                         'siswa', 'student' => 'bg-emerald-50 text-emerald-700 border-emerald-200/80',
                                         default => 'bg-slate-100 text-slate-600 border-slate-200',
                                     };
@@ -200,7 +199,7 @@
 
 <!-- Native Delete Confirmation Modal -->
 <div id="deleteModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-slate-900/40 p-4 backdrop-blur-sm">
-    <div class="w-full max-w-sm rounded-xl border border-slate-200 bg-white p-5 shadow-xl space-y-4">
+    <div class="w-full max-w-sm rounded-xl border border-slate-200 bg-white p-5 shadow-sm space-y-4">
         <div class="flex items-center gap-3 text-rose-600">
             <span class="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-rose-50 text-rose-600">
                 <x-icon name="heroicon-o-exclamation-triangle" class="h-5 w-5" />

@@ -49,7 +49,7 @@
 
                         <!-- Floating Overlay Loading & Status (Di Atas Video) -->
                         <div id="video-overlay-loading" class="hidden absolute inset-0 z-20 flex flex-col items-start justify-end bg-slate-950/60 p-4 backdrop-blur-xs transition">
-                            <div class="flex items-center gap-2.5 rounded-lg bg-slate-900/90 border border-white/10 px-3 py-2 text-left shadow-lg">
+                            <div class="flex items-center gap-2.5 rounded-lg bg-slate-900/90 border border-white/10 px-3 py-2 text-left shadow-sm">
                                 <span id="overlay-spinner" class="h-4 w-4 animate-spin rounded-full border-2 border-slate-400 border-t-amber-500 shrink-0"></span>
                                 <p id="overlay-status-text" class="text-xs font-semibold text-white leading-tight">Memproses...</p>
                             </div>

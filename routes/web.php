@@ -33,11 +33,11 @@ Route::middleware('auth')->group(function () {
     Route::resource('students', StudentController::class)->except('show')->middleware('role:admin');
     Route::resource('users', UserController::class)->except('show')->middleware('role:admin');
     Route::resource('schedules', ScheduleController::class)->only(['index', 'create', 'store', 'edit', 'update', 'destroy'])->middleware('role:admin,km');
-    Route::get('/verification', [VerificationController::class, 'index'])->middleware('role:admin,guru_piket,wali_kelas,km')->name('verification.index');
-    Route::patch('/verification/{log}/approve', [VerificationController::class, 'approve'])->middleware('role:admin,guru_piket,wali_kelas,km')->name('verification.approve');
-    Route::patch('/verification/{log}/reject', [VerificationController::class, 'reject'])->middleware('role:admin,guru_piket,wali_kelas,km')->name('verification.reject');
-    Route::get('/reports', [ReportController::class, 'index'])->middleware('role:admin,guru_piket,wali_kelas,km')->name('reports.index');
-    Route::get('/reports/{log}', [ReportController::class, 'show'])->middleware('role:admin,guru_piket,wali_kelas,km')->name('reports.show');
-    Route::get('/reports.csv', [ReportController::class, 'csv'])->middleware('role:admin,guru_piket,wali_kelas,km')->name('reports.csv');
-    Route::get('/reports.pdf', [ReportController::class, 'pdf'])->middleware('role:admin,guru_piket,wali_kelas,km')->name('reports.pdf');
+    Route::get('/verification', [VerificationController::class, 'index'])->middleware('role:admin,wali_kelas,km')->name('verification.index');
+    Route::patch('/verification/{log}/approve', [VerificationController::class, 'approve'])->middleware('role:admin,wali_kelas,km')->name('verification.approve');
+    Route::patch('/verification/{log}/reject', [VerificationController::class, 'reject'])->middleware('role:admin,wali_kelas,km')->name('verification.reject');
+    Route::get('/reports', [ReportController::class, 'index'])->middleware('role:admin,wali_kelas,km')->name('reports.index');
+    Route::get('/reports/{log}', [ReportController::class, 'show'])->middleware('role:admin,wali_kelas,km')->name('reports.show');
+    Route::get('/reports.csv', [ReportController::class, 'csv'])->middleware('role:admin,wali_kelas,km')->name('reports.csv');
+    Route::get('/reports.pdf', [ReportController::class, 'pdf'])->middleware('role:admin,wali_kelas,km')->name('reports.pdf');
 });

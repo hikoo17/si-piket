@@ -42,7 +42,6 @@ class DatabaseSeeder extends Seeder
 
         $password = Hash::make('password');
         $admin = $this->user('Administrator', 'admin@si-piket.test', 'admin', null, $password, '628111111111');
-        $teacher = $this->user('Guru Piket', 'guru@si-piket.test', 'guru_piket', null, $password, '628122222222');
         $waliKelas = $this->user('Wali Kelas XII-4', 'wali.kelas@si-piket.test', 'wali_kelas', $classXII4->id, $password, '628166666666');
         $km = $this->user('Ketua Kelas XII-4', 'km@si-piket.test', 'km', $classXII4->id, $password, '628133333333');
         $student = $this->user('Siswa XII-4', 'siswa@si-piket.test', 'siswa', $classXII4->id, $password, '628144444444');
@@ -58,7 +57,7 @@ class DatabaseSeeder extends Seeder
                 'status' => 'approved',
                 'distance_meters' => 12,
                 'accuracy_meters' => 8,
-                'verified_by' => $teacher->id,
+                'verified_by' => $waliKelas->id,
                 'verified_at' => now(),
             ],
         );

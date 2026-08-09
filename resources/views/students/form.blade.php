@@ -44,14 +44,22 @@
                 </select>
                 @error('role') <p class="mt-1 text-xs text-rose-600">{{ $message }}</p> @enderror
             </div>
-            <div class="space-y-1.5">
+            <div class="space-y-1.5 relative">
                 <label class="text-xs font-semibold uppercase tracking-wider text-slate-600">Password</label>
-                <input type="password" name="password" placeholder="Minimal 8 karakter" class="w-full rounded-xl border border-slate-200 bg-slate-50/50 px-4 py-3 text-sm text-slate-900 transition focus:border-amber-500 focus:bg-white focus:outline-none focus:ring-4 focus:ring-amber-500/10" @required(!$student->exists)>
+                <input id="student-password" type="password" name="password" placeholder="Minimal 8 karakter" class="w-full rounded-xl border border-slate-200 bg-slate-50/50 px-4 py-3 pr-10 text-sm text-slate-900 transition focus:border-amber-500 focus:bg-white focus:outline-none focus:ring-4 focus:ring-amber-500/10" @required(!$student->exists)>
+                <button type="button" onclick="togglePassword('student-password', this)" class="absolute right-3 top-[1.7rem] text-slate-400 hover:text-amber-600 transition">
+                    <x-icon name="heroicon-o-eye" class="h-4 w-4" id="student-icon-eye" />
+                    <x-icon name="heroicon-o-eye-slash" class="h-4 w-4 hidden" id="student-icon-eye-slash" />
+                </button>
                 @error('password') <p class="mt-1 text-xs text-rose-600">{{ $message }}</p> @enderror
             </div>
-            <div class="space-y-1.5">
+            <div class="space-y-1.5 relative">
                 <label class="text-xs font-semibold uppercase tracking-wider text-slate-600">Konfirmasi password</label>
-                <input type="password" name="password_confirmation" placeholder="Ulangi password" class="w-full rounded-xl border border-slate-200 bg-slate-50/50 px-4 py-3 text-sm text-slate-900 transition focus:border-amber-500 focus:bg-white focus:outline-none focus:ring-4 focus:ring-amber-500/10" @required(!$student->exists)>
+                <input id="student-password_confirmation" type="password" name="password_confirmation" placeholder="Ulangi password" class="w-full rounded-xl border border-slate-200 bg-slate-50/50 px-4 py-3 pr-10 text-sm text-slate-900 transition focus:border-amber-500 focus:bg-white focus:outline-none focus:ring-4 focus:ring-amber-500/10" @required(!$student->exists)>
+                <button type="button" onclick="togglePassword('student-password_confirmation', this)" class="absolute right-3 top-[1.7rem] text-slate-400 hover:text-amber-600 transition">
+                    <x-icon name="heroicon-o-eye" class="h-4 w-4" id="student-icon-eye-confirm" />
+                    <x-icon name="heroicon-o-eye-slash" class="h-4 w-4 hidden" id="student-icon-eye-slash-confirm" />
+                </button>
                 @error('password_confirmation') <p class="mt-1 text-xs text-rose-600">{{ $message }}</p> @enderror
             </div>
         </div>
@@ -62,4 +70,26 @@
         </div>
     </form>
 </div>
+
+<script>
+    function togglePassword(inputId, button) {
+        const input = document.getElementById(inputId);
+        const isPassword = input.type === 'password';
+        input.type = isPassword ? 'text' : 'password';
+
+        const eyeId = inputId === 'student-password' ? 'student-icon-eye' : 'student-icon-eye-confirm';
+        const eyeSlashId = inputId === 'student-password' ? 'student-icon-eye-slash' : 'student-icon-eye-slash-confirm';
+
+        const eyeIcon = document.getElementById(eyeId);
+        const eyeSlashIcon = document.getElementById(eyeSlashId);
+
+        if (isPassword) {
+            eyeIcon?.classList.remove('hidden');
+            eyeSlashIcon?.classList.add('hidden');
+        } else {
+            eyeIcon?.classList.add('hidden');
+            eyeSlashIcon?.classList.remove('hidden');
+        }
+    }
+</script>
 @endsection

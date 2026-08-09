@@ -151,7 +151,7 @@ class PhaseOneWorkflowTest extends TestCase
     public function teacher_can_approve_pending_evidence(): void
     {
         [$class] = $this->classes();
-        $teacher = User::factory()->create(['role' => 'guru_piket']);
+        $teacher = User::factory()->create(['role' => 'wali_kelas']);
         $student = User::factory()->create(['role' => 'siswa', 'class_id' => $class->id]);
         $schedule = PiketSchedule::create(['user_id' => $student->id, 'day_of_week' => 'Monday']);
         $log = PiketLog::create(['schedule_id' => $schedule->id, 'user_id' => $student->id, 'date' => today(), 'status' => 'pending']);
@@ -165,7 +165,7 @@ class PhaseOneWorkflowTest extends TestCase
     public function approved_evidence_is_not_shown_on_verification_page(): void
     {
         [$class] = $this->classes();
-        $teacher = User::factory()->create(['role' => 'guru_piket']);
+        $teacher = User::factory()->create(['role' => 'wali_kelas']);
         $student = User::factory()->create(['role' => 'siswa', 'class_id' => $class->id]);
         $schedule = PiketSchedule::create(['user_id' => $student->id, 'day_of_week' => 'Monday']);
         PiketLog::create(['schedule_id' => $schedule->id, 'user_id' => $student->id, 'date' => today(), 'status' => 'approved']);
@@ -180,7 +180,7 @@ class PhaseOneWorkflowTest extends TestCase
     public function teacher_can_open_report_detail_page(): void
     {
         [$class] = $this->classes();
-        $teacher = User::factory()->create(['role' => 'guru_piket']);
+        $teacher = User::factory()->create(['role' => 'wali_kelas']);
         $student = User::factory()->create(['role' => 'siswa', 'class_id' => $class->id]);
         $schedule = PiketSchedule::create(['user_id' => $student->id, 'day_of_week' => 'Monday']);
         $log = PiketLog::create(['schedule_id' => $schedule->id, 'user_id' => $student->id, 'date' => today(), 'status' => 'approved', 'photo_path' => 'piket/example.jpg']);
@@ -221,7 +221,7 @@ class PhaseOneWorkflowTest extends TestCase
     public function teacher_without_a_class_can_access_all_classes(): void
     {
         [$firstClass, $secondClass] = $this->classes();
-        $teacher = User::factory()->create(['role' => 'guru_piket', 'class_id' => null]);
+        $teacher = User::factory()->create(['role' => 'wali_kelas', 'class_id' => null]);
         $firstStudent = User::factory()->create(['role' => 'siswa', 'class_id' => $firstClass->id]);
         $secondStudent = User::factory()->create(['role' => 'siswa', 'class_id' => $secondClass->id]);
         $firstSchedule = PiketSchedule::create(['user_id' => $firstStudent->id, 'day_of_week' => 'Monday']);

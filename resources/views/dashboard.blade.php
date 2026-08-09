@@ -4,7 +4,7 @@
     ['piket.upload.form', 'Ambil Bukti', 'heroicon-o-qr-code'],
     ['verification.index', 'Verifikasi', 'heroicon-o-shield-check'],
     ['reports.index', 'Laporan', 'heroicon-o-clipboard-document-list'],
-    ['users.index', 'Pengguna', 'heroicon-o-users'],
+    ['users.index', 'Manajemen Pengguna', 'heroicon-o-users'],
 ]])
 
 @php
@@ -32,7 +32,7 @@
             ['Belum Kirim', max(0, $memberCount - $submittedCount), 'heroicon-o-exclamation-triangle', 'Anggota belum upload', 'text-rose-600 bg-rose-50 border-rose-200/60'],
             ['Perlu Ditinjau', $pendingCount, 'heroicon-o-shield-check', 'Menunggu verifikasi', 'text-amber-600 bg-amber-50 border-amber-200/60'],
         ];
-    } elseif (in_array($role, ['guru_piket', 'wali_kelas'])) {
+    } elseif ($role === 'wali_kelas') {
         $cards = [
             ['Piket Pagi', $morningScheduleCount, 'heroicon-o-sun', 'Jadwal pagi ' . $scopeText, 'text-amber-600 bg-amber-50 border-amber-200/60'],
             ['Piket Pulang', $afternoonScheduleCount, 'heroicon-o-moon', 'Jadwal pulang ' . $scopeText, 'text-indigo-600 bg-indigo-50 border-indigo-200/60'],
@@ -53,7 +53,6 @@
     $roleLabel = match ($role) {
         'siswa' => 'Siswa',
         'km' => 'Ketua Kelas',
-        'guru_piket' => 'Guru Piket',
         'wali_kelas' => 'Wali Kelas',
         'admin' => 'Administrator',
         default => 'Pengguna',
@@ -253,7 +252,7 @@
                 </div>
             </div>
         </section>
-    @elseif(in_array($role, ['guru_piket', 'wali_kelas']))
+    @elseif($role === 'wali_kelas')
         <section class="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
             <div class="mb-4">
                 <h2 class="text-base font-bold tracking-tight text-slate-900">Verifikasi Bukti</h2>
@@ -422,7 +421,7 @@
                     </a>
                 @endif
 
-                @if(in_array($role, ['admin', 'guru_piket', 'wali_kelas', 'km']))
+                @if(in_array($role, ['admin', 'wali_kelas', 'km']))
                     <a class="group flex items-center justify-between rounded-lg border border-slate-200 bg-slate-50/50 p-3.5 transition hover:border-amber-400 hover:bg-amber-50/30" href="{{ route('verification.index') }}">
                         <div class="flex items-center gap-3">
                             <span class="grid h-9 w-9 shrink-0 place-items-center rounded-lg bg-white border border-slate-200 text-slate-700 shadow-sm transition group-hover:border-amber-400 group-hover:text-amber-600">
@@ -437,7 +436,7 @@
                     </a>
                 @endif
 
-                @if(in_array($role, ['guru_piket', 'wali_kelas']))
+                @if($role === 'wali_kelas')
                     <a class="group flex items-center justify-between rounded-lg border border-slate-200 bg-slate-50/50 p-3.5 transition hover:border-amber-400 hover:bg-amber-50/30" href="{{ route('reports.index') }}">
                         <div class="flex items-center gap-3">
                             <span class="grid h-9 w-9 shrink-0 place-items-center rounded-lg bg-white border border-slate-200 text-slate-700 shadow-sm transition group-hover:border-amber-400 group-hover:text-amber-600">

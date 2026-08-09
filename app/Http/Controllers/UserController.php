@@ -22,7 +22,7 @@ class UserController extends Controller
                 ->where('name', 'like', '%'.$request->string('search').'%')
                 ->orWhere('email', 'like', '%'.$request->string('search').'%')))
             ->when($request->filled('role'), fn ($query) => $query->where('role', $request->string('role')))
-            ->orderByRaw("FIELD(role, 'admin', 'guru_piket', 'wali_kelas', 'km', 'siswa')")
+            ->orderByRaw("FIELD(role, 'admin', 'wali_kelas', 'km', 'siswa')")
             ->orderBy('name')
             ->paginate(15)
             ->withQueryString();
@@ -77,7 +77,7 @@ class UserController extends Controller
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'email', Rule::unique('users')->ignore($user)],
             'phone' => ['nullable', 'regex:/^62[0-9]{8,13}$/'],
-            'role' => ['required', Rule::in(['admin', 'guru_piket', 'wali_kelas', 'km', 'siswa'])],
+            'role' => ['required', Rule::in(['admin', 'wali_kelas', 'km', 'siswa'])],
             'class_id' => ['nullable', 'exists:classes,id'],
             'password' => [$user ? 'nullable' : 'required', 'string', 'min:8', 'confirmed'],
         ], [
@@ -100,7 +100,7 @@ class UserController extends Controller
             throw ValidationException::withMessages(['class_id' => 'Kelas wajib dipilih untuk siswa, KM, atau wali kelas.']);
         }
 
-        if (in_array($data['role'], ['admin', 'guru_piket'], true)) {
+        if (in_array($data['role'], ['admin'], true)) {
             $data['class_id'] = null;
         }
 

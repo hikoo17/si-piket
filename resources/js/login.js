@@ -11,9 +11,20 @@ const submitLabel = loginSubmit?.querySelector('[data-submit-label]');
 const submitArrow = loginSubmit?.querySelector('[data-submit-arrow]');
 
 passwordToggle?.addEventListener('click', () => {
-    const isVisible = passwordInput.type === 'text';
-    passwordInput.type = isVisible ? 'password' : 'text';
-    passwordToggle.setAttribute('aria-label', isVisible ? 'Tampilkan kata sandi' : 'Sembunyikan kata sandi');
+    const isPassword = passwordInput.type === 'password';
+    passwordInput.type = isPassword ? 'text' : 'password';
+    passwordToggle.setAttribute('aria-label', isPassword ? 'Sembunyikan kata sandi' : 'Tampilkan kata sandi');
+
+    const eyeIcon = document.getElementById('icon-eye');
+    const eyeSlashIcon = document.getElementById('icon-eye-slash');
+
+    if (isPassword) {
+        eyeIcon?.classList.remove('hidden');
+        eyeSlashIcon?.classList.add('hidden');
+    } else {
+        eyeIcon?.classList.add('hidden');
+        eyeSlashIcon?.classList.remove('hidden');
+    }
 });
 
 loginForm?.addEventListener('submit', () => {

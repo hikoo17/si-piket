@@ -8,7 +8,7 @@
     </div>
 
     <!-- Single Card: semua pengaturan -->
-    <div class="overflow-hidden rounded-2xl border border-slate-200/80 bg-white shadow-[0_1px_2px_rgba(15,23,42,0.04)]">
+    <div class="overflow-hidden rounded-2xl border border-slate-200/80 bg-white">
         <form class="divide-y divide-slate-100" method="POST" action="{{ route('schools.update', $school) }}">
             @csrf
             @method('PUT')
@@ -67,7 +67,7 @@
 
                 <div class="space-y-3">
                     <div class="relative">
-                        <div id="school-location-map" class="h-80 w-full rounded-2xl border border-slate-200 shadow-inner z-0 sm:h-[22rem]" data-default-latitude="-7.32709600" data-default-longitude="108.22034900"></div>
+                        <div id="school-location-map" class="h-80 w-full rounded-2xl border border-slate-200 shadow-[inset_0_1px_1px_rgba(0,0,0,0.03)] z-0 sm:h-[22rem]" data-default-latitude="-7.32709600" data-default-longitude="108.22034900"></div>
                         <script id="location-catalog" type="application/json">{!! json_encode($locationCatalog, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) !!}</script>
                     </div>
 
@@ -204,7 +204,7 @@
     </div>
 
     <!-- Test WhatsApp (card terpisah) -->
-    <div class="overflow-hidden rounded-2xl border border-slate-200/80 bg-white shadow-[0_1px_2px_rgba(15,23,42,0.04)]">
+    <div class="overflow-hidden rounded-2xl border border-slate-200/80 bg-white">
         <div class="border-b border-emerald-100 bg-emerald-50/50 px-6 py-4 sm:px-8">
             <header class="flex items-center gap-3">
                 <span class="grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-emerald-100 text-emerald-600">
