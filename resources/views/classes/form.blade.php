@@ -1,10 +1,10 @@
-@extends('layouts.app', ['title' => $class->exists ? 'Edit Kelas' : 'Tambah Kelas', 'navigation' => [
+@extends('layouts.app', ['title' => $class->exists ? 'Edit Manajemen Kelas' : 'Tambah Manajemen Kelas', 'navigation' => [
     ['dashboard', 'Dashboard', 'heroicon-o-squares-2x2'],
     ['schedules.index', 'Jadwal Piket', 'heroicon-o-clock'],
     ['piket.upload.form', 'Ambil Bukti', 'heroicon-o-qr-code'],
     ['verification.index', 'Verifikasi', 'heroicon-o-shield-check'],
     ['reports.index', 'Laporan', 'heroicon-o-clipboard-document-list'],
-    ['classes.index', 'Kelas', 'heroicon-o-users'],
+    ['classes.index', 'Manajemen Kelas', 'heroicon-o-rectangle-group'],
 ]])
 
 @section('content')

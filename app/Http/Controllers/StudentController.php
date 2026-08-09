@@ -83,6 +83,22 @@ class StudentController extends Controller
             'role' => ['required', Rule::in(['siswa', 'km'])],
             'class_id' => ['required', 'exists:classes,id'],
             'password' => [$student ? 'nullable' : 'required', 'string', 'min:8', 'confirmed'],
+        ], [
+            'name.required' => 'Nama lengkap wajib diisi.',
+            'name.string' => 'Nama harus berupa teks.',
+            'name.max' => 'Nama terlalu panjang, maksimal 255 karakter.',
+            'email.required' => 'Email wajib diisi.',
+            'email.email' => 'Format email tidak valid.',
+            'email.unique' => 'Email ini sudah terdaftar.',
+            'phone.regex' => 'Nomor WhatsApp harus diawali 62 dan berisi 8-13 digit angka.',
+            'role.required' => 'Jabatan wajib dipilih.',
+            'role.in' => 'Jabatan yang dipilih tidak valid.',
+            'class_id.required' => 'Kelas wajib dipilih.',
+            'class_id.exists' => 'Kelas yang dipilih tidak ditemukan.',
+            'password.required' => 'Password wajib diisi.',
+            'password.string' => 'Password harus berupa teks.',
+            'password.min' => 'Password minimal 8 karakter.',
+            'password.confirmed' => 'Konfirmasi password tidak cocok.',
         ]);
     }
 

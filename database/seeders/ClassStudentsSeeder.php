@@ -14,7 +14,7 @@ class ClassStudentsSeeder extends Seeder
 {
     use WithoutModelEvents;
 
-    private const CLASS_NAME = 'X RPL 1';
+    private const CLASS_NAME = 'XII-4';
 
     private const STUDENT_NAMES = [
         'Ahmad Fauzi',
@@ -89,27 +89,23 @@ class ClassStudentsSeeder extends Seeder
         $days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
         $shifts = ['morning', 'afternoon'];
 
-        $slots = [];
-        foreach ($days as $day) {
-            foreach ($shifts as $shift) {
-                $slots[] = ['day_of_week' => $day, 'shift' => $shift];
-            }
-        }
-
         $students = $class->users()->orderBy('id')->get();
-        $slotCount = count($slots);
+
+        $dayCount = count($days);
 
         foreach ($students as $index => $student) {
-            $slot = $slots[$index % $slotCount];
+            $day = $days[$index % $dayCount];
 
-            PiketSchedule::query()->updateOrCreate(
-                [
-                    'user_id' => $student->id,
-                    'day_of_week' => $slot['day_of_week'],
-                    'shift' => $slot['shift'],
-                ],
-                [],
-            );
+            foreach ($shifts as $shift) {
+                PiketSchedule::query()->updateOrCreate(
+                    [
+                        'user_id' => $student->id,
+                        'day_of_week' => $day,
+                        'shift' => $shift,
+                    ],
+                    [],
+                );
+            }
         }
     }
 

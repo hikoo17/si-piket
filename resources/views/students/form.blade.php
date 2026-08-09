@@ -1,6 +1,6 @@
 @extends('layouts.app', ['title' => $student->exists ? 'Edit Siswa' : 'Tambah Siswa'])
 @section('content')
-<div class="mx-auto max-w-2xl space-y-5">
+<div class="max-w-2xl space-y-5">
     <div>
         <h1 class="text-xl font-bold tracking-tight text-slate-900">{{ $student->exists ? 'Edit' : 'Tambah' }} Siswa</h1>
         <p class="mt-0.5 text-xs font-medium text-slate-500">KM tetap tercatat sebagai anggota kelas, dengan akses untuk mengatur jadwal kelasnya.</p>
@@ -13,15 +13,18 @@
         <div class="grid gap-4 sm:grid-cols-2">
             <div class="space-y-1.5 sm:col-span-2">
                 <label class="text-xs font-semibold uppercase tracking-wider text-slate-600">Nama lengkap</label>
-                <input name="name" value="{{ old('name', $student->name) }}" class="w-full rounded-xl border border-slate-200 bg-slate-50/50 px-4 py-3 text-sm text-slate-900 transition focus:border-amber-500 focus:bg-white focus:outline-none focus:ring-4 focus:ring-amber-500/10" required>
+                <input name="name" value="{{ old('name', $student->name) }}" placeholder="Nama lengkap" class="w-full rounded-xl border border-slate-200 bg-slate-50/50 px-4 py-3 text-sm text-slate-900 transition focus:border-amber-500 focus:bg-white focus:outline-none focus:ring-4 focus:ring-amber-500/10" required>
+                @error('name') <p class="mt-1 text-xs text-rose-600">{{ $message }}</p> @enderror
             </div>
             <div class="space-y-1.5">
                 <label class="text-xs font-semibold uppercase tracking-wider text-slate-600">Email</label>
-                <input type="email" name="email" value="{{ old('email', $student->email) }}" class="w-full rounded-xl border border-slate-200 bg-slate-50/50 px-4 py-3 text-sm text-slate-900 transition focus:border-amber-500 focus:bg-white focus:outline-none focus:ring-4 focus:ring-amber-500/10" required>
+                <input type="email" name="email" value="{{ old('email', $student->email) }}" placeholder="nama@email.com" class="w-full rounded-xl border border-slate-200 bg-slate-50/50 px-4 py-3 text-sm text-slate-900 transition focus:border-amber-500 focus:bg-white focus:outline-none focus:ring-4 focus:ring-amber-500/10" required>
+                @error('email') <p class="mt-1 text-xs text-rose-600">{{ $message }}</p> @enderror
             </div>
             <div class="space-y-1.5">
                 <label class="text-xs font-semibold uppercase tracking-wider text-slate-600">WhatsApp <span class="font-medium normal-case text-slate-400">(format 62...)</span></label>
-                <input name="phone" value="{{ old('phone', $student->phone) }}" class="w-full rounded-xl border border-slate-200 bg-slate-50/50 px-4 py-3 text-sm text-slate-900 transition focus:border-amber-500 focus:bg-white focus:outline-none focus:ring-4 focus:ring-amber-500/10">
+                <input name="phone" value="{{ old('phone', $student->phone) }}" placeholder="6281234567890" class="w-full rounded-xl border border-slate-200 bg-slate-50/50 px-4 py-3 text-sm text-slate-900 transition focus:border-amber-500 focus:bg-white focus:outline-none focus:ring-4 focus:ring-amber-500/10">
+                @error('phone') <p class="mt-1 text-xs text-rose-600">{{ $message }}</p> @enderror
             </div>
             <div class="space-y-1.5">
                 <label class="text-xs font-semibold uppercase tracking-wider text-slate-600">Kelas</label>
@@ -31,6 +34,7 @@
                         <option value="{{ $class->id }}" @selected(old('class_id', $student->class_id) == $class->id)>{{ $class->school->name }} · {{ $class->name }}</option>
                     @endforeach
                 </select>
+                @error('class_id') <p class="mt-1 text-xs text-rose-600">{{ $message }}</p> @enderror
             </div>
             <div class="space-y-1.5">
                 <label class="text-xs font-semibold uppercase tracking-wider text-slate-600">Jabatan</label>
@@ -38,15 +42,17 @@
                     <option value="siswa" @selected(old('role', $student->role) === 'siswa')>Siswa</option>
                     <option value="km" @selected(old('role', $student->role) === 'km')>Ketua Murid (KM)</option>
                 </select>
+                @error('role') <p class="mt-1 text-xs text-rose-600">{{ $message }}</p> @enderror
             </div>
             <div class="space-y-1.5">
                 <label class="text-xs font-semibold uppercase tracking-wider text-slate-600">Password</label>
-                <input type="password" name="password" class="w-full rounded-xl border border-slate-200 bg-slate-50/50 px-4 py-3 text-sm text-slate-900 transition focus:border-amber-500 focus:bg-white focus:outline-none focus:ring-4 focus:ring-amber-500/10" @required(!$student->exists)>
-                <p class="text-[0.7rem] text-slate-500">{{ $student->exists ? 'Kosongkan jika tidak diubah.' : 'Minimal 8 karakter.' }}</p>
+                <input type="password" name="password" placeholder="Minimal 8 karakter" class="w-full rounded-xl border border-slate-200 bg-slate-50/50 px-4 py-3 text-sm text-slate-900 transition focus:border-amber-500 focus:bg-white focus:outline-none focus:ring-4 focus:ring-amber-500/10" @required(!$student->exists)>
+                @error('password') <p class="mt-1 text-xs text-rose-600">{{ $message }}</p> @enderror
             </div>
             <div class="space-y-1.5">
                 <label class="text-xs font-semibold uppercase tracking-wider text-slate-600">Konfirmasi password</label>
-                <input type="password" name="password_confirmation" class="w-full rounded-xl border border-slate-200 bg-slate-50/50 px-4 py-3 text-sm text-slate-900 transition focus:border-amber-500 focus:bg-white focus:outline-none focus:ring-4 focus:ring-amber-500/10" @required(!$student->exists)>
+                <input type="password" name="password_confirmation" placeholder="Ulangi password" class="w-full rounded-xl border border-slate-200 bg-slate-50/50 px-4 py-3 text-sm text-slate-900 transition focus:border-amber-500 focus:bg-white focus:outline-none focus:ring-4 focus:ring-amber-500/10" @required(!$student->exists)>
+                @error('password_confirmation') <p class="mt-1 text-xs text-rose-600">{{ $message }}</p> @enderror
             </div>
         </div>
 

@@ -14,9 +14,22 @@ use Illuminate\View\View;
 
 class UserController extends Controller
 {
-    public function index(): View
+    public function index(Request $request): View
     {
-        return view('users.index', ['users' => User::with('schoolClass')->paginate(15)]);
+        $users = User::query()
+            ->with('schoolClass')
+            ->when($request->filled('search'), fn ($query) => $query->where(fn ($query) => $query
+                ->where('name', 'like', '%'.$request->string('search').'%')
+                ->orWhere('email', 'like', '%'.$request->string('search').'%')))
+            ->when($request->filled('role'), fn ($query) => $query->where('role', $request->string('role')))
+            ->orderByRaw("FIELD(role, 'admin', 'guru_piket', 'wali_kelas', 'km', 'siswa')")
+            ->orderBy('name')
+            ->paginate(15)
+            ->withQueryString();
+
+        $roleFilter = $request->string('role');
+
+        return view('users.index', ['users' => $users, 'roleFilter' => $roleFilter]);
     }
 
     public function create(): View
@@ -61,12 +74,34 @@ class UserController extends Controller
     private function validated(Request $request, ?User $user = null): array
     {
         $data = $request->validate([
-            'name' => ['required', 'string', 'max:255'], 'email' => ['required', 'email', Rule::unique('users')->ignore($user)],
-            'phone' => ['nullable', 'regex:/^62[0-9]{8,13}$/'], 'role' => ['required', Rule::in(['admin', 'guru', 'km', 'siswa'])],
-            'class_id' => ['nullable', 'exists:classes,id'], 'password' => [$user ? 'nullable' : 'required', 'string', 'min:8', 'confirmed'],
+            'name' => ['required', 'string', 'max:255'],
+            'email' => ['required', 'email', Rule::unique('users')->ignore($user)],
+            'phone' => ['nullable', 'regex:/^62[0-9]{8,13}$/'],
+            'role' => ['required', Rule::in(['admin', 'guru_piket', 'wali_kelas', 'km', 'siswa'])],
+            'class_id' => ['nullable', 'exists:classes,id'],
+            'password' => [$user ? 'nullable' : 'required', 'string', 'min:8', 'confirmed'],
+        ], [
+            'name.required' => 'Nama lengkap wajib diisi.',
+            'name.string' => 'Nama harus berupa teks.',
+            'name.max' => 'Nama terlalu panjang, maksimal 255 karakter.',
+            'email.required' => 'Email wajib diisi.',
+            'email.email' => 'Format email tidak valid.',
+            'email.unique' => 'Email ini sudah terdaftar.',
+            'phone.regex' => 'Nomor WhatsApp harus diawali 62 dan berisi 8-13 digit angka.',
+            'role.required' => 'Jabatan wajib dipilih.',
+            'role.in' => 'Jabatan yang dipilih tidak valid.',
+            'class_id.exists' => 'Kelas yang dipilih tidak ditemukan.',
+            'password.required' => 'Password wajib diisi.',
+            'password.string' => 'Password harus berupa teks.',
+            'password.min' => 'Password minimal 8 karakter.',
+            'password.confirmed' => 'Konfirmasi password tidak cocok.',
         ]);
-        if (in_array($data['role'], ['km', 'siswa'], true) && empty($data['class_id'])) {
-            throw ValidationException::withMessages(['class_id' => 'Kelas wajib dipilih untuk siswa atau KM.']);
+        if (in_array($data['role'], ['km', 'wali_kelas', 'siswa'], true) && empty($data['class_id'])) {
+            throw ValidationException::withMessages(['class_id' => 'Kelas wajib dipilih untuk siswa, KM, atau wali kelas.']);
+        }
+
+        if (in_array($data['role'], ['admin', 'guru_piket'], true)) {
+            $data['class_id'] = null;
         }
 
         return $data;

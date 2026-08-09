@@ -68,6 +68,11 @@ class SchoolClassController extends Controller
     {
         $data = $request->validate([
             'name' => ['required', 'string', 'max:100', Rule::unique('classes')->where('school_id', $this->primarySchool()->id)->ignore($class)],
+        ], [
+            'name.required' => 'Nama kelas wajib diisi.',
+            'name.string' => 'Nama kelas harus berupa teks.',
+            'name.max' => 'Nama kelas terlalu panjang, maksimal 100 karakter.',
+            'name.unique' => 'Nama kelas sudah terdaftar.',
         ]);
         $data['school_id'] = $this->primarySchool()->id;
 

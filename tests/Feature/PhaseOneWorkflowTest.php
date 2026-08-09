@@ -151,7 +151,7 @@ class PhaseOneWorkflowTest extends TestCase
     public function teacher_can_approve_pending_evidence(): void
     {
         [$class] = $this->classes();
-        $teacher = User::factory()->create(['role' => 'guru']);
+        $teacher = User::factory()->create(['role' => 'guru_piket']);
         $student = User::factory()->create(['role' => 'siswa', 'class_id' => $class->id]);
         $schedule = PiketSchedule::create(['user_id' => $student->id, 'day_of_week' => 'Monday']);
         $log = PiketLog::create(['schedule_id' => $schedule->id, 'user_id' => $student->id, 'date' => today(), 'status' => 'pending']);
@@ -165,14 +165,14 @@ class PhaseOneWorkflowTest extends TestCase
     public function approved_evidence_is_not_shown_on_verification_page(): void
     {
         [$class] = $this->classes();
-        $teacher = User::factory()->create(['role' => 'guru']);
+        $teacher = User::factory()->create(['role' => 'guru_piket']);
         $student = User::factory()->create(['role' => 'siswa', 'class_id' => $class->id]);
         $schedule = PiketSchedule::create(['user_id' => $student->id, 'day_of_week' => 'Monday']);
         PiketLog::create(['schedule_id' => $schedule->id, 'user_id' => $student->id, 'date' => today(), 'status' => 'approved']);
 
         $this->actingAs($teacher)->get(route('verification.index'))
             ->assertOk()
-            ->assertSee('Tidak ada bukti yang menunggu verifikasi.')
+            ->assertSee('Tidak ada bukti yang menunggu verifikasi')
             ->assertDontSee($student->name);
     }
 
@@ -180,7 +180,7 @@ class PhaseOneWorkflowTest extends TestCase
     public function teacher_can_open_report_detail_page(): void
     {
         [$class] = $this->classes();
-        $teacher = User::factory()->create(['role' => 'guru']);
+        $teacher = User::factory()->create(['role' => 'guru_piket']);
         $student = User::factory()->create(['role' => 'siswa', 'class_id' => $class->id]);
         $schedule = PiketSchedule::create(['user_id' => $student->id, 'day_of_week' => 'Monday']);
         $log = PiketLog::create(['schedule_id' => $schedule->id, 'user_id' => $student->id, 'date' => today(), 'status' => 'approved', 'photo_path' => 'piket/example.jpg']);
@@ -196,7 +196,7 @@ class PhaseOneWorkflowTest extends TestCase
     public function teacher_with_a_class_can_only_access_that_class(): void
     {
         [$firstClass, $secondClass] = $this->classes();
-        $teacher = User::factory()->create(['role' => 'guru', 'class_id' => $firstClass->id]);
+        $teacher = User::factory()->create(['role' => 'wali_kelas', 'class_id' => $firstClass->id]);
         $firstStudent = User::factory()->create(['role' => 'siswa', 'class_id' => $firstClass->id]);
         $secondStudent = User::factory()->create(['role' => 'siswa', 'class_id' => $secondClass->id]);
         $firstSchedule = PiketSchedule::create(['user_id' => $firstStudent->id, 'day_of_week' => 'Monday']);
@@ -221,7 +221,7 @@ class PhaseOneWorkflowTest extends TestCase
     public function teacher_without_a_class_can_access_all_classes(): void
     {
         [$firstClass, $secondClass] = $this->classes();
-        $teacher = User::factory()->create(['role' => 'guru', 'class_id' => null]);
+        $teacher = User::factory()->create(['role' => 'guru_piket', 'class_id' => null]);
         $firstStudent = User::factory()->create(['role' => 'siswa', 'class_id' => $firstClass->id]);
         $secondStudent = User::factory()->create(['role' => 'siswa', 'class_id' => $secondClass->id]);
         $firstSchedule = PiketSchedule::create(['user_id' => $firstStudent->id, 'day_of_week' => 'Monday']);
@@ -246,8 +246,8 @@ class PhaseOneWorkflowTest extends TestCase
         $school = School::create(['name' => 'SMAN 1 Tasikmalaya', 'latitude' => -6.2, 'longitude' => 106.8, 'radius_meters' => 100]);
 
         return [
-            SchoolClass::create(['school_id' => $school->id, 'name' => 'XII RPL 1']),
-            SchoolClass::create(['school_id' => $school->id, 'name' => 'XII RPL 2']),
+            SchoolClass::create(['school_id' => $school->id, 'name' => 'XII-4']),
+            SchoolClass::create(['school_id' => $school->id, 'name' => 'XII-5']),
         ];
     }
 }

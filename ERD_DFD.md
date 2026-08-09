@@ -72,7 +72,7 @@ erDiagram
         string name
         string email UK
         string phone "nullable"
-        enum role "admin, guru, km, siswa"
+        enum role "admin, guru_piket, wali_kelas, km, siswa"
         timestamp email_verified_at "nullable"
         string password
         string remember_token "nullable"

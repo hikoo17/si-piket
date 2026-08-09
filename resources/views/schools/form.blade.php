@@ -26,7 +26,7 @@
                 </header>
                 <div class="space-y-1.5">
                     <label for="school-name" class="text-xs font-semibold uppercase tracking-wider text-slate-600">Nama Sekolah</label>
-                    <input id="school-name" class="w-full rounded-xl border border-slate-200 bg-slate-50/50 px-4 py-3 text-sm text-slate-900 transition focus:border-indigo-500 focus:bg-white focus:outline-none focus:ring-4 focus:ring-indigo-500/10" name="name" type="text" value="{{ old('name', $school->name) }}" placeholder="Contoh: SMKN 2 Tasikmalaya" required>
+                    <input id="school-name" class="w-full rounded-xl border border-slate-200 bg-slate-50/50 px-4 py-3 text-sm text-slate-900 transition focus:border-indigo-500 focus:bg-white focus:outline-none focus:ring-4 focus:ring-indigo-500/10" name="name" type="text" value="{{ old('name', $school->name) }}" placeholder="Contoh: SMAN 2 Tasikmalaya" required>
                 </div>
             </section>
 
@@ -86,16 +86,16 @@
                 <div class="grid gap-4 sm:grid-cols-3">
                     <div class="space-y-1.5">
                         <label for="school-latitude" class="text-xs font-semibold uppercase tracking-wider text-slate-600">Latitude</label>
-                        <input id="school-latitude" class="w-full rounded-xl border border-slate-200 bg-slate-50/50 px-3 py-3 text-sm text-slate-900 transition focus:border-indigo-500 focus:bg-white focus:outline-none focus:ring-4 focus:ring-indigo-500/10" name="latitude" type="number" min="-90" max="90" step="0.00000001" value="{{ old('latitude', $school->latitude) }}" required>
+                        <input id="school-latitude" class="w-full rounded-xl border border-slate-200 bg-slate-50/50 px-3 py-3 text-sm text-slate-900 transition focus:border-indigo-500 focus:bg-white focus:outline-none focus:ring-4 focus:ring-indigo-500/10" name="latitude" type="number" min="-90" max="90" step="0.00000001" value="{{ old('latitude', $school->latitude) }}" placeholder="Contoh: -7.32709600" required>
                     </div>
                     <div class="space-y-1.5">
                         <label for="school-longitude" class="text-xs font-semibold uppercase tracking-wider text-slate-600">Longitude</label>
-                        <input id="school-longitude" class="w-full rounded-xl border border-slate-200 bg-slate-50/50 px-3 py-3 text-sm text-slate-900 transition focus:border-indigo-500 focus:bg-white focus:outline-none focus:ring-4 focus:ring-indigo-500/10" name="longitude" type="number" min="-180" max="180" step="0.00000001" value="{{ old('longitude', $school->longitude) }}" required>
+                        <input id="school-longitude" class="w-full rounded-xl border border-slate-200 bg-slate-50/50 px-3 py-3 text-sm text-slate-900 transition focus:border-indigo-500 focus:bg-white focus:outline-none focus:ring-4 focus:ring-indigo-500/10" name="longitude" type="number" min="-180" max="180" step="0.00000001" value="{{ old('longitude', $school->longitude) }}" placeholder="Contoh: 108.22034900" required>
                     </div>
                     <div class="space-y-1.5">
                         <label for="school-radius" class="text-xs font-semibold uppercase tracking-wider text-slate-600">Radius Jangkauan (Meter)</label>
                         <div class="relative">
-                            <input id="school-radius" class="w-full rounded-xl border border-indigo-200 bg-indigo-50/40 px-3 py-3 pr-12 text-sm font-semibold text-indigo-900 transition focus:border-indigo-500 focus:bg-white focus:outline-none focus:ring-4 focus:ring-indigo-500/10" name="radius_meters" type="number" min="10" max="2000" step="1" value="{{ old('radius_meters', $school->radius_meters ?? 100) }}" required>
+                            <input id="school-radius" class="w-full rounded-xl border border-indigo-200 bg-indigo-50/40 px-3 py-3 pr-12 text-sm font-semibold text-indigo-900 transition focus:border-indigo-500 focus:bg-white focus:outline-none focus:ring-4 focus:ring-indigo-500/10" name="radius_meters" type="number" min="10" max="2000" step="1" value="{{ old('radius_meters', $school->radius_meters ?? 100) }}" placeholder="100" required>
                             <span class="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-xs font-bold text-indigo-400">m</span>
                         </div>
                     </div>
@@ -122,11 +122,11 @@
                     <div class="grid gap-4 sm:grid-cols-2">
                         <div class="space-y-1.5">
                             <label class="text-xs font-medium text-indigo-800">Jam Mulai Upload</label>
-                            <input class="w-full rounded-xl border border-indigo-200 bg-white p-3 text-sm text-slate-900 focus:border-indigo-500 focus:outline-none focus:ring-4 focus:ring-indigo-500/10" name="upload_start_time" type="time" value="{{ old('upload_start_time', $school->upload_start_time ? substr($school->upload_start_time, 0, 5) : '06:00') }}" required>
+                            <input class="w-full rounded-xl border border-indigo-200 bg-white p-3 text-sm text-slate-900 focus:border-indigo-500 focus:outline-none focus:ring-4 focus:ring-indigo-500/10" name="upload_start_time" type="time" value="{{ old('upload_start_time', $school->upload_start_time ? substr($school->upload_start_time, 0, 5) : '06:00') }}" placeholder="06:00" required>
                         </div>
                         <div class="space-y-1.5">
                             <label class="text-xs font-medium text-indigo-800">Batas Akhir Upload</label>
-                            <input class="w-full rounded-xl border border-indigo-200 bg-white p-3 text-sm text-slate-900 focus:border-indigo-500 focus:outline-none focus:ring-4 focus:ring-indigo-500/10" name="upload_deadline" type="time" value="{{ old('upload_deadline', $school->upload_deadline ? substr($school->upload_deadline, 0, 5) : '07:15') }}" required>
+                            <input class="w-full rounded-xl border border-indigo-200 bg-white p-3 text-sm text-slate-900 focus:border-indigo-500 focus:outline-none focus:ring-4 focus:ring-indigo-500/10" name="upload_deadline" type="time" value="{{ old('upload_deadline', $school->upload_deadline ? substr($school->upload_deadline, 0, 5) : '07:15') }}" placeholder="07:15" required>
                         </div>
                     </div>
                 </div>
@@ -139,11 +139,11 @@
                     <div class="grid gap-4 sm:grid-cols-2">
                         <div class="space-y-1.5">
                             <label class="text-xs font-medium text-amber-800">Jam Mulai Upload</label>
-                            <input class="w-full rounded-xl border border-amber-200 bg-white p-3 text-sm text-slate-900 focus:border-amber-500 focus:outline-none focus:ring-4 focus:ring-amber-500/10" name="return_upload_start_time" type="time" value="{{ old('return_upload_start_time', $school->return_upload_start_time ? substr($school->return_upload_start_time, 0, 5) : '14:00') }}" required>
+                            <input class="w-full rounded-xl border border-amber-200 bg-white p-3 text-sm text-slate-900 focus:border-amber-500 focus:outline-none focus:ring-4 focus:ring-amber-500/10" name="return_upload_start_time" type="time" value="{{ old('return_upload_start_time', $school->return_upload_start_time ? substr($school->return_upload_start_time, 0, 5) : '14:00') }}" placeholder="14:00" required>
                         </div>
                         <div class="space-y-1.5">
                             <label class="text-xs font-medium text-amber-800">Batas Akhir Upload</label>
-                            <input class="w-full rounded-xl border border-amber-200 bg-white p-3 text-sm text-slate-900 focus:border-amber-500 focus:outline-none focus:ring-4 focus:ring-amber-500/10" name="return_upload_deadline" type="time" value="{{ old('return_upload_deadline', $school->return_upload_deadline ? substr($school->return_upload_deadline, 0, 5) : '17:00') }}" required>
+                            <input class="w-full rounded-xl border border-amber-200 bg-white p-3 text-sm text-slate-900 focus:border-amber-500 focus:outline-none focus:ring-4 focus:ring-amber-500/10" name="return_upload_deadline" type="time" value="{{ old('return_upload_deadline', $school->return_upload_deadline ? substr($school->return_upload_deadline, 0, 5) : '17:00') }}" placeholder="17:00" required>
                         </div>
                     </div>
                 </div>
@@ -175,14 +175,14 @@
                             <x-icon name="heroicon-o-sun" class="h-4 w-4 text-indigo-500" />
                             Piket Pagi
                         </label>
-                        <input class="mt-1 w-full rounded-xl border border-indigo-200 bg-white px-3 py-2.5 text-sm text-slate-900 transition focus:border-indigo-500 focus:outline-none focus:ring-4 focus:ring-indigo-500/10" name="whatsapp_send_time" type="time" value="{{ old('whatsapp_send_time', $school->whatsapp_send_time ? substr($school->whatsapp_send_time, 0, 5) : '06:00') }}" required>
+                        <input class="mt-1 w-full rounded-xl border border-indigo-200 bg-white px-3 py-2.5 text-sm text-slate-900 transition focus:border-indigo-500 focus:outline-none focus:ring-4 focus:ring-indigo-500/10" name="whatsapp_send_time" type="time" value="{{ old('whatsapp_send_time', $school->whatsapp_send_time ? substr($school->whatsapp_send_time, 0, 5) : '06:00') }}" placeholder="06:00" required>
                     </div>
                     <div class="space-y-1.5 rounded-xl border border-amber-200/80 bg-amber-50/40 p-4">
                         <label class="flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-amber-900">
                             <x-icon name="heroicon-o-moon" class="h-4 w-4 text-amber-500" />
                             Piket Pulang
                         </label>
-                        <input class="mt-1 w-full rounded-xl border border-amber-200 bg-white px-3 py-2.5 text-sm text-slate-900 transition focus:border-amber-500 focus:outline-none focus:ring-4 focus:ring-amber-500/10" name="whatsapp_send_time_return" type="time" value="{{ old('whatsapp_send_time_return', $school->whatsapp_send_time_return ? substr($school->whatsapp_send_time_return, 0, 5) : '14:00') }}" required>
+                        <input class="mt-1 w-full rounded-xl border border-amber-200 bg-white px-3 py-2.5 text-sm text-slate-900 transition focus:border-amber-500 focus:outline-none focus:ring-4 focus:ring-amber-500/10" name="whatsapp_send_time_return" type="time" value="{{ old('whatsapp_send_time_return', $school->whatsapp_send_time_return ? substr($school->whatsapp_send_time_return, 0, 5) : '14:00') }}" placeholder="14:00" required>
                     </div>
                 </div>
 

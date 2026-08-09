@@ -1,18 +1,18 @@
-@extends('layouts.app', ['title' => 'Kelas', 'navigation' => [
-    ['dashboard', 'Dashboard', 'heroicon-o-squares-2x2'],
-    ['schedules.index', 'Jadwal Piket', 'heroicon-o-clock'],
-    ['piket.upload.form', 'Ambil Bukti', 'heroicon-o-qr-code'],
-    ['verification.index', 'Verifikasi', 'heroicon-o-shield-check'],
-    ['reports.index', 'Laporan', 'heroicon-o-clipboard-document-list'],
-    ['classes.index', 'Kelas', 'heroicon-o-users'],
-]])
+@extends('layouts.app', ['title' => 'Manajemen Kelas', 'navigation' => [
+     ['dashboard', 'Dashboard', 'heroicon-o-squares-2x2'],
+     ['schedules.index', 'Jadwal Piket', 'heroicon-o-clock'],
+     ['piket.upload.form', 'Ambil Bukti', 'heroicon-o-qr-code'],
+     ['verification.index', 'Verifikasi', 'heroicon-o-shield-check'],
+     ['reports.index', 'Laporan', 'heroicon-o-clipboard-document-list'],
+     ['classes.index', 'Manajemen Kelas', 'heroicon-o-rectangle-group'],
+ ]])
 
 @section('content')
 <div class="space-y-5">
     <!-- Header Section -->
     <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
-            <h1 class="text-xl font-bold tracking-tight text-slate-900">Kelas</h1>
+             <h1 class="text-xl font-bold tracking-tight text-slate-900">Manajemen Kelas</h1>
             <p class="mt-1 text-xs font-medium text-slate-500">Buat kelas, lalu buka kelas untuk memasukkan siswa dan menentukan KM.</p>
         </div>
         <a href="{{ route('classes.create') }}" class="inline-flex h-9 shrink-0 items-center justify-center gap-2 rounded-lg bg-amber-500 px-4 text-xs font-bold text-amber-950 shadow-sm transition hover:bg-amber-400">

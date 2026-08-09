@@ -9,6 +9,7 @@
 
 @php
     $role = $role ?? auth()->user()->role;
+    $scopeText = $scopeClass ? ('kelas ' . $scopeClass->name) : 'sekolah';
 
     $cards = [];
     if ($role === 'siswa') {
@@ -26,18 +27,18 @@
     } elseif ($role === 'km') {
         $cards = [
             ['Anggota Kelas', $memberCount, 'heroicon-o-users', 'Siswa & KM terdaftar', 'text-slate-600 bg-slate-100 border-slate-200'],
-            ['Piket Pagi', $morningScheduleCount, 'heroicon-o-sun', 'Jadwal pagi kelas', 'text-amber-600 bg-amber-50 border-amber-200/60'],
-            ['Piket Pulang', $afternoonScheduleCount, 'heroicon-o-moon', 'Jadwal pulang kelas', 'text-indigo-600 bg-indigo-50 border-indigo-200/60'],
+            ['Piket Pagi', $morningScheduleCount, 'heroicon-o-sun', 'Jadwal pagi ' . $scopeText, 'text-amber-600 bg-amber-50 border-amber-200/60'],
+            ['Piket Pulang', $afternoonScheduleCount, 'heroicon-o-moon', 'Jadwal pulang ' . $scopeText, 'text-indigo-600 bg-indigo-50 border-indigo-200/60'],
             ['Belum Kirim', max(0, $memberCount - $submittedCount), 'heroicon-o-exclamation-triangle', 'Anggota belum upload', 'text-rose-600 bg-rose-50 border-rose-200/60'],
             ['Perlu Ditinjau', $pendingCount, 'heroicon-o-shield-check', 'Menunggu verifikasi', 'text-amber-600 bg-amber-50 border-amber-200/60'],
         ];
-    } elseif ($role === 'guru') {
+    } elseif (in_array($role, ['guru_piket', 'wali_kelas'])) {
         $cards = [
-            ['Piket Pagi', $morningScheduleCount, 'heroicon-o-sun', 'Jadwal pagi kelas', 'text-amber-600 bg-amber-50 border-amber-200/60'],
-            ['Piket Pulang', $afternoonScheduleCount, 'heroicon-o-moon', 'Jadwal pulang kelas', 'text-indigo-600 bg-indigo-50 border-indigo-200/60'],
+            ['Piket Pagi', $morningScheduleCount, 'heroicon-o-sun', 'Jadwal pagi ' . $scopeText, 'text-amber-600 bg-amber-50 border-amber-200/60'],
+            ['Piket Pulang', $afternoonScheduleCount, 'heroicon-o-moon', 'Jadwal pulang ' . $scopeText, 'text-indigo-600 bg-indigo-50 border-indigo-200/60'],
             ['Perlu Ditinjau', $pendingCount, 'heroicon-o-shield-check', 'Menunggu verifikasi', 'text-amber-600 bg-amber-50 border-amber-200/60'],
             ['Disetujui', $approvedCount, 'heroicon-o-check-circle', 'Bukti piket valid', 'text-emerald-600 bg-emerald-50 border-emerald-200/60'],
-            ['Anggota', $memberCount, 'heroicon-o-users', 'Siswa & KM kelas', 'text-slate-600 bg-slate-100 border-slate-200'],
+            ['Anggota', $memberCount, 'heroicon-o-users', 'Siswa & KM ' . $scopeText, 'text-slate-600 bg-slate-100 border-slate-200'],
         ];
     } else {
         $cards = [
@@ -52,7 +53,8 @@
     $roleLabel = match ($role) {
         'siswa' => 'Siswa',
         'km' => 'Ketua Kelas',
-        'guru' => 'Guru Piket',
+        'guru_piket' => 'Guru Piket',
+        'wali_kelas' => 'Wali Kelas',
         'admin' => 'Administrator',
         default => 'Pengguna',
     };
@@ -198,7 +200,7 @@
             <div class="mb-4 flex flex-wrap items-center justify-between gap-2">
                 <div>
                     <h2 class="text-base font-bold tracking-tight text-slate-900">Ringkasan Kelas</h2>
-                    <p class="text-xs text-slate-500">Pantau keikutsertaan piket anggota kelas kamu hari ini.</p>
+                    <p class="text-xs text-slate-500">Pantau keikutsertaan piket {{ $scopeClass ? 'Kelas ' . $scopeClass->name : 'seluruh sekolah' }} hari ini.</p>
                 </div>
             </div>
             <div class="grid gap-3 sm:grid-cols-3">
@@ -251,11 +253,11 @@
                 </div>
             </div>
         </section>
-    @elseif($role === 'guru')
+    @elseif(in_array($role, ['guru_piket', 'wali_kelas']))
         <section class="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
             <div class="mb-4">
                 <h2 class="text-base font-bold tracking-tight text-slate-900">Verifikasi Bukti</h2>
-                <p class="text-xs text-slate-500">Tinjau kiriman bukti piket kelas yang masih menunggu persetujuan.</p>
+                <p class="text-xs text-slate-500">Tinjau kiriman bukti piket {{ $scopeClass ? 'Kelas ' . $scopeClass->name : 'seluruh sekolah' }} yang masih menunggu persetujuan.</p>
             </div>
             <div class="flex flex-wrap items-center justify-between gap-3 rounded-lg border border-amber-200/80 bg-amber-50/50 p-4">
                 <div class="flex items-center gap-3">
@@ -356,7 +358,7 @@
                                 <x-icon name="heroicon-o-squares-2x2" class="h-4 w-4" />
                             </span>
                             <div>
-                                <strong class="block text-xs font-bold text-slate-800 group-hover:text-amber-900">Kelola Kelas</strong>
+                                 <strong class="block text-xs font-bold text-slate-800 group-hover:text-amber-900">Manajemen Kelas</strong>
                                 <small class="text-[0.7rem] text-slate-500">Susunan kelas aktif</small>
                             </div>
                         </div>
@@ -382,7 +384,7 @@
                                 <x-icon name="heroicon-o-users" class="h-4 w-4" />
                             </span>
                             <div>
-                                <strong class="block text-xs font-bold text-slate-800 group-hover:text-amber-900">Kelola Pengguna</strong>
+                                 <strong class="block text-xs font-bold text-slate-800 group-hover:text-amber-900">Manajemen Pengguna</strong>
                                 <small class="text-[0.7rem] text-slate-500">Akun dan hak akses</small>
                             </div>
                         </div>
@@ -420,7 +422,7 @@
                     </a>
                 @endif
 
-                @if(in_array($role, ['admin', 'guru', 'km']))
+                @if(in_array($role, ['admin', 'guru_piket', 'wali_kelas', 'km']))
                     <a class="group flex items-center justify-between rounded-lg border border-slate-200 bg-slate-50/50 p-3.5 transition hover:border-amber-400 hover:bg-amber-50/30" href="{{ route('verification.index') }}">
                         <div class="flex items-center gap-3">
                             <span class="grid h-9 w-9 shrink-0 place-items-center rounded-lg bg-white border border-slate-200 text-slate-700 shadow-sm transition group-hover:border-amber-400 group-hover:text-amber-600">
@@ -435,7 +437,7 @@
                     </a>
                 @endif
 
-                @if($role === 'guru')
+                @if(in_array($role, ['guru_piket', 'wali_kelas']))
                     <a class="group flex items-center justify-between rounded-lg border border-slate-200 bg-slate-50/50 p-3.5 transition hover:border-amber-400 hover:bg-amber-50/30" href="{{ route('reports.index') }}">
                         <div class="flex items-center gap-3">
                             <span class="grid h-9 w-9 shrink-0 place-items-center rounded-lg bg-white border border-slate-200 text-slate-700 shadow-sm transition group-hover:border-amber-400 group-hover:text-amber-600">

@@ -7,9 +7,9 @@
         request()->routeIs('piket.upload.*') => 'Ambil Bukti',
         request()->routeIs('verification.*') => 'Verifikasi',
         request()->routeIs('reports.*') => 'Laporan',
-        request()->routeIs('users.*') => request()->routeIs('users.create') ? 'Tambah Pengguna' : (request()->routeIs('users.edit') ? 'Edit Pengguna' : 'Pengguna'),
+        request()->routeIs('users.*') => request()->routeIs('users.create') ? 'Tambah Pengguna' : (request()->routeIs('users.edit') ? 'Edit Pengguna' : 'Manajemen Pengguna'),
         request()->routeIs('schools.*') => 'Pengaturan Sekolah',
-        request()->routeIs('classes.*') => 'Kelas',
+        request()->routeIs('classes.*') => 'Manajemen Kelas',
         request()->routeIs('students.*') => request()->routeIs('students.create') ? 'Tambah Siswa' : (request()->routeIs('students.edit') ? 'Edit Siswa' : 'Siswa'),
         default => 'SI-PIKET',
     };
@@ -120,18 +120,18 @@
                 @php
                     $navGroups = [
                         'Utama' => [
-                            ['dashboard', 'Dashboard', 'heroicon-o-squares-2x2', ['admin', 'guru', 'km', 'siswa']],
+                            ['dashboard', 'Dashboard', 'heroicon-o-squares-2x2', ['admin', 'guru_piket', 'wali_kelas', 'km', 'siswa']],
                         ],
                         'Presensi Piket' => [
                             ['schedules.index', 'Jadwal Piket', 'heroicon-o-clock', ['admin', 'km']],
                             ['piket.upload.form', 'Ambil Bukti', 'heroicon-o-camera', ['km', 'siswa']],
-                            ['verification.index', 'Verifikasi', 'heroicon-o-shield-check', ['admin', 'guru', 'km']],
-                            ['reports.index', 'Laporan', 'heroicon-o-clipboard-document-list', ['admin', 'guru', 'km']],
+                            ['verification.index', 'Verifikasi', 'heroicon-o-shield-check', ['admin', 'guru_piket', 'wali_kelas', 'km']],
+                            ['reports.index', 'Laporan', 'heroicon-o-clipboard-document-list', ['admin', 'guru_piket', 'wali_kelas', 'km']],
                         ],
                         'Manajemen & Data' => [
-                            ['users.index', 'Pengguna', 'heroicon-o-users', ['admin']],
-                            ['schools.index', 'Sekolah', 'heroicon-o-academic-cap', ['admin']],
-                            ['classes.index', 'Kelas', 'heroicon-o-rectangle-group', ['admin']],
+                            ['users.index', 'Manajemen Pengguna', 'heroicon-o-users', ['admin']],
+                            ['schools.index', 'Pengaturan Sekolah', 'heroicon-o-academic-cap', ['admin']],
+                            ['classes.index', 'Manajemen Kelas', 'heroicon-o-rectangle-group', ['admin']],
                         ],
                     ];
                     $userRole = auth()->user()->role;

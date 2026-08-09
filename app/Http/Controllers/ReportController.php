@@ -71,7 +71,7 @@ class ReportController extends Controller
     {
         $user = $request->user();
 
-        return $user->role === 'km' || ($user->role === 'guru' && $user->class_id)
+        return $user->role === 'km' || $user->role === 'wali_kelas'
             ? (int) $user->class_id
             : null;
     }

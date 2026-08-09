@@ -148,7 +148,7 @@ class PiketUploadTest extends TestCase
     private function createScheduledUser(int $radius = 100): array
     {
         $school = School::query()->create([
-            'name' => 'SMK Test',
+            'name' => 'SMA Test',
             'latitude' => -6.200000,
             'longitude' => 106.816666,
             'accuracy' => 10,
@@ -156,7 +156,7 @@ class PiketUploadTest extends TestCase
         ]);
         $class = SchoolClass::query()->create([
             'school_id' => $school->id,
-            'name' => 'XII RPL 1',
+            'name' => 'XII-4',
         ]);
         $user = User::factory()->create(['class_id' => $class->id]);
 

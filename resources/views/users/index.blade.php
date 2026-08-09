@@ -4,7 +4,7 @@
     ['piket.upload.form', 'Ambil Bukti', 'heroicon-o-qr-code'],
     ['verification.index', 'Verifikasi', 'heroicon-o-shield-check'],
     ['reports.index', 'Laporan', 'heroicon-o-clipboard-document-list'],
-    ['users.index', 'Pengguna', 'heroicon-o-users'],
+    ['users.index', 'Manajemen Pengguna', 'heroicon-o-users'],
 ]])
 
 @section('content')
@@ -22,13 +22,40 @@
         </a>
     </div>
 
+    <!-- Filter Panel -->
+    <div class="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
+        <form method="GET" action="{{ route('users.index') }}" class="grid gap-3 sm:grid-cols-2 lg:grid-cols-[1fr_auto_auto] lg:items-end">
+            <div>
+                <label for="search" class="mb-1 block text-[0.68rem] font-bold uppercase tracking-wider text-slate-500">Cari</label>
+                <input id="search" name="search" value="{{ request('search') }}" placeholder="Nama atau email..." class="h-9 w-full rounded-lg border border-slate-200 bg-slate-50/50 px-3 text-xs font-medium text-slate-800 transition focus:border-amber-500 focus:bg-white focus:outline-none focus:ring-1 focus:ring-amber-500">
+            </div>
+            <div>
+                <label for="role" class="mb-1 block text-[0.68rem] font-bold uppercase tracking-wider text-slate-500">Peran</label>
+                <select id="role" name="role" class="h-9 w-full rounded-lg border border-slate-200 bg-slate-50/50 px-3 text-xs font-medium text-slate-800 transition focus:border-amber-500 focus:bg-white focus:outline-none focus:ring-1 focus:ring-amber-500">
+                    <option value="">Semua Peran</option>
+                    <option value="admin" @selected($roleFilter === 'admin')>Administrator</option>
+                    <option value="guru_piket" @selected($roleFilter === 'guru_piket')>Guru Piket</option>
+                    <option value="wali_kelas" @selected($roleFilter === 'wali_kelas')>Wali Kelas</option>
+                    <option value="km" @selected($roleFilter === 'km')>Ketua Kelas</option>
+                    <option value="siswa" @selected($roleFilter === 'siswa')>Siswa</option>
+                </select>
+            </div>
+            <div class="flex items-center gap-2">
+                <button type="submit" class="inline-flex h-9 flex-1 items-center justify-center gap-2 rounded-lg bg-slate-900 px-4 text-xs font-bold text-white transition hover:bg-slate-800">
+                    <x-icon name="heroicon-o-magnifying-glass" class="h-4 w-4" />
+                    <span>Tampilkan</span>
+                </button>
+            </div>
+        </form>
+    </div>
+
     <!-- Card list (mobile) -->
     <div class="space-y-3 sm:hidden">
         @forelse($users as $user)
             @php
                 $roleClass = match(strtolower($user->role)) {
                     'admin' => 'bg-purple-50 text-purple-700 border-purple-200/80',
-                    'guru', 'teacher' => 'bg-blue-50 text-blue-700 border-blue-200/80',
+                    'guru_piket', 'wali_kelas', 'teacher' => 'bg-blue-50 text-blue-700 border-blue-200/80',
                     'siswa', 'student' => 'bg-emerald-50 text-emerald-700 border-emerald-200/80',
                     default => 'bg-slate-100 text-slate-600 border-slate-200',
                 };
@@ -107,7 +134,7 @@
                                 @php
                                     $roleClass = match(strtolower($user->role)) {
                                         'admin' => 'bg-purple-50 text-purple-700 border-purple-200/80',
-                                        'guru', 'teacher' => 'bg-blue-50 text-blue-700 border-blue-200/80',
+                                        'guru_piket', 'wali_kelas', 'teacher' => 'bg-blue-50 text-blue-700 border-blue-200/80',
                                         'siswa', 'student' => 'bg-emerald-50 text-emerald-700 border-emerald-200/80',
                                         default => 'bg-slate-100 text-slate-600 border-slate-200',
                                     };

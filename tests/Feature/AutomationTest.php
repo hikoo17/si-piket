@@ -87,7 +87,7 @@ class AutomationTest extends TestCase
     private function scheduledUser(?string $phone = null, bool $whatsappEnabled = false): array
     {
         $school = School::create(['name' => 'SMAN 1 Tasikmalaya', 'latitude' => -6.2, 'longitude' => 106.8, 'radius_meters' => 100, 'whatsapp_enabled' => $whatsappEnabled]);
-        $class = SchoolClass::create(['school_id' => $school->id, 'name' => 'XII RPL 1']);
+        $class = SchoolClass::create(['school_id' => $school->id, 'name' => 'XII-4']);
         $user = User::factory()->create(['class_id' => $class->id, 'phone' => $phone]);
         $schedule = PiketSchedule::create(['user_id' => $user->id, 'day_of_week' => 'Monday']);
 

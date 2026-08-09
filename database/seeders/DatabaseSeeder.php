@@ -35,34 +35,22 @@ class DatabaseSeeder extends Seeder
             ],
         );
 
-        $rpl = SchoolClass::query()->updateOrCreate(
-            ['school_id' => $school->id, 'name' => 'XII RPL 1'],
-            [],
-        );
-        $tkj = SchoolClass::query()->updateOrCreate(
-            ['school_id' => $school->id, 'name' => 'XII TKJ 1'],
+        $classXII4 = SchoolClass::query()->updateOrCreate(
+            ['school_id' => $school->id, 'name' => 'XII-4'],
             [],
         );
 
         $password = Hash::make('password');
         $admin = $this->user('Administrator', 'admin@si-piket.test', 'admin', null, $password, '628111111111');
-        $teacher = $this->user('Guru Piket', 'guru@si-piket.test', 'guru', null, $password, '628122222222');
-        $km = $this->user('Ketua Kelas RPL', 'km@si-piket.test', 'km', $rpl->id, $password, '628133333333');
-        $student = $this->user('Siswa RPL', 'siswa@si-piket.test', 'siswa', $rpl->id, $password, '628144444444');
-        $otherStudent = $this->user('Siswa TKJ', 'siswa.tkj@si-piket.test', 'siswa', $tkj->id, $password, '628155555555');
+        $teacher = $this->user('Guru Piket', 'guru@si-piket.test', 'guru_piket', null, $password, '628122222222');
+        $waliKelas = $this->user('Wali Kelas XII-4', 'wali.kelas@si-piket.test', 'wali_kelas', $classXII4->id, $password, '628166666666');
+        $km = $this->user('Ketua Kelas XII-4', 'km@si-piket.test', 'km', $classXII4->id, $password, '628133333333');
+        $student = $this->user('Siswa XII-4', 'siswa@si-piket.test', 'siswa', $classXII4->id, $password, '628144444444');
+        $otherStudent = $this->user('Siswa XII-4', 'siswa.xii4@si-piket.test', 'siswa', $classXII4->id, $password, '628155555555');
 
         $this->call(ClassStudentsSeeder::class);
 
-        $day = now()->englishDayOfWeek;
-
-        foreach ([$km, $student, $otherStudent] as $scheduledUser) {
-            PiketSchedule::query()->updateOrCreate(
-                ['user_id' => $scheduledUser->id, 'day_of_week' => $day, 'shift' => 'morning'],
-                [],
-            );
-        }
-
-        $sampleSchedule = PiketSchedule::query()->where('user_id', $student->id)->where('day_of_week', $day)->firstOrFail();
+        $sampleSchedule = PiketSchedule::query()->where('user_id', $student->id)->firstOrFail();
         PiketLog::query()->updateOrCreate(
             ['schedule_id' => $sampleSchedule->id, 'date' => today()->subDay()],
             [

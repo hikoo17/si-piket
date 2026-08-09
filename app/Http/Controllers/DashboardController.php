@@ -23,7 +23,10 @@ class DashboardController extends Controller
         $students = User::query()->whereIn('role', ['siswa', 'km']);
         $classes = SchoolClass::query();
 
-        if (in_array($role, ['km', 'guru'], true) && $user->class_id) {
+        $scopeClass = null;
+        if (($role === 'km' || $role === 'wali_kelas') && $user->class_id) {
+            // Guru/KM yang terikat ke sebuah kelas hanya melihat data kelasnya sendiri.
+            $scopeClass = $user->schoolClass;
             $logs->whereHas('user', fn ($query) => $query->where('class_id', $user->class_id));
             $schedules->whereHas('user', fn ($query) => $query->where('class_id', $user->class_id));
             $students->where('class_id', $user->class_id);
@@ -32,10 +35,12 @@ class DashboardController extends Controller
             $logs->where('user_id', $user->id);
             $schedules->where('user_id', $user->id);
         }
+        // Guru/KM tanpa kelas -> tetap menampilkan data umum (seluruh sekolah).
 
         $data = [
             'school' => $school,
             'role' => $role,
+            'scopeClass' => $scopeClass,
             'morningScheduleCount' => (clone $schedules)->where('shift', 'morning')->count(),
             'afternoonScheduleCount' => (clone $schedules)->where('shift', 'afternoon')->count(),
             'pendingCount' => (clone $logs)->where('status', 'pending')->count(),
@@ -56,7 +61,7 @@ class DashboardController extends Controller
             $data['myLog'] = $data['myLogs']->first();
         }
 
-        if (in_array($role, ['km', 'guru'], true)) {
+        if (in_array($role, ['km', 'guru_piket', 'wali_kelas'], true)) {
             $data['memberCount'] = $students->count();
             $data['scheduleCount'] = (clone $schedules)->count();
             $data['morningScheduleCount'] = (clone $schedules)->where('shift', 'morning')->count();
