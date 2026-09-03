@@ -20,18 +20,14 @@ jobs:
           username: ${{ secrets.SSH_USERNAME }}
           key: ${{ secrets.SSH_KEY }}
           port: 22
+          script_stop: true
           script: |
             cd /www/wwwroot/si-piket.kezadev.my.id
-            
             git pull origin main
-            
             composer install --no-interaction --prefer-dist --optimize-autoloader --no-dev
-            
             php artisan migrate --force
-            
             php artisan config:cache
             php artisan route:cache
             php artisan view:cache
-            
             chown -R www:www /www/wwwroot/si-piket.kezadev.my.id
             chmod -R 775 /www/wwwroot/si-piket.kezadev.my.id/storage /www/wwwroot/si-piket.kezadev.my.id/bootstrap/cache
