@@ -128,7 +128,6 @@
                             ['piket.upload.form', 'Ambil Bukti', 'heroicon-o-camera', ['km', 'siswa']],
                             ['verification.index', 'Verifikasi', 'heroicon-o-shield-check', ['admin', 'wali_kelas', 'km']],
                             ['reports.index', 'Laporan', 'heroicon-o-clipboard-document-list', ['admin', 'wali_kelas', 'km']],
-                            ['reports.summary', 'Rekap Ketidakhadiran', 'heroicon-o-chart-bar', ['admin', 'wali_kelas', 'km']],
                         ],
                         'Manajemen & Data' => [
                             ['users.index', 'Manajemen Pengguna', 'heroicon-o-users', ['admin']],

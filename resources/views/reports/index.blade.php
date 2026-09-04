@@ -17,10 +17,6 @@
         
         <!-- Export Actions -->
         <div class="flex items-center gap-2">
-            <a href="{{ route('reports.summary') }}" class="inline-flex h-9 items-center gap-2 rounded-lg bg-slate-900 px-3.5 text-xs font-semibold text-white transition hover:bg-slate-700">
-                <x-icon name="heroicon-o-chart-bar" class="h-4 w-4" />
-                <span>Rekap Tidak Hadir</span>
-            </a>
             <a href="{{ route('reports.csv', request()->query()) }}" class="inline-flex h-9 items-center gap-2 rounded-lg border border-slate-200 bg-white px-3.5 text-xs font-semibold text-slate-700 transition hover:bg-slate-50 hover:text-slate-900">
                 <x-icon name="heroicon-o-document-text" class="h-4 w-4 text-emerald-600" />
                 <span>Export CSV</span>

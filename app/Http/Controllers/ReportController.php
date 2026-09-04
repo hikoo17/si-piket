@@ -3,12 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\PiketLog;
-use App\Models\PiketSchedule;
 use App\Models\SchoolClass;
 use App\Models\User;
 use Barryvdh\DomPDF\Facade\Pdf;
-use Carbon\Carbon;
-use Carbon\CarbonPeriod;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 use Symfony\Component\HttpFoundation\StreamedResponse;
@@ -56,83 +53,6 @@ class ReportController extends Controller
     public function pdf(Request $request)
     {
         return Pdf::loadView('reports.pdf', ['logs' => $this->query($request)->get()])->download('laporan-piket.pdf');
-    }
-
-    public function summary(Request $request): View
-    {
-        $request->validate([
-            'period' => ['nullable', 'in:previous_mondays,preceding_week'],
-            'from' => ['nullable', 'date', 'required_with:to'],
-            'to' => ['nullable', 'date', 'required_with:from', 'after_or_equal:from'],
-            'class_id' => ['nullable', 'integer'],
-            'shift' => ['nullable', 'in:morning,afternoon'],
-        ]);
-        [$from, $to] = $this->summaryPeriod($request);
-        $restrictedClassId = $this->restrictedClassId($request);
-        $schedules = PiketSchedule::with('user.schoolClass')
-            ->when($restrictedClassId, fn ($query) => $query->whereHas('user', fn ($user) => $user->where('class_id', $restrictedClassId)))
-            ->when($request->filled('class_id'), fn ($query) => $query->whereHas('user', fn ($user) => $user->where('class_id', $request->class_id)))
-            ->when($request->filled('shift'), fn ($query) => $query->where('shift', $request->shift))
-            ->get();
-
-        $logs = PiketLog::query()
-            ->whereBetween('date', [$from->toDateString(), $to->toDateString()])
-            ->whereIn('schedule_id', $schedules->pluck('id'))
-            ->get()
-            ->keyBy(fn ($log) => $log->schedule_id.'|'.$log->date->toDateString());
-
-        $summary = collect();
-        foreach (CarbonPeriod::create($from, $to) as $date) {
-            foreach ($schedules->where('day_of_week', $date->englishDayOfWeek) as $schedule) {
-                $log = $logs->get($schedule->id.'|'.$date->toDateString());
-                $student = $schedule->user;
-                $row = $summary->get($student->id, [
-                    'user' => $student,
-                    'expected' => 0,
-                    'attended' => 0,
-                    'missed' => 0,
-                    'dates' => collect(),
-                ]);
-                $row['expected']++;
-                if ($log && in_array($log->status, ['pending', 'approved'], true)) {
-                    $row['attended']++;
-                } else {
-                    $row['missed']++;
-                    $row['dates']->push(['date' => $date->copy(), 'shift' => $schedule->shift_label]);
-                }
-                $summary->put($student->id, $row);
-            }
-        }
-
-        $classes = SchoolClass::query()
-            ->when($restrictedClassId, fn ($query) => $query->whereKey($restrictedClassId))
-            ->get();
-
-        return view('reports.summary', [
-            'summary' => $summary->filter(fn ($row) => $row['missed'] > 0)->sortByDesc('missed')->values(),
-            'from' => $from,
-            'to' => $to,
-            'classes' => $classes,
-        ]);
-    }
-
-    /** @return array{Carbon, Carbon} */
-    private function summaryPeriod(Request $request): array
-    {
-        $preset = $request->input('period', 'previous_mondays');
-        if ($preset === 'preceding_week') {
-            $from = today()->subWeek()->startOfWeek();
-
-            return [$from, $from->copy()->endOfWeek()];
-        }
-
-        if ($request->filled('from') && $request->filled('to')) {
-            return [Carbon::parse($request->from)->startOfDay(), Carbon::parse($request->to)->startOfDay()];
-        }
-
-        $to = today()->previous(Carbon::MONDAY);
-
-        return [$to->copy()->subWeeks(3), $to];
     }
 
     private function query(Request $request)
