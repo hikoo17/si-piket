@@ -278,6 +278,26 @@ class PhaseOneWorkflowTest extends TestCase
         $this->actingAs($teacher)->get(route('reports.show', $secondLog))->assertOk();
     }
 
+    #[Test]
+    public function summary_lists_missed_duties_for_the_selected_period(): void
+    {
+        [$class] = $this->classes();
+        $admin = User::factory()->create(['role' => 'admin']);
+        $student = User::factory()->create(['role' => 'siswa', 'class_id' => $class->id]);
+        $monday = today()->previous(\Carbon\Carbon::MONDAY);
+        $schedule = PiketSchedule::create(['user_id' => $student->id, 'day_of_week' => 'Monday', 'shift' => 'morning']);
+
+        $this->actingAs($admin)->get(route('reports.summary', [
+            'from' => $monday->toDateString(),
+            'to' => $monday->toDateString(),
+        ]))
+            ->assertOk()
+            ->assertSee($student->name)
+            ->assertSee('Tidak hadir');
+
+        $this->assertDatabaseMissing('piket_logs', ['schedule_id' => $schedule->id, 'date' => $monday->toDateString()]);
+    }
+
     /** @return array{SchoolClass, SchoolClass} */
     private function classes(): array
     {
