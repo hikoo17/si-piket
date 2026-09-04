@@ -10,7 +10,8 @@
         request()->routeIs('users.*') => request()->routeIs('users.create') ? 'Tambah Pengguna' : (request()->routeIs('users.edit') ? 'Edit Pengguna' : 'Manajemen Pengguna'),
         request()->routeIs('schools.*') => 'Pengaturan Sekolah',
         request()->routeIs('classes.*') => 'Manajemen Kelas',
-        request()->routeIs('students.*') => request()->routeIs('students.create') ? 'Tambah Siswa' : (request()->routeIs('students.edit') ? 'Edit Siswa' : 'Siswa'),
+         request()->routeIs('students.*') => request()->routeIs('students.create') ? 'Tambah Siswa' : (request()->routeIs('students.edit') ? 'Edit Siswa' : 'Siswa'),
+         request()->routeIs('profile.*') => 'Profil Saya',
         default => 'SI-PIKET',
     };
 @endphp
@@ -209,9 +210,23 @@
                     {{ now()->translatedFormat('l, d F Y') }}
                 </span>
                 @auth
-                    <span class="grid h-8 w-8 place-items-center rounded-lg bg-slate-900 text-xs font-bold text-white lg:hidden">
-                    {{ strtoupper(substr(auth()->user()->name, 0, 1)) }}
-                </span>
+                    <div class="relative" id="profile-menu">
+                        <button id="profile-menu-button" type="button" class="grid h-9 w-9 place-items-center rounded-xl bg-slate-900 text-xs font-bold text-white shadow-sm transition hover:bg-slate-700 focus:outline-none focus:ring-4 focus:ring-slate-900/10" aria-label="Buka menu profil" aria-expanded="false" aria-haspopup="true">
+                            {{ strtoupper(substr(auth()->user()->name, 0, 1)) }}
+                        </button>
+                        <div id="profile-menu-panel" class="absolute right-0 top-12 z-50 hidden w-64 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-xl shadow-slate-900/10">
+                            <div class="border-b border-slate-100 bg-slate-50/80 px-4 py-3">
+                                <p class="truncate text-sm font-bold text-slate-900">{{ auth()->user()->name }}</p>
+                                <p class="truncate text-xs text-slate-500">{{ auth()->user()->email }}</p>
+                            </div>
+                            <div class="p-2">
+                                <a href="{{ route('profile.show') }}" class="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-semibold text-slate-700 transition hover:bg-indigo-50 hover:text-indigo-700">
+                                    <span class="grid h-8 w-8 place-items-center rounded-lg bg-indigo-50 text-indigo-600"><x-icon name="heroicon-o-user" class="h-4 w-4" /></span>
+                                    Profile
+                                </a>
+                            </div>
+                        </div>
+                    </div>
                 @endauth
             </div>
         </header>
@@ -250,6 +265,22 @@
 
     menuButton?.addEventListener('click', () => setSidebar(true));
     scrim?.addEventListener('click', () => setSidebar(false));
+
+    const profileMenu = document.getElementById('profile-menu');
+    const profileMenuButton = document.getElementById('profile-menu-button');
+    const profileMenuPanel = document.getElementById('profile-menu-panel');
+
+    profileMenuButton?.addEventListener('click', () => {
+        const open = profileMenuPanel.classList.toggle('hidden');
+        profileMenuButton.setAttribute('aria-expanded', String(!open));
+    });
+
+    document.addEventListener('click', (event) => {
+        if (profileMenu && !profileMenu.contains(event.target)) {
+            profileMenuPanel?.classList.add('hidden');
+            profileMenuButton?.setAttribute('aria-expanded', 'false');
+        }
+    });
 </script>
 </body>
 </html>
